@@ -106,6 +106,8 @@ var World = (function () {
     night: { grass: '#1e3a28', park: '#24482c', water: '#10284c', deep: '#0a1c3a', sand: '#6c6448', concrete: '#44485a', road: '#2c303c', walk: '#555a68', line: '#b8a040', field: '#3c4a28', rock: '#403c3c', dirt: '#4a3c2c', sky: '#070b1e', edge: '#2a2018' },
     dusk: { grass: '#5c7a3c', park: '#4c6c34', water: '#2c5a80', deep: '#1c4468', sand: '#c8b080', concrete: '#9a8c80', road: '#5c5450', walk: '#a09080', line: '#e8d070', field: '#8a9a44', rock: '#7a6a5a', dirt: '#8a6a44', sky: '#3a1c2c', edge: '#5a3c24' },
     day: { grass: '#6c9c44', park: '#5a8c3c', water: '#3c7cbc', deep: '#2c64a0', sand: '#dcc890', concrete: '#a8a8a0', road: '#6a6a70', walk: '#b8b8b0', line: '#f0f0e8', field: '#9cb04c', rock: '#8a8278', dirt: '#9c7a4c', sky: '#8cc4ec', edge: '#6a4a2c' },
+    smog: { grass: '#4c5a3a', park: '#44523a', water: '#3a4a44', deep: '#2c3a36', sand: '#8a8468', concrete: '#7a766c', road: '#4a4844', walk: '#8a867c', line: '#c8b870', field: '#6a7040', rock: '#5a544c', dirt: '#6a5a44', sky: '#4a4436', edge: '#3a2e20' },
+    red: { grass: '#2a3424', park: '#2c3a26', water: '#1c2440', deep: '#141a30', sand: '#5c5040', concrete: '#4c4448', road: '#302a2e', walk: '#5c5258', line: '#d0a040', field: '#3c4028', rock: '#403838', dirt: '#4a3a2c', sky: '#2a0a10', edge: '#2a1810' },
     island: { grass: '#3c8a3c', park: '#2c7a34', water: '#2c8cb0', deep: '#1c6c94', sand: '#e8d49c', concrete: '#8a8a80', road: '#6a6a70', walk: '#b8b8b0', line: '#f0f0e8', field: '#7aa04c', rock: '#5a5048', dirt: '#7a5a3c', sky: '#f0a868', edge: '#5a3c24' }
   };
 
@@ -141,6 +143,82 @@ var World = (function () {
       map: m, start: [4.5, 18.5], llama: [15.5, 5.5], bossAt: [33, 33], night: true,
       bg: null
     };
+  }
+
+  // Straßenraster: Straße alle 6 Kacheln
+  function grid(m, x0, y0, x1, y1, step) {
+    for (var j = y0; j < y1; j++) for (var i = x0; i < x1; i++) {
+      var t = m.T(i, j);
+      if (t === T.WATER || t === T.DEEP || t === T.SAND) continue;
+      var onX = (j - y0) % step === 0, onY = (i - x0) % step === 0;
+      if (onX && onY) m.S(i, j, T.CROSS); else if (onX) m.S(i, j, T.ROADX); else if (onY) m.S(i, j, T.ROADY);
+    }
+  }
+
+  function genOsaka() {
+    var W = 36, H = 36, m = new Map(W, H, PAL.day), R = rng(1955), i, j;
+    for (j = 0; j < H; j++) for (i = 0; i < W; i++) m.S(i, j, T.CONCRETE);
+    // Fluss Yodo diagonal
+    for (i = 0; i < W; i++) { var ry = 24 + Math.round(Math.sin(i / 5) * 2); for (j = ry; j < ry + 3; j++) m.S(i, j, T.WATER); }
+    grid(m, 2, 2, W, H, 6);
+    // Burgpark
+    for (j = 6; j < 13; j++) for (i = 20; i < 28; i++) m.S(i, j, T.PARK);
+    for (j = 6; j < 13; j++) { m.S(19, j, T.WATER); m.S(28, j, T.WATER); }
+    special(m, 24, 9, 'castle', { hp: 150, score: 1500, r: 0.7, egg: 'castle' });
+    for (j = 6; j < 13; j++) for (i = 20; i < 28; i++) if (!(i === 24 && j === 9) && R() < 0.35) special(m, i, j, 'tree', { hp: 10, score: 10 });
+    special(m, 4, 31, 'reactor', { hp: 90, score: 500, nuclear: true });
+    special(m, 14, 20, 'tower', { hp: 140, score: 1000 });
+    for (j = 0; j < H; j++) for (i = 0; i < W; i++) {
+      if (m.T(i, j) !== T.CONCRETE) continue;
+      var dc = Math.sqrt((i - 12) * (i - 12) + (j - 14) * (j - 14)), close = Math.max(0, 1 - dc / 18);
+      if (R() < 0.08) { m.S(i, j, T.PARK); if (R() < 0.6) special(m, i, j, 'tree', { hp: 10, score: 10 }); continue; }
+      if (R() < 0.3 && dc > 14) house(m, i, j, R, false);
+      else if (R() < 0.6) office(m, i, j, R, 8 + R() * 14 + close * 36 * R(), false);
+    }
+    return { map: m, start: [33.5, 32.5], llama: [23.5, 11.5], bossAt: [5, 5] };
+  }
+
+  function genYokohama() {
+    var W = 36, H = 36, m = new Map(W, H, PAL.smog), R = rng(1971), i, j;
+    for (j = 0; j < H; j++) for (i = 0; i < W; i++) {
+      var t = T.CONCRETE;
+      if (j > 28) t = j > 30 ? T.DEEP : T.WATER;
+      m.S(i, j, t);
+    }
+    // Hafenbecken
+    for (j = 20; j < 29; j++) for (i = 14; i < 19; i++) m.S(i, j, T.WATER);
+    grid(m, 1, 1, W, 29, 7);
+    for (i = 0; i < W; i++) if (m.T(i, 28) === T.CONCRETE && R() < 0.5) {
+      var cc = ['#c83a2a', '#2a6ac8', '#e0a020', '#3a9a4a'][Math.floor(R() * 4)];
+      m.add(i, 27, Sprites.prism({ a: 9, h: 6, wl: sh(cc, -0.4), wr: sh(cc, -0.55), roof: sh(cc, -0.3), band: 2 }), { hp: 20, score: 20 });
+    }
+    for (i = 3; i < W; i += 6) special(m, i, 28, 'crane', { hp: 50, score: 200 });
+    special(m, 30, 4, 'reactor', { hp: 90, score: 500, nuclear: true });
+    for (j = 0; j < 28; j++) for (i = 0; i < W; i++) {
+      if (m.T(i, j) !== T.CONCRETE) continue;
+      var r = R();
+      if (j > 12 && r < 0.18) special(m, i, j, 'factory', { hp: 60, score: 250 });
+      else if (j > 12 && r < 0.3) special(m, i, j, 'oiltank', { hp: 30, score: 150 });
+      else if (r < 0.62) office(m, i, j, R, 8 + R() * 22, false);
+    }
+    return { map: m, start: [18.5, 30.5], llama: [2.5, 3.5], bossAt: [17, 6], smog: true };
+  }
+
+  function genShinjuku() {
+    var W = 36, H = 36, m = new Map(W, H, PAL.red), R = rng(1995), i, j;
+    for (j = 0; j < H; j++) for (i = 0; i < W; i++) m.S(i, j, T.CONCRETE);
+    grid(m, 0, 0, W, H, 5);
+    for (j = 16; j < 21; j++) for (i = 16; i < 21; i++) if (m.T(i, j) === T.CONCRETE) m.S(i, j, T.PARK);
+    special(m, 18, 18, 'pagoda', { hp: 60, score: 300 });
+    special(m, 33, 2, 'reactor', { hp: 90, score: 500, nuclear: true });
+    special(m, 2, 33, 'reactor', { hp: 90, score: 500, nuclear: true });
+    for (j = 0; j < H; j++) for (i = 0; i < W; i++) {
+      if (m.T(i, j) !== T.CONCRETE) continue;
+      var dc = Math.sqrt((i - 18) * (i - 18) + (j - 18) * (j - 18)), close = Math.max(0, 1 - dc / 22);
+      if (R() < 0.1) { m.S(i, j, T.PARK); continue; }
+      if (R() < 0.55) office(m, i, j, R, 14 + R() * 20 + close * 44 * R(), true, Math.floor(R() * 2) + 1);
+    }
+    return { map: m, start: [3.5, 3.5], llama: [18.5, 16.5], bossAt: [30, 30], night: true, red: true };
   }
 
   function genLake() {
@@ -259,5 +337,5 @@ var World = (function () {
     return { cv: cv, OX: OX, OY: OY };
   }
 
-  return { T: T, TW: TW, TH: TH, gen: { tokyo: genTokyo, lake: genLake, fuji: genFuji, island: genIsland }, renderGround: renderGround, PAL: PAL, rng: rng };
+  return { T: T, TW: TW, TH: TH, gen: { tokyo: genTokyo, osaka: genOsaka, lake: genLake, yokohama: genYokohama, fuji: genFuji, shinjuku: genShinjuku, island: genIsland }, renderGround: renderGround, PAL: PAL, rng: rng };
 })();

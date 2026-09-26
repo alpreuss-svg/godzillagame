@@ -10,7 +10,7 @@ Du steuerst Godzilla, legst Städte in Schutt und Asche und kämpfst gegen Mecha
 | Taste | Aktion |
 |---|---|
 | Pfeiltasten / WASD | Laufen (einfach durch Häuser hindurch!) |
-| J oder Leertaste | Schwanz- & Klauenschlag |
+| J oder Leertaste | Kombo: Klaue, Klaue, Schwanzhieb rundum |
 | K (halten) | Atomstrahl (verbraucht die blaue Leiste) |
 | L | Brüllen – betäubt Gegner, verjagt Panzer |
 | P / Esc | Pause |
@@ -18,12 +18,23 @@ Du steuerst Godzilla, legst Städte in Schutt und Asche und kämpfst gegen Mecha
 
 ## Level
 
-1. **Tokio** – Hafenviertel bei Nacht, Boss: Mechagodzilla (mit Spiegelschild ab halber Energie)
-2. **Ashino-See** – Hakone in der Abenddämmerung, Boss: Biolante (Ranken, Säure-Spucke)
-3. **Berg Fuji** – Dörfer am heiligen Berg, Boss: King Ghidorah (fliegt, Gravitationsblitze)
-4. **???** – ein Geheimlevel
+| # | Level | Zwischengegner | Boss |
+|---|---|---|---|
+| 1 | Tokio – Hafenviertel bei Nacht | Kamacuras (1, dann 2) | Mechagodzilla (Spiegelschild) |
+| 2 | Osaka – Burg am Yodo-Fluss | Anguirus | Gigan |
+| 3 | Ashino-See – Hakone in der Dämmerung | Kumonga (Netze bremsen) | Biolante |
+| 4 | Yokohama – Industriehafen im Smog | Kamacuras + Kumonga | Hedorah (Giftwolken) |
+| 5 | Berg Fuji | Rodan, dann Anguirus + Rodan | King Ghidorah |
+| 6 | Shinjuku – das Finale | Gigan | Destoroyah |
+| ? | ??? | – | Geheimlevel |
 
-Tipps: Zerstörte Gebäude laden den Atomstrahl auf. Atomkraftwerke heilen Godzilla.
+In den Städten fahren Autos und laufen Menschen, die vor den Monstern fliehen. Panzer und Jets greifen an.
+
+**Tipps**
+- Roter Kreis + „!“ über einem Monster = es holt gleich aus → ausweichen!
+- Ohne Treffer regeneriert Godzilla nach 3 Sekunden langsam HP.
+- Gelbe Fässer (+15 HP) fallen aus zerstörten Gebäuden, Atomkraftwerke geben +50 HP.
+- Fliegende Monster erreicht man nur mit dem Atomstrahl.
 
 ## Technik
 
@@ -31,8 +42,10 @@ Tipps: Zerstörte Gebäude laden den Atomstrahl auf. Atomkraftwerke heilen Godzi
 - Interne Auflösung 480×270, pixelgenau hochskaliert → läuft auch auf älteren Rechnern
 - Der Boden jedes Levels wird einmalig vorgerendert; pro Frame nur ein paar hundert `drawImage`-Aufrufe
 - **Alle Grafiken** werden beim Start prozedural aus Code erzeugt (keine fremden Bilddateien)
-- **Alle Musikstücke** sind Eigenkompositionen und werden live über einen 4-Kanal-Chiptune-Synth
-  (2× Puls, Dreieck, Rauschen – wie beim Game Boy) mit der WebAudio-API erzeugt → komplett lizenzfrei
+- **Alle Musikstücke** sind Eigenkompositionen im Stil der Kaiju-Filmmusik der 50er/60er und werden live über einen
+  kleinen Orchester-Synth (Blechbläser, Streicher, Kontrabass-Ostinato, Pauken, Militärtrommel, Hall) mit der
+  WebAudio-API erzeugt → komplett lizenzfrei, es wird keine einzige Audiodatei geladen
+- Auch die Monsterschreie sind synthetisch (der echte Godzilla-Schrei ist eine geschützte Marke von Toho)
 - Schrift: „Press Start 2P“ (SIL Open Font License) über Google Fonts
 
 ## Lokal starten
@@ -57,12 +70,14 @@ und dann http://localhost:8123 öffnen.
 - **TANZ** im Spiel tippen → Godzillas berühmter Siegestanz von 1965
 - **GOJIRA** tippen → Brüllen
 - In jedem Level versteckt sich ein **Lama** (Gruß an SimCity 3000 – „Reticulating Splines…“)
-- Zerstöre den **Fernsehturm** in Tokio …
+- Zerstöre den **Fernsehturm** in Tokio … oder die **Burg von Osaka**
+- **Konami-Code** auf der Monsterinsel: Boss-Rush gegen Mechagodzilla, Biolante, King Ghidorah und Destoroyah
 
 </details>
 
 ## Rechtliches
 
-Nicht-kommerzielles Fanprojekt. Godzilla, Mechagodzilla, King Ghidorah, Biolante, Minilla und Mothra sind Marken
+Nicht-kommerzielles Fanprojekt. Godzilla, Mechagodzilla, King Ghidorah, Biolante, Minilla, Mothra, Anguirus, Rodan,
+Kamacuras, Kumonga, Gigan, Hedorah und Destoroyah sind Marken
 von Toho Co., Ltd. Dieses Projekt steht in keiner Verbindung zu Toho. Sämtlicher Code, alle Pixelgrafiken und die Musik
 wurden eigens für dieses Projekt erstellt.

@@ -36,13 +36,42 @@ var Pix = (function () {
   function Raster(w, h) {
     this.w = Math.ceil(w); this.h = Math.ceil(h);
     this.d = new Array(this.w * this.h);
+    this.ly = new Int8Array(this.w * this.h);
+    this.layer = 0;
     this.k = 1; this.ox = 0; this.oy = 0;
   }
   var P = Raster.prototype;
   P.set = function (x, y, c) {
     x = Math.floor(x); y = Math.floor(y);
     if (x < 0 || y < 0 || x >= this.w || y >= this.h) return;
-    this.d[y * this.w + x] = c;
+    var i = y * this.w + x;
+    this.d[i] = c; this.ly[i] = this.layer;
+  };
+  /* Volumen-Schattierung: Licht von links oben, Kernschatten rechts unten,
+     innere Konturen zwischen Körperteilen und Hautstruktur. */
+  P.shade2 = function (o) {
+    o = o || {};
+    var w = this.w, h = this.h, d = this.d, L = this.ly, out = d.slice();
+    function E(x, y) { return x < 0 || y < 0 || x >= w || y >= h || !d[y * w + x]; }
+    for (var y = 0; y < h; y++) for (var x = 0; x < w; x++) {
+      var i = y * w + x, c = d[i];
+      if (!c || (o.skip && o.skip[c])) continue;
+      var f = 0;
+      if (E(x, y - 1) || E(x - 1, y - 1)) f += 0.3;
+      else if (E(x, y - 2) || E(x - 2, y - 2) || E(x - 2, y)) f += 0.13;
+      if (E(x, y + 1) || E(x + 1, y + 1)) f -= 0.36;
+      else if (E(x, y + 2) || E(x + 2, y + 2) || E(x + 2, y)) f -= 0.2;
+      else if (E(x + 3, y + 3) || E(x, y + 4)) f -= 0.09;
+      var l = L[i];
+      if ((x < w - 1 && d[i + 1] && L[i + 1] > l) || (y < h - 1 && d[i + w] && L[i + w] > l) ||
+        (x > 0 && d[i - 1] && L[i - 1] > l) || (y > 0 && d[i - w] && L[i - w] > l)) f -= 0.42;
+      if (o.tex && o.tex[c]) {
+        var n = hash(x, y, o.seed || 7);
+        if (n < o.tex[c]) f -= 0.13; else if (n > 1 - o.tex[c] * 0.5) f += 0.09;
+      }
+      if (f) out[i] = shade(c, Math.max(-0.62, Math.min(0.42, f)));
+    }
+    this.d = out;
   };
   P.get = function (x, y) {
     if (x < 0 || y < 0 || x >= this.w || y >= this.h) return undefined;
