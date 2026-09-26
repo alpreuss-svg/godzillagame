@@ -76,27 +76,28 @@ var World = (function () {
 
   // Standard-Hochhaus
   function office(m, i, j, R, h, night, style) {
-    var st = style || Math.floor(R() * 4);
-    var cols = [
-      { wl: '#8a93a0', wr: '#6c7482', roof: '#a4acb8', win: '#34465c' },
-      { wl: '#5a7c9c', wr: '#46627e', roof: '#8aa4bc', win: '#1c3450' },
-      { wl: '#a08a70', wr: '#826e58', roof: '#b8a48c', win: '#3c3428' },
-      { wl: '#c4c0b0', wr: '#a09c8c', roof: '#dcd8c8', win: '#44505c' }
-    ][st];
-    if (night) cols = { wl: sh(cols.wl, -0.45), wr: sh(cols.wr, -0.5), roof: sh(cols.roof, -0.45), win: sh(cols.win, -0.4) };
-    h = Math.round(h / 5) * 5 + 4;
-    var spr = Sprites.prism({
-      a: 13, h: h, wl: cols.wl, wr: cols.wr, roof: cols.roof, win: cols.win, winLit: night ? '#ffd860' : '#9cc8e8',
-      lit: night ? 0.5 : 0.25, seed: (i * 7 + j) % 5, ant: h > 40 && R() < 0.5
+    var styles = night ? ['glass', 'office', 'dark', 'brown', 'teal', 'white'] : ['glass', 'office', 'white', 'brown', 'teal', 'gold'];
+    var sty = style !== undefined ? styles[style % styles.length] : styles[Math.floor(R() * styles.length)];
+    h = Math.round(h / 4) * 4 + 8;
+    var secs;
+    if (h > 52 && R() < 0.65) {
+      var h1 = Math.round(h * 0.6 / 4) * 4;
+      secs = [{ a: 14, h: h1 }, { a: 10.5, h: h - h1 }];
+      if (h > 80 && R() < 0.5) secs.push({ a: 6.5, h: 8 });
+    } else secs = [{ a: 14, h: h }];
+    var roofs = h > 70 ? ['ant', 'ant', 'heli', 'ac'] : ['ant', 'tank', 'tank', 'ac', 'ac', null];
+    var tspr = Sprites.tower({
+      secs: secs, st: sty, night: !!night, lit: night ? 0.45 : 0, seed: (i * 7 + j) % 6, shop: h < 60 || R() < 0.6,
+      awn: ['#b03a2a', '#2a6a3a', '#2a4a8a', '#c8a020'][Math.floor(R() * 4)], roof: roofs[Math.floor(R() * roofs.length)], shadow: !night
     });
-    return m.add(i, j, spr, { hp: 40 + h * 2, score: 50 + h * 3 });
+    return m.add(i, j, tspr, { hp: 40 + h * 2, score: 50 + h * 3 });
   }
   function house(m, i, j, R, night) {
-    var roofs = ['#b8402c', '#3c5c8c', '#4c4c54', '#8c5c2c'];
+    var roofs = ['#a83a28', '#34507c', '#44444c', '#7c5028'];
     var roof = roofs[Math.floor(R() * roofs.length)];
-    var wl = '#e0d8c4', wr = '#bcb4a0';
+    var wl = '#dcd4c0', wr = '#b0a894';
     if (night) { roof = sh(roof, -0.4); wl = sh(wl, -0.45); wr = sh(wr, -0.5); }
-    var spr = Sprites.prism({ a: 10, h: 7 + Math.floor(R() * 2) * 4, wl: wl, wr: wr, roof: roof, win: '#4a4a44', winLit: '#ffd860', lit: night ? 0.6 : 0, seed: 3 });
+    var spr = Sprites.prism({ a: 11, h: 8 + Math.floor(R() * 2) * 5, wl: wl, wr: wr, roof: roof, win: '#3a3a36', winLit: '#ffd860', lit: night ? 0.6 : 0, seed: 3, tiles: 1 });
     return m.add(i, j, spr, { hp: 30, score: 30 });
   }
   function special(m, i, j, kind, o) { return m.add(i, j, Sprites.special(kind), o || {}); }
@@ -137,7 +138,7 @@ var World = (function () {
       var dc = Math.sqrt((i - 24) * (i - 24) + (j - 18) * (j - 18));
       var close = Math.max(0, 1 - dc / 20);
       if (R() < 0.12) { m.S(i, j, T.PARK); if (R() < 0.6) special(m, i, j, 'tree', { hp: 10, score: 10 }); continue; }
-      if (R() < 0.62) office(m, i, j, R, 8 + R() * 14 + close * 40 * R(), true);
+      if (R() < 0.62) office(m, i, j, R, 12 + R() * 22 + close * 70 * R(), true);
     }
     return {
       map: m, start: [4.5, 18.5], llama: [15.5, 5.5], bossAt: [33, 33], night: true,
@@ -173,7 +174,7 @@ var World = (function () {
       var dc = Math.sqrt((i - 12) * (i - 12) + (j - 14) * (j - 14)), close = Math.max(0, 1 - dc / 18);
       if (R() < 0.08) { m.S(i, j, T.PARK); if (R() < 0.6) special(m, i, j, 'tree', { hp: 10, score: 10 }); continue; }
       if (R() < 0.3 && dc > 14) house(m, i, j, R, false);
-      else if (R() < 0.6) office(m, i, j, R, 8 + R() * 14 + close * 36 * R(), false);
+      else if (R() < 0.6) office(m, i, j, R, 12 + R() * 20 + close * 64 * R(), false);
     }
     return { map: m, start: [33.5, 32.5], llama: [23.5, 11.5], bossAt: [5, 5] };
   }
@@ -199,7 +200,7 @@ var World = (function () {
       var r = R();
       if (j > 12 && r < 0.18) special(m, i, j, 'factory', { hp: 60, score: 250 });
       else if (j > 12 && r < 0.3) special(m, i, j, 'oiltank', { hp: 30, score: 150 });
-      else if (r < 0.62) office(m, i, j, R, 8 + R() * 22, false);
+      else if (r < 0.62) office(m, i, j, R, 10 + R() * 34, false);
     }
     return { map: m, start: [18.5, 30.5], llama: [2.5, 3.5], bossAt: [17, 6], smog: true };
   }
@@ -216,7 +217,7 @@ var World = (function () {
       if (m.T(i, j) !== T.CONCRETE) continue;
       var dc = Math.sqrt((i - 18) * (i - 18) + (j - 18) * (j - 18)), close = Math.max(0, 1 - dc / 22);
       if (R() < 0.1) { m.S(i, j, T.PARK); continue; }
-      if (R() < 0.55) office(m, i, j, R, 14 + R() * 20 + close * 44 * R(), true, Math.floor(R() * 2) + 1);
+      if (R() < 0.55) office(m, i, j, R, 20 + R() * 30 + close * 70 * R(), true);
     }
     return { map: m, start: [3.5, 3.5], llama: [18.5, 16.5], bossAt: [30, 30], night: true, red: true };
   }
@@ -243,7 +244,7 @@ var World = (function () {
     for (j = 22; j < 35; j++) for (i = 1; i < 16; i++) {
       if (m.T(i, j) !== T.CONCRETE) continue;
       if (R() < 0.55) house(m, i, j, R, false);
-      else if (R() < 0.6) office(m, i, j, R, 8 + R() * 22, false, 2 + Math.floor(R() * 2));
+      else if (R() < 0.6) office(m, i, j, R, 8 + R() * 20, false, 2 + Math.floor(R() * 2));
     }
     // Straße zum See
     for (i = 0; i < W; i++) if (m.T(i, 20) === T.GRASS || m.T(i, 20) === T.PARK) m.S(i, 20, T.ROADX);

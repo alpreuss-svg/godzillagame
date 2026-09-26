@@ -5,7 +5,12 @@
 var Sound = (function () {
   var ctx = null, master, music, sfx, verb, noiseBuf, muted = false;
   var song = null, songEvents = null, step = 0, nextTime = 0, timer = null, songName = '';
-  var breathNode = null;
+  var breathNode = null, volM = 0.7, volS = 0.8;
+  function setVol(m, s) {
+    volM = m; volS = s;
+    if (music) music.gain.value = 0.72 * m;
+    if (sfx) sfx.gain.value = 0.9 * s;
+  }
 
   function init() {
     if (ctx) { if (ctx.state === 'suspended') ctx.resume(); return; }
@@ -16,8 +21,9 @@ var Sound = (function () {
     comp.threshold.value = -14; comp.ratio.value = 4;
     master = ctx.createGain(); master.gain.value = muted ? 0 : 0.8;
     comp.connect(master); master.connect(ctx.destination);
-    music = ctx.createGain(); music.gain.value = 0.5; music.connect(comp);
-    sfx = ctx.createGain(); sfx.gain.value = 0.7; sfx.connect(comp);
+    music = ctx.createGain(); music.connect(comp);
+    sfx = ctx.createGain(); sfx.connect(comp);
+    setVol(volM, volS);
     // Hall (künstliche Impulsantwort)
     verb = ctx.createConvolver();
     var len = ctx.sampleRate * 2.2, ir = ctx.createBuffer(2, len, ctx.sampleRate);
@@ -329,6 +335,12 @@ var Sound = (function () {
       sweep('sine', t, big ? 0.6 : 0.3, 110, 30, big ? 0.9 : 0.5);
     },
     hit: function () { var t = ctx.currentTime; sweep('sine', t, 0.18, 160, 45, 0.8); noise(t, 0.14, 'bandpass', 1400, 500, 0.5, 1.5); },
+    collapse: function (tall) {
+      var t = ctx.currentTime, len = 1 + Math.min(1.8, (tall || 40) / 50);
+      noise(t, len, 'lowpass', 700, 60, 0.9, 0, 0.5);
+      sweep('sine', t, len * 0.8, 70, 25, 0.8);
+      for (var i = 0; i < 6; i++) noise(t + Math.random() * len * 0.7, 0.12, 'bandpass', 1500 + Math.random() * 2000, 600, 0.25, 2);
+    },
     heavy: function () { var t = ctx.currentTime; sweep('sine', t, 0.35, 120, 30, 1); noise(t, 0.3, 'lowpass', 1200, 100, 0.7, 0, 0.3); },
     hurt: function () { var t = ctx.currentTime; sweep('sawtooth', t, 0.25, 180, 60, 0.35); noise(t, 0.2, 'bandpass', 900, 300, 0.4, 2); },
     swing: function () { var t = ctx.currentTime; noise(t, 0.22, 'bandpass', 500, 2600, 0.45, 2.5); },
@@ -375,5 +387,5 @@ var Sound = (function () {
     return muted;
   }
 
-  return { songs: SONGS, init: init, play: play, stop: stopMusic, sfx: sfxPlay, breath: breath, toggleMute: toggleMute, isMuted: function () { return muted; } };
+  return { songs: SONGS, setVol: setVol, init: init, play: play, stop: stopMusic, sfx: sfxPlay, breath: breath, toggleMute: toggleMute, isMuted: function () { return muted; } };
 })();

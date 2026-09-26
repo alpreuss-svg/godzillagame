@@ -1,7 +1,7 @@
 # Mini-Webserver zum lokalen Testen: powershell -ExecutionPolicy Bypass -File tools\serve.ps1
 param([int]$Port = 8123)
 $root = Split-Path -Parent $PSScriptRoot
-$types = @{ '.html' = 'text/html; charset=utf-8'; '.js' = 'text/javascript; charset=utf-8'; '.css' = 'text/css'; '.png' = 'image/png'; '.md' = 'text/plain; charset=utf-8'; '.ico' = 'image/x-icon' }
+$types = @{ '.html' = 'text/html; charset=utf-8'; '.js' = 'text/javascript; charset=utf-8'; '.css' = 'text/css'; '.png' = 'image/png'; '.md' = 'text/plain; charset=utf-8'; '.ico' = 'image/x-icon'; '.webmanifest' = 'application/manifest+json'; '.json' = 'application/json' }
 $l = New-Object System.Net.HttpListener
 $l.Prefixes.Add("http://localhost:$Port/")
 $l.Start()

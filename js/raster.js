@@ -65,6 +65,7 @@ var Pix = (function () {
       var l = L[i];
       if ((x < w - 1 && d[i + 1] && L[i + 1] > l) || (y < h - 1 && d[i + w] && L[i + w] > l) ||
         (x > 0 && d[i - 1] && L[i - 1] > l) || (y > 0 && d[i - w] && L[i - w] > l)) f -= 0.42;
+      if (o.grad) f -= (y / h) * o.grad;
       if (o.tex && o.tex[c]) {
         var n = hash(x, y, o.seed || 7);
         if (n < o.tex[c]) f -= 0.13; else if (n > 1 - o.tex[c] * 0.5) f += 0.09;

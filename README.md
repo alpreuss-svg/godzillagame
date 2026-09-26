@@ -13,8 +13,23 @@ Du steuerst Godzilla, legst Städte in Schutt und Asche und kämpfst gegen Mecha
 | J oder Leertaste | Kombo: Klaue, Klaue, Schwanzhieb rundum |
 | K (halten) | Atomstrahl (verbraucht die blaue Leiste) |
 | L | Brüllen – betäubt Gegner, verjagt Panzer |
+| R | **Kernpuls** – 360°-Atomexplosion, wenn die rote Wut-Leiste voll ist |
 | P / Esc | Pause |
 | M | Ton an/aus |
+
+**Gamepad:** Stick/Steuerkreuz laufen, A Schlag, X/RT Strahl, Y Brüllen, RB/B Kernpuls, Start Pause.
+**Handy/Tablet:** virtueller Stick links, Aktionstasten rechts (erscheinen automatisch auf Touch-Geräten).
+
+## Als App installieren (PWA)
+
+Das Spiel ist eine Progressive Web App und läuft nach dem ersten Laden auch **offline**.
+
+- **PC (Chrome/Edge):** Seite öffnen → Installieren-Symbol rechts in der Adressleiste.
+- **Android:** Chrome-Menü → „App installieren“ bzw. „Zum Startbildschirm hinzufügen“.
+- **iPhone/iPad:** Safari → Teilen → „Zum Home-Bildschirm“.
+
+Im Menü **OPTIONEN** lassen sich Musik- und Effektlautstärke, Grafikqualität (NIEDRIG für ältere PCs)
+und Schwierigkeit (Leicht/Normal/Schwer) einstellen.
 
 ## Level
 
@@ -29,6 +44,8 @@ Du steuerst Godzilla, legst Städte in Schutt und Asche und kämpfst gegen Mecha
 | ? | ??? | – | Geheimlevel |
 
 In den Städten fahren Autos und laufen Menschen, die vor den Monstern fliehen. Panzer und Jets greifen an.
+Hochhäuser zeigen Schäden und stürzen mit Staubwolken und Trümmern ein; Fußabdrücke und Brandspuren bleiben
+auf dem Boden. Am Levelende gibt es eine Bewertung (S/A/B/C). Eine Minikarte zeigt alle Monster.
 
 **Tipps**
 - Roter Kreis + „!“ über einem Monster = es holt gleich aus → ausweichen!
