@@ -77,7 +77,7 @@
         { t: 'volley', min: 4, max: 14, w: 0.35, dur: 1.3, n: 6, proj: 'missile', dmg: 3, spd: 4 }]
     },
     biolante: {
-      name: 'BIOLANTE', hp: 380, r: 2.8, speed: 0.45, pref: 0, home: true, emerge: true, cd: [1.2, 2.2], roar: ['deep', 0.8], atk: [
+      name: 'BIOLANTE', hp: 380, r: 2.3, speed: 0.45, pref: 0, home: true, emerge: true, cd: [1.2, 2.2], roar: ['deep', 0.8], atk: [
         { t: 'melee', max: 4.6, w: 0.55, dur: 0.9, dmg: 12, kb: 1.2 },
         { t: 'marks', min: 0, max: 14, w: 0.6, dur: 0.8, n: 3, mark: 'vine', dmg: 9 },
         { t: 'lob', min: 3, max: 13, w: 0.35, dur: 1.0, n: 5, proj: 'sap', dmg: 6 }]
@@ -1320,10 +1320,10 @@
     if (!solid) return;
     // glühender Kern (Biolante)
     if (set.core && !m.dead) {
-      var cpx = s[0] + set.core.x * (m.face < 0 ? -1 : 1), cpy = s[1] + set.core.y - m.z, pr = 22 + Math.sin(L.time * 3) * 5;
+      var cpx = s[0] + set.core.x * (m.face < 0 ? -1 : 1), cpy = s[1] + set.core.y - m.z, pr = (set.core.r || 16) + Math.sin(L.time * 2.5) * 3;
       ctx.globalCompositeOperation = 'lighter';
       var gcg = ctx.createRadialGradient(cpx, cpy, 0, cpx, cpy, pr);
-      gcg.addColorStop(0, 'rgba(255,170,60,0.55)'); gcg.addColorStop(0.5, 'rgba(255,80,20,0.25)'); gcg.addColorStop(1, 'rgba(0,0,0,0)');
+      gcg.addColorStop(0, 'rgba(255,120,40,0.4)'); gcg.addColorStop(0.5, 'rgba(200,40,10,0.18)'); gcg.addColorStop(1, 'rgba(0,0,0,0)');
       ctx.fillStyle = gcg; ctx.beginPath(); ctx.arc(cpx, cpy, pr, 0, 6.283); ctx.fill();
       ctx.globalCompositeOperation = 'source-over';
     }

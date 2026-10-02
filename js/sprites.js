@@ -102,10 +102,10 @@ var Sprites = (function () {
   }
 
   /* ================= Biolante ================= */
-  // riesig und düster: Krokodilkopf mit aufgerissenem Maul, zottige Mähne, glühender Kern hinter Rankengitter,
-  // Wurzeln am Boden und viele Tentakel mit Venusfliegenfallen-Mäulern
-  var BP = { body: '#263628', dark: '#17211a', mid: '#2f4532', mane: '#2a3c2c', core: '#d8501a', coreL: '#ffa040', lat: '#121a13', mouth: '#7a1010', mouthD: '#3e0606', tooth: '#f2ecd8', eye: '#ffcc33', trap: '#36523a', trapIn: '#b8202a' };
-  var BK = 1.85;
+  // nach dem Film von 1989: schlanker, aufrechter Pflanzenkörper, zottige Mähne, langer Krokodilkopf
+  // mit aufgerissenem Maul, rot glühende Brust hinter verästelten Ranken, lange dünne Tentakel mit Fallen-Mäulern
+  var BP = { body: '#24342a', dark: '#152018', mid: '#2e4434', mane: '#2b3e30', glowD: '#6a1810', glow: '#c8401a', glowL: '#ff8a32', vein: '#101a12', mouth: '#7a1010', mouthD: '#3e0606', tooth: '#f2ecd8', eye: '#ffcc33', trap: '#34503a', trapIn: '#b8202a' };
+  var BK = 1.45;
   function trap(r, x, y, dx, dy, s, o, col) {
     var l = Math.sqrt(dx * dx + dy * dy) || 1; dx /= l; dy /= l;
     var nx = -dy, ny = dx;
@@ -115,67 +115,80 @@ var Sprites = (function () {
     if (o > 0.2) r.poly([P(0.3, 0), P(s * 1.35, -o * s * 0.7), P(s * 1.45, o * s * 0.7)], BP.trapIn);
   }
   function biolante(f) {
-    var r = new R(112 * BK + 4, 92 * BK + 4); r.k = BK; r.ox = 2; r.oy = 2;
+    var r = new R(112 * BK + 4, 94 * BK + 4); r.k = BK; r.ox = 2; r.oy = 2;
     var ph = f.stand ? 0 : (f.phase || 0), s = [0, 1.5, 0, -1.5][ph], atk = f.atk;
     var o = atk ? 1 : 0.55 + 0.2 * Math.sin(ph * 1.6);
-    var traps = [];
-    function T(x0, y0, cx, cy, x1, y1, r0, col, sz, op) {
-      r.curve(x0, y0, cx, cy, x1, y1, r0, r0 * 0.6, col);
-      sz *= 1.35;
+    var traps = [], i;
+    // lange, dünne Tentakel mit Fallen-Maul am Ende
+    function T(x0, y0, cx, cy, x1, y1, col, sz, op) {
+      r.curve(x0, y0, cx, cy, x1, y1, 2.2, 1.3, col);
+      sz *= 1.25;
       traps.push([x1, y1, x1 - cx, y1 - cy, sz, op]);
       trap(r, x1, y1, x1 - cx, y1 - cy, sz, op, col === BP.dark ? BP.dark : BP.trap);
     }
     r.layer = 0;
-    T(40, 50, 16, 30 + s, 10, 9 + s, 3.2, BP.dark, 4, o);
-    T(48, 46, 40, 14, 28, 5 - s, 3, BP.dark, 3.6, o * 0.8);
-    T(36, 58, 10, 54, 5, 36 - s, 3, BP.dark, 3.6, o);
-    T(70, 48, 92, 40, 104, 22 + s, 3, BP.dark, 3.6, o);
+    T(46, 66, 18, 50 + s, 12, 18 + s, BP.dark, 3.4, o);
+    T(50, 60, 34, 20, 30, 4 - s, BP.dark, 3.2, o * 0.8);
+    T(44, 74, 10, 70, 4, 48 - s, BP.dark, 3.2, o);
+    T(62, 62, 90, 56, 104, 36 + s, BP.dark, 3.2, o);
+    // Wurzeln / Rankenfüße
     r.layer = 1;
-    [[50, 72, 24, 76, 4, 85], [56, 74, 40, 86, 18, 89], [62, 74, 80, 86, 100, 89], [66, 72, 92, 74, 108, 81], [54, 70, 60, 84, 56, 90]].forEach(function (q, i) {
-      r.curve(q[0], q[1], q[2], q[3], q[4], q[5], 5, 2, i % 2 ? BP.mid : BP.body);
+    [[50, 80, 30, 84, 12, 90], [54, 82, 44, 90, 30, 92], [60, 82, 76, 90, 92, 92], [64, 80, 84, 82, 100, 88]].forEach(function (q, k) {
+      r.curve(q[0], q[1], q[2], q[3], q[4], q[5], 3.4, 1.4, k % 2 ? BP.mid : BP.body);
     });
-    r.ell(56, 75, 30, 10, BP.dark);
+    r.ell(56, 82, 16, 5, BP.dark);
+    // schlanker, aufrechter Körper (leicht nach vorne gebeugt)
     r.layer = 2;
-    r.ell(54, 55, 21, 24, BP.body); r.ell(50, 36, 17, 17, BP.body); r.ell(60, 67, 24, 12, BP.body);
-    var i;
-    for (i = 0; i < 28; i++) {
-      var a = Math.PI * (0.92 + i / 27 * 1.18), rx = 50 + Math.cos(a) * 16, ry = 36 + Math.sin(a) * 17 - hash(i, 1, 9) * 2;
-      var len = 5 + hash(i, 2, 9) * 7, cxn = Math.cos(a), cyn = Math.sin(a);
-      r.poly([[rx - cyn * 2, ry + cxn * 2], [rx + cyn * 2, ry - cxn * 2], [rx + cxn * len, ry + cyn * len]], hash(i, 3, 9) < 0.5 ? BP.mane : BP.mid);
+    r.ell(55, 70, 13, 13, BP.body);
+    r.ell(55, 54, 11, 15, BP.body);
+    r.ell(53, 38, 10, 11, BP.body);
+    // zottige Mähne entlang Rücken und Kopf
+    for (i = 0; i < 30; i++) {
+      var t = i / 29, a = Math.PI * (0.85 + t * 0.95);
+      var bx = 53 + Math.cos(a) * 10, by = 40 + Math.sin(a) * 13 + t * 4;
+      if (t > 0.75) { bx = 55 + (t - 0.75) * 40; by = 27 - (t - 0.75) * 14; }
+      var len = 4 + hash(i, 2, 9) * 6, cxn = Math.cos(a - 0.3), cyn = Math.sin(a - 0.3);
+      r.poly([[bx - cyn * 1.8, by + cxn * 1.8], [bx + cyn * 1.8, by - cxn * 1.8], [bx + cxn * len, by + cyn * len]], hash(i, 3, 9) < 0.5 ? BP.mane : BP.mid);
     }
-    for (i = 0; i < 90; i++) {
-      var x = 34 + hash(i, 4, 9) * 46, y = 22 + hash(i, 5, 9) * 60;
-      if (r.get(Math.floor(r.tx(x)), Math.floor(r.ty(y))) === BP.body) r.line(x, y, x + (hash(i, 6, 9) - 0.5) * 6, y + 3 + hash(i, 7, 9) * 4, hash(i, 8, 9) < 0.5 ? BP.dark : BP.mid);
+    // Pflanzenfasern
+    for (i = 0; i < 80; i++) {
+      var x = 42 + hash(i, 4, 9) * 26, y = 28 + hash(i, 5, 9) * 54;
+      if (r.get(Math.floor(r.tx(x)), Math.floor(r.ty(y))) === BP.body) r.line(x, y, x + (hash(i, 6, 9) - 0.5) * 4, y + 3 + hash(i, 7, 9) * 5, hash(i, 8, 9) < 0.5 ? BP.dark : BP.mid);
     }
+    // glühende Brust: unregelmäßig, hinter verästelten Ranken
     r.layer = 3;
-    r.ell(60, 58, 11, 12, BP.core); r.ell(60, 57, 7, 8, BP.coreL);
-    for (var gx = -12; gx <= 12; gx += 4) {
-      r.line(60 + gx - 5, 47, 60 + gx + 5, 69, BP.lat);
-      r.line(60 + gx + 5, 47, 60 + gx - 5, 69, BP.lat);
-    }
+    var gl = [];
+    for (i = 0; i < 14; i++) { var an = i / 14 * 6.283, rr = 1 + (hash(i, 11, 5) - 0.5) * 0.45; gl.push([60 + Math.cos(an) * 6.5 * rr, 54 + Math.sin(an) * 8.5 * rr]); }
+    r.poly(gl, BP.glowD);
+    r.poly(gl.map(function (p) { return [60 + (p[0] - 60) * 0.72, 54 + (p[1] - 54) * 0.72]; }), BP.glow);
+    r.ell(60.5, 53.5, 2.6, 3.6, BP.glowL);
+    [[52, 44, 58, 52, 64, 64], [66, 45, 60, 54, 55, 63], [53, 54, 60, 57, 67, 52], [56, 47, 63, 50, 66, 58], [55, 60, 60, 59, 64, 62]].forEach(function (v) {
+      r.curve(v[0], v[1], v[2], v[3], v[4], v[5], 0.9, 0.5, BP.vein);
+    });
+    // Hals & Kopf
     r.layer = 4;
-    r.curve(58, 40, 64, 30, 72, 24, 8, 6.5, BP.body);
-    var jo = atk ? 1.35 : 1;
-    r.poly([[64, 18], [74, 13], [90, 14], [104, 19], [106, 22], [100, 24], [74, 27], [66, 26]], BP.body);
-    r.poly([[68, 30], [100, 32 + 4 * jo], [104, 36 + 5 * jo], [96, 40 + 5 * jo], [74, 40], [66, 34]], BP.body);
-    r.poly([[70, 26], [100, 24], [100, 32 + 4 * jo], [96, 36 + 5 * jo], [72, 36]], BP.mouth);
-    r.poly([[70, 27], [80, 27], [80, 35], [72, 35]], BP.mouthD);
-    for (i = 0; i < 9; i++) { var hx = 63 + i * 2.4, hy = 16 - i * 0.3; r.poly([[hx - 2, hy + 2], [hx + 2, hy + 2], [hx - 3 + hash(i, 9, 3) * 2, hy - 5 - hash(i, 10, 3) * 5]], BP.mane); }
+    r.curve(56, 36, 62, 28, 68, 25, 6, 5, BP.body);
+    var jo = atk ? 1.3 : 1;
+    r.poly([[63, 20], [72, 16], [86, 17], [98, 21], [99, 24], [93, 25], [72, 27], [65, 26]], BP.body);
+    r.poly([[67, 29], [92, 30 + 3 * jo], [96, 34 + 4 * jo], [89, 37 + 4 * jo], [72, 36], [65, 32]], BP.body);
+    r.poly([[69, 26], [94, 24.5], [93, 30 + 3 * jo], [89, 34 + 4 * jo], [71, 34]], BP.mouth);
+    r.poly([[69, 27], [77, 27], [77, 33], [71, 33]], BP.mouthD);
+    // vordere Tentakel
     r.layer = 5;
-    T(44, 60, 20, 64 + s, 8, 52 - s, 3.4, BP.body, 4.4, o);
-    T(70, 62, 96, 68 - s, 104, 52 + s, 3.4, BP.body, 4.4, o);
-    T(52, 40, 44, 14 - s, 54, 5 + s, 3, BP.body, 4, o * 0.9);
-    T(76, 56, 106, 50, 108, 36 - s, 3, BP.body, 3.8, atk ? 1 : o);
+    T(48, 72, 22, 76 + s, 10, 62 - s, BP.body, 3.6, o);
+    T(64, 72, 92, 78 - s, 104, 62 + s, BP.body, 3.6, o);
+    T(52, 50, 40, 22 - s, 46, 6 + s, BP.body, 3.2, o * 0.9);
+    T(62, 66, 100, 64, 108, 46 - s, BP.body, 3.2, atk ? 1 : o);
     var tx = {}; tx[BP.body] = 0.38; tx[BP.mid] = 0.3; tx[BP.dark] = 0.25; tx[BP.mane] = 0.35; tx[BP.trap] = 0.3;
-    var sk = {}; sk[BP.coreL] = 1; sk[BP.core] = 1; sk[BP.mouth] = 1; sk[BP.trapIn] = 1;
-    r.shade2({ tex: tx, skip: sk, seed: 41, grad: 0.18 });
-    for (var tq = 0; tq < 11; tq++) {
-      var a1 = tq / 10, ux = 72 + a1 * 29, uy = 26.4 - a1 * 2.4, lx = 72 + a1 * 27, ly = 36 + a1 * 4 * jo - 0.4;
-      r.poly([[ux - 0.7, uy], [ux + 0.7, uy], [ux, uy + 2.2 + (tq % 3 === 0 ? 1.6 : 0)]], BP.tooth);
-      r.poly([[lx - 0.7, ly], [lx + 0.7, ly], [lx, ly - 2.2 - (tq % 3 === 1 ? 1.4 : 0)]], BP.tooth);
+    var sk = {}; sk[BP.glow] = 1; sk[BP.glowL] = 1; sk[BP.mouth] = 1; sk[BP.trapIn] = 1;
+    r.shade2({ tex: tx, skip: sk, seed: 41, grad: 0.16 });
+    for (var tq = 0; tq < 10; tq++) {
+      var a1 = tq / 9, ux = 71 + a1 * 24, uy = 26.4 - a1 * 1.8, lx = 71 + a1 * 22, ly = 35 + a1 * 3 * jo - 0.4;
+      r.poly([[ux - 0.6, uy], [ux + 0.6, uy], [ux, uy + 2 + (tq % 3 === 0 ? 1.4 : 0)]], BP.tooth);
+      r.poly([[lx - 0.6, ly], [lx + 0.6, ly], [lx, ly - 2 - (tq % 3 === 1 ? 1.3 : 0)]], BP.tooth);
     }
-    r.poly([[99, 23], [101.5, 23], [100.5, 30]], BP.tooth); r.poly([[95, 38 + 4 * (jo - 1)], [97.5, 38 + 4 * (jo - 1)], [96.5, 32]], BP.tooth);
-    r.ell(74, 17.2, 1.6, 1.1, BP.eye); r.line(70, 15.5, 77, 16, '#0c120c');
+    r.poly([[95, 23.5], [97.2, 23.5], [96.2, 29.5]], BP.tooth);
+    r.ell(73, 18.6, 1.4, 1, BP.eye); r.line(69.5, 17.2, 76, 17.6, '#0c120c');
     traps.forEach(function (q) {
       var x = q[0], y = q[1], dx = q[2], dy = q[3], l = Math.sqrt(dx * dx + dy * dy) || 1; dx /= l; dy /= l;
       var nx = -dy, ny = dx, sz = q[4], op = q[5];
@@ -188,9 +201,9 @@ var Sprites = (function () {
     return r;
   }
   function biolanteSet() {
-    var S = mkSet(biolante, 56 * BK + 2, 84 * BK + 2);
-    S.mouth = { x: (100 - 56) * BK, y: (30 - 84) * BK };
-    S.core = { x: (60 - 56) * BK, y: (57 - 84) * BK };
+    var S = mkSet(biolante, 56 * BK + 2, 86 * BK + 2);
+    S.mouth = { x: (94 - 56) * BK, y: (29 - 86) * BK };
+    S.core = { x: (60 - 56) * BK, y: (54 - 86) * BK, r: 13 };
     return S;
   }
 

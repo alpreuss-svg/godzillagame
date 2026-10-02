@@ -277,8 +277,10 @@ var Sound = (function () {
      zufällig schwankende Periode, gelegentliche Unterharmonische (Knurren), Rauhigkeit, Atemrauschen.
      Danach Formantfilter (Rachen), Sättigung und Hüllkurve. Typen: godzilla, mecha, rodan, ghidorah, deep. */
   var ROARS = {
-    godzilla: { len: 2.9, pts: [[0, 140], [0.14, 290], [0.4, 345], [0.95, 330], [1.18, 290], [1.32, 230], [1.46, 300], [2.1, 270], [2.9, 130]],
-      jit: 0.16, sub: 0.3, breath: 0.22, form: [[620, 5, 1], [1150, 6, 0.85], [2350, 7, 0.55], [3500, 8, 0.3]], drive: 2.6, grit: 0.45, gap: [1.24, 1.38] },
+    // wie 1954: Kontrabass-Saite, mit harzigem Lederhandschuh gestrichen, verlangsamt abgespielt
+    godzilla: { bow: true, slow: 2, len: 2.7, pts: [[0, 170], [0.12, 320], [0.5, 355], [0.95, 340], [1.12, 300], [1.25, 205], [1.4, 275], [1.9, 240], [2.7, 115]],
+      press: [0.93, 0.72], split: 1.2, rasp: 0.55, gap: [1.18, 1.3], dry: 0.55, drive: 1.8,
+      form: [[1000, 4, 1], [2300, 5, 0.8], [4600, 6, 0.5], [6800, 7, 0.25]] },
     mecha: { len: 2.1, pts: [[0, 180], [0.2, 330], [1.2, 300], [2.1, 160]],
       jit: 0.05, sub: 0.15, breath: 0.08, form: [[900, 12, 1], [1900, 14, 0.8], [3300, 14, 0.5]], drive: 3.2, grit: 0.25, ring: 155 },
     rodan: { len: 1.5, pts: [[0, 420], [0.1, 760], [0.6, 700], [1.5, 420]],
@@ -297,8 +299,53 @@ var Sound = (function () {
     }
     return pts[pts.length - 1][1];
   }
+  /* Physikalisches Modell einer gestrichenen Saite (nach McIntyre/Woodhouse bzw. STK "Bowed"):
+     zwei Verzögerungsleitungen (Bogen -> Steg, Bogen -> Sattel) und eine Reibungskurve am Bogen,
+     die das Haften und Gleiten des Handschuhs erzeugt. Hoher Druck = kratzig-schrill. */
+  function makeBowed(C) {
+    var sr = ctx.sampleRate, slow = C.slow, n = Math.floor(sr * C.len / slow);
+    var buf = ctx.createBuffer(1, n, sr), out = buf.getChannelData(0);
+    var seed = 4711; function rnd() { seed = (seed * 1664525 + 1013904223) >>> 0; return seed / 4294967296; }
+    var SZ = 8192;
+    function DL() { return { b: new Float32Array(SZ), w: 0 }; }
+    function tick(d, x, len) {
+      var rp = d.w - len; while (rp < 0) rp += SZ;
+      var i0 = Math.floor(rp), fr = rp - i0, y = d.b[i0] * (1 - fr) + d.b[(i0 + 1) % SZ] * fr;
+      d.b[d.w] = x; d.w = (d.w + 1) % SZ; return y;
+    }
+    var neck = DL(), bridge = DL(), lastN = 0, lastB = 0, lp = 0, beta = 0.127, jit = 0, peak = 1e-4;
+    var F = C.form.map(function (f) {
+      var w = 2 * Math.PI * f[0] / sr, al = Math.sin(w) / (2 * f[1]), a0 = 1 + al;
+      return { g: f[2], b0: al / a0, b2: -al / a0, a1: -2 * Math.cos(w) / a0, a2: (1 - al) / a0, x1: 0, x2: 0, y1: 0, y2: 0 };
+    });
+    for (var i = 0; i < n; i++) {
+      var t = i / sr * slow, f0 = contour(C.pts, t) * slow, period = sr / f0;
+      var env = Math.min(1, t / 0.08) * Math.min(1, (C.len - t) / (C.len * 0.3));
+      if (C.gap && t > C.gap[0] && t < C.gap[1]) env *= 0.4;
+      jit += (rnd() - 0.5) * 0.3; jit *= 0.995;
+      var press = t < C.split ? C.press[0] : C.press[1];
+      var bowV = (0.17 + 0.05 * jit) * env * (1 + (rnd() - 0.5) * C.rasp);
+      lp = lp * 0.3 + lastB * 0.7;
+      var bridgeRefl = -lp * 0.97, nutRefl = -lastN, dv = bowV - (bridgeRefl + nutRefl);
+      var x = dv * (5 - 4 * press) + 0.001, bt = Math.pow(Math.abs(x) + 0.75, -4); if (bt > 1) bt = 1;
+      var nv = dv * bt;
+      lastN = tick(neck, bridgeRefl + nv, Math.max(2, period * (1 - beta) - 1));
+      lastB = tick(bridge, nutRefl + nv, Math.max(2, period * beta));
+      var ex = lastB, y = ex * C.dry;
+      for (var k = 0; k < F.length; k++) {
+        var fl = F[k], yo = fl.b0 * ex + fl.b2 * fl.x2 - fl.a1 * fl.y1 - fl.a2 * fl.y2;
+        fl.x2 = fl.x1; fl.x1 = ex; fl.y2 = fl.y1; fl.y1 = yo; y += yo * fl.g;
+      }
+      y = Math.tanh(y * C.drive * 4) * (0.25 + 0.75 * env);
+      out[i] = y; if (Math.abs(y) > peak) peak = Math.abs(y);
+    }
+    for (i = 0; i < n; i++) out[i] *= 0.9 / peak;
+    buf.slow = slow;
+    return buf;
+  }
   function makeRoar(kind) {
     if (roarBufs[kind]) return roarBufs[kind];
+    if (ROARS[kind].bow) return (roarBufs[kind] = makeBowed(ROARS[kind]));
     var C = ROARS[kind], sr = ctx.sampleRate, n = Math.floor(sr * C.len);
     var buf = ctx.createBuffer(1, n, sr), out = buf.getChannelData(0);
     var seed = 12345 + kind.length * 777;
@@ -359,11 +406,11 @@ var Sound = (function () {
     kind = ROARS[kind] ? kind : 'godzilla';
     var t = ctx.currentTime, src = ctx.createBufferSource(), g = ctx.createGain(), hp = ctx.createBiquadFilter();
     src.buffer = makeRoar(kind);
-    src.playbackRate.value = pitch || 1;
+    src.playbackRate.value = (pitch || 1) / (src.buffer.slow || 1);
     hp.type = 'highpass'; hp.frequency.value = 50;
-    g.gain.value = 0.85;
+    g.gain.value = 0.5;
     src.connect(hp); hp.connect(g); g.connect(sfx);
-    var w = ctx.createGain(); w.gain.value = 0.55; g.connect(w); w.connect(verb);
+    var w = ctx.createGain(); w.gain.value = 0.4; g.connect(w); w.connect(verb);
     src.start(t);
     if (kind === 'godzilla' || kind === 'deep') sweep('sine', t, 0.6, 70, 35, 0.35); // Bauchresonanz
   }
@@ -442,5 +489,5 @@ var Sound = (function () {
     return muted;
   }
 
-  return { songs: SONGS, setVol: setVol, init: init, play: play, stop: stopMusic, sfx: sfxPlay, breath: breath, toggleMute: toggleMute, isMuted: function () { return muted; } };
+  return { songs: SONGS, roarBuf: function (k) { init(); return makeRoar(k); }, setVol: setVol, init: init, play: play, stop: stopMusic, sfx: sfxPlay, breath: breath, toggleMute: toggleMute, isMuted: function () { return muted; } };
 })();
