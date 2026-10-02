@@ -278,8 +278,8 @@ var Sound = (function () {
      Danach Formantfilter (Rachen), Sättigung und Hüllkurve. Typen: godzilla, mecha, rodan, ghidorah, deep. */
   var ROARS = {
     // wie 1954: Kontrabass-Saite, mit harzigem Lederhandschuh gestrichen, verlangsamt abgespielt
-    godzilla: { bow: true, slow: 2, len: 2.7, pts: [[0, 170], [0.12, 320], [0.5, 355], [0.95, 340], [1.12, 300], [1.25, 205], [1.4, 275], [1.9, 240], [2.7, 115]],
-      press: [0.93, 0.72], split: 1.2, rasp: 0.55, gap: [1.18, 1.3], dry: 0.55, drive: 1.8,
+    godzilla: { bow: true, slow: 2, len: 1.9, pts: [[0, 200], [0.08, 340], [0.38, 370], [0.72, 350], [0.86, 310], [0.95, 230], [1.06, 290], [1.4, 250], [1.9, 130]],
+      press: [0.995, 0.97], split: 0.92, rasp: 1.0, gap: [0.88, 0.98], dry: 0.7, drive: 2.8, scratch: 0.16, scratchP: 0.08, pj: 1, hiss: 0.25,
       form: [[1000, 4, 1], [2300, 5, 0.8], [4600, 6, 0.5], [6800, 7, 0.25]] },
     mecha: { len: 2.1, pts: [[0, 180], [0.2, 330], [1.2, 300], [2.1, 160]],
       jit: 0.05, sub: 0.15, breath: 0.08, form: [[900, 12, 1], [1900, 14, 0.8], [3300, 14, 0.5]], drive: 3.2, grit: 0.25, ring: 155 },
@@ -313,7 +313,7 @@ var Sound = (function () {
       var i0 = Math.floor(rp), fr = rp - i0, y = d.b[i0] * (1 - fr) + d.b[(i0 + 1) % SZ] * fr;
       d.b[d.w] = x; d.w = (d.w + 1) % SZ; return y;
     }
-    var neck = DL(), bridge = DL(), lastN = 0, lastB = 0, lp = 0, beta = 0.127, jit = 0, peak = 1e-4;
+    var neck = DL(), bridge = DL(), lastN = 0, lastB = 0, lp = 0, beta = 0.127, jit = 0, peak = 1e-4, pjit = 0;
     var F = C.form.map(function (f) {
       var w = 2 * Math.PI * f[0] / sr, al = Math.sin(w) / (2 * f[1]), a0 = 1 + al;
       return { g: f[2], b0: al / a0, b2: -al / a0, a1: -2 * Math.cos(w) / a0, a2: (1 - al) / a0, x1: 0, x2: 0, y1: 0, y2: 0 };
@@ -324,14 +324,17 @@ var Sound = (function () {
       if (C.gap && t > C.gap[0] && t < C.gap[1]) env *= 0.4;
       jit += (rnd() - 0.5) * 0.3; jit *= 0.995;
       var press = t < C.split ? C.press[0] : C.press[1];
-      var bowV = (0.17 + 0.05 * jit) * env * (1 + (rnd() - 0.5) * C.rasp);
+      // lockere Saite: Länge schwankt unruhig -> rau statt glatt
+      pjit += (rnd() - 0.5) * 0.02; pjit *= 0.985;
+      if (C.pj) period *= 1 + pjit * C.pj;
+      var bowV = (0.17 + 0.05 * jit + (C.scratch ? (rnd() < (C.scratchP || 0.02) ? -C.scratch : 0) : 0)) * env * (1 + (rnd() - 0.5) * C.rasp);
       lp = lp * 0.3 + lastB * 0.7;
       var bridgeRefl = -lp * 0.97, nutRefl = -lastN, dv = bowV - (bridgeRefl + nutRefl);
       var x = dv * (5 - 4 * press) + 0.001, bt = Math.pow(Math.abs(x) + 0.75, -4); if (bt > 1) bt = 1;
       var nv = dv * bt;
       lastN = tick(neck, bridgeRefl + nv, Math.max(2, period * (1 - beta) - 1));
       lastB = tick(bridge, nutRefl + nv, Math.max(2, period * beta));
-      var ex = lastB, y = ex * C.dry;
+      var ex = lastB + (C.hiss ? (rnd() * 2 - 1) * C.hiss * env * 0.3 : 0), y = ex * C.dry;
       for (var k = 0; k < F.length; k++) {
         var fl = F[k], yo = fl.b0 * ex + fl.b2 * fl.x2 - fl.a1 * fl.y1 - fl.a2 * fl.y2;
         fl.x2 = fl.x1; fl.x1 = ex; fl.y2 = fl.y1; fl.y1 = yo; y += yo * fl.g;

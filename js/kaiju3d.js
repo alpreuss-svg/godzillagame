@@ -692,6 +692,61 @@
     return S;
   });
 
+  /* ======================= Super-X (1984) & Super-X2 (1989) ======================= */
+  var XK = 1.35;
+  function superx(f, two) {
+    var r = new R(86 * XK + 4, 40 * XK + 4); r.k = XK; r.ox = 2; r.oy = 2;
+    var fl = f.stand ? 0 : (f.phase || 0) % 2, atk = f.atk;
+    var C = two ? { hull: '#3c4a5e', dark: '#232c3a', top: '#5a6a80', trim: '#8a9ab0', glass: '#6ad0ff', mir: atk ? '#ffe890' : '#b89a40', mirD: '#7a6020' }
+      : { hull: '#5c646e', dark: '#363c44', top: '#7c848e', trim: '#a8b0b8', glass: '#6ac8ff' };
+    r.layer = 0;
+    // hintere Flosse & Triebwerke
+    r.poly([[8, 16], [2, 4], [14, 8], [20, 16]], C.dark);
+    r.layer = 1;
+    if (two) r.poly([[6, 22], [18, 12], [52, 9], [72, 12], [84, 20], [80, 26], [62, 30], [16, 30]], C.hull);
+    else r.poly([[4, 22], [20, 12], [62, 10], [78, 15], [82, 21], [66, 28], [16, 30]], C.hull);
+    r.poly(two ? [[18, 12], [52, 9], [72, 12], [70, 16], [22, 17]] : [[20, 12], [62, 10], [78, 15], [74, 18], [24, 17]], C.top);
+    r.rect(14, 26, 54, 3, C.dark);
+    // Cockpit-Kuppel
+    r.ell(two ? 46 : 50, 9.5, 7, 3.2, C.trim); r.ell(two ? 46 : 50, 9, 5, 2.2, C.glass);
+    // Seitenflügel
+    r.poly([[30, 24], [44, 24], [40, 36], [28, 34]], C.dark);
+    if (two) {
+      // Feuerspiegel an der Front
+      r.layer = 2;
+      r.ell(78, 20, 5.5, 7.5, C.mirD); r.ell(78.6, 20, 4.2, 6.2, C.mir);
+    } else {
+      // Raketenluken (beim Angriff offen)
+      for (var i = 0; i < 4; i++) r.rect(28 + i * 8, 13.5, 4, 2, atk ? '#ff8a30' : C.dark);
+    }
+    r.shade2({ tex: (function () { var o = {}; o[C.hull] = 0.12; return o; })(), seed: two ? 9 : 4 });
+    // Triebwerksglühen
+    [[18, 31], [30, 31], [50, 31], [62, 30]].forEach(function (p, j) { r.ell(p[0], p[1] + 0.6, 1.8, 1, (fl + j) % 2 ? '#ffd060' : '#ff8a30'); });
+    r.ell(3, 13, 1.6, 1.2, fl ? '#ffe090' : '#ff9a40');
+    r.line(22, 20, 70, 19, two ? '#2a3446' : '#4a525c');
+    if (two) { r.dot(76, 17, '#ffffff'); r.dot(77, 16, '#ffffff'); }
+    r.outline('soft');
+    return r;
+  }
+  function vehicleSet(two) {
+    var S = H.mkSet(function (f) { return superx(f, two); }, 42 * XK + 2, 34 * XK + 2);
+    S.mouth = { x: (80 - 42) * XK, y: (20 - 34) * XK };
+    if (two) S.mirror = { x: (78 - 42) * XK, y: (20 - 34) * XK };
+    return S;
+  }
+  Sprites.reg('superx', function () { return vehicleSet(false); });
+  Sprites.reg('superx2', function () { return vehicleSet(true); });
+  // Maser-Kanone (Typ 66) auf Lkw
+  Sprites.maser = function () {
+    var r = new R(24, 18);
+    r.poly([[2, 12], [12, 7], [22, 12], [12, 17]], '#4a5a3a');
+    r.poly([[2, 12], [12, 17], [22, 12], [22, 13.5], [12, 18], [2, 13.5]], '#2a3420');
+    r.line(12, 11, 12, 6, '#6a6e72', 0.8);
+    r.ell(13, 4.5, 4.5, 2.6, '#c8ccd2'); r.ell(13.5, 4.5, 2.6, 1.6, '#8a9098'); r.dot(16, 4.5, '#9af0ff');
+    r.shade(); r.outline('soft');
+    return { r: r.toCanvas(false), l: r.toCanvas(true) };
+  };
+
   /* ======================= Ebirah ======================= */
   function ebirah(f) {
     var r = H.mk(92, 52);

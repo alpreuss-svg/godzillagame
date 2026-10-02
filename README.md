@@ -36,15 +36,16 @@ und Schwierigkeit (Leicht/Normal/Schwer) einstellen.
 | # | Level | Zwischengegner | Boss |
 |---|---|---|---|
 | 1 | Tokio – Hafenviertel bei Nacht | Kamacuras (1, dann 2) | Mechagodzilla (Spiegelschild) |
-| 2 | Osaka – **mit Anguirus als Verbündetem** | Kamacuras ×2 | Gigan |
-| 3 | Ashino-See – Hakone in der Dämmerung | Kumonga (Netze bremsen) | Biolante: erst Rosenform, dann Bestie (wie im Film) |
-| 4 | Letchi-Atoll – Südsee | Ebirah, dann Ebirah + Kamacuras | Megalon |
-| 5 | Yokohama – Industriehafen im Smog | Kamacuras + Kumonga | Hedorah (Giftwolken) |
-| 6 | Nagoya – **mit Mothra als Verbündeter** | Kumonga | Battra (Larve → Falter) |
-| 7 | Berg Fuji | Rodan, dann Rodan + Kamacuras | King Ghidorah |
-| 8 | Fukuoka – Kristallstadt | Moguera | SpaceGodzilla (unverwundbar, solange Kristalle stehen) |
-| 9 | Sapporo – Schneefestival | Titanosaurus, dann Battra + Rodan | Mecha-King Ghidorah |
-| 10 | Shinjuku – das Finale | Gigan + Megalon | Destoroyah |
+| 2 | Tokio 1984 – die Rückkehr (nur Militär) | Panzer, Jets, Maser-Kanonen | Super-X (Kadmium-Geschosse) |
+| 3 | Osaka – **mit Anguirus als Verbündetem** | Kamacuras ×2 | Gigan |
+| 5 | Ashino-See – Hakone in der Dämmerung | Kumonga, Super-X2 (Feuerspiegel) | Biolante: erst Rosenform, dann Bestie (wie im Film) |
+| 5 | Letchi-Atoll – Südsee | Ebirah, dann Ebirah + Kamacuras | Megalon |
+| 6 | Yokohama – Industriehafen im Smog | Kamacuras + Kumonga | Hedorah (Giftwolken) |
+| 7 | Nagoya – **mit Mothra als Verbündeter** | Kumonga | Battra (Larve → Falter) |
+| 8 | Berg Fuji | Rodan, dann Rodan + Kamacuras | King Ghidorah |
+| 9 | Fukuoka – Kristallstadt | Moguera | SpaceGodzilla (Kristalle heilen ihn – zerstöre einige) |
+| 10 | Sapporo – Schneefestival | Titanosaurus, dann Battra + Rodan | Mecha-King Ghidorah |
+| 11 | Shinjuku – das Finale | Gigan + Megalon | Destoroyah |
 | ? | ??? | – | Geheimlevel (Boss-Rush gegen fünf) |
 
 **Boss-Auftritt:** Bosse erscheinen wie im Kino mit schwarzen Balken, Kameraschwenk und Namenseinblendung.

@@ -119,8 +119,8 @@ var World = (function () {
   };
 
   /* ---------- Level-Generatoren ---------- */
-  function genTokyo() {
-    var W = 36, H = 36, m = new Map(W, H, PAL.night), R = rng(1954), i, j;
+  function genTokyo(seed) {
+    var W = 36, H = 36, m = new Map(W, H, PAL.night), R = rng(seed || 1954), i, j;
     for (j = 0; j < H; j++) for (i = 0; i < W; i++) {
       var t = T.CONCRETE;
       if (i < 6) t = T.DEEP; else if (i < 8) t = T.WATER; else if (i === 8) t = T.SAND;
@@ -462,5 +462,5 @@ var World = (function () {
     return { cv: cv, OX: OX, OY: OY, M: M };
   }
 
-  return { T: T, TW: TW, TH: TH, gen: { tokyo: genTokyo, osaka: genOsaka, lake: genLake, atoll: genAtoll, yokohama: genYokohama, nagoya: genNagoya, fuji: genFuji, fukuoka: genFukuoka, sapporo: genSapporo, shinjuku: genShinjuku, island: genIsland }, renderGround: renderGround, decorate: decorate, PAL: PAL, rng: rng };
+  return { T: T, TW: TW, TH: TH, gen: { tokyo: function () { return genTokyo(1954); }, tokyo84: function () { var g = genTokyo(1984); g.llama = [30.5, 8.5]; g.bossAt = [30, 6]; return g; }, osaka: genOsaka, lake: genLake, atoll: genAtoll, yokohama: genYokohama, nagoya: genNagoya, fuji: genFuji, fukuoka: genFukuoka, sapporo: genSapporo, shinjuku: genShinjuku, island: genIsland }, renderGround: renderGround, decorate: decorate, PAL: PAL, rng: rng };
 })();

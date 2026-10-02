@@ -102,6 +102,17 @@
         { t: 'charge', min: 3, max: 10, w: 0.65, dur: 1.1, spd: 9, dmg: 11, ground: true },
         { t: 'marks', min: 0, max: 12, w: 0.5, dur: 0.8, n: 4, mark: 'oxy', dmg: 8 }]
     },
+    superx: {
+      name: 'SUPER-X', hp: 260, r: 1.6, speed: 2.3, pref: 6, fly: 32, vehicle: true, cd: [0.9, 1.6], roar: ['mecha', 1.5], atk: [
+        { t: 'volley', min: 2, max: 14, w: 0.4, dur: 1.2, n: 6, proj: 'missile', dmg: 3, spd: 5 },
+        { t: 'volley', min: 2, max: 12, w: 0.6, dur: 1.0, n: 2, proj: 'cadmium', dmg: 4, spd: 6 },
+        { t: 'beam', min: 3, max: 12, w: 0.8, dur: 1.2, dmg: 9, beam: 'laser' }]
+    },
+    superx2: {
+      name: 'SUPER-X2', hp: 300, r: 1.6, speed: 2.5, pref: 6, fly: 30, vehicle: true, mirror: true, cd: [0.9, 1.6], roar: ['mecha', 1.5], atk: [
+        { t: 'volley', min: 2, max: 14, w: 0.4, dur: 1.2, n: 6, proj: 'missile', dmg: 3, spd: 5 },
+        { t: 'beam', min: 3, max: 12, w: 0.8, dur: 1.2, dmg: 10, beam: 'laser' }]
+    },
     biolanteRose: {
       name: 'BIOLANTE (ROSE)', hp: 260, r: 2.0, speed: 0, pref: 0, home: true, emerge: true, next: 'biolante', cd: [1, 1.8], roar: ['deep', 1.25],
       morphText: 'BIOLANTE VERWANDELT SICH IN IHRE WAHRE GESTALT!', atk: [
@@ -176,9 +187,11 @@
   var LEVELS = [
     { id: 'tokyo', name: 'TOKIO', sub: 'HAFENVIERTEL BEI NACHT', enc: [['kamacuras'], ['kamacuras', 'kamacuras'], ['mecha']], music: 'stage',
       text: ['MECHAGODZILLA WURDE IN DER', 'BUCHT VON TOKIO GESICHTET.', 'VORHER SCHWÄRMEN RIESIGE', 'GOTTESANBETERINNEN AUS...'] },
+    { id: 'tokyo84', name: 'TOKIO 1984', sub: 'DIE RÜCKKEHR DES GODZILLA', enc: [['superx']], music: 'stage', military: true,
+      text: ['WIE IM FILM VON 1984: KEINE', 'MONSTER - NUR DIE ARMEE,', 'MASER-KANONEN UND DAS', 'FLIEGENDE KAMPFSCHIFF SUPER-X!'] },
     { id: 'osaka', name: 'OSAKA', sub: 'MIT ANGUIRUS AN DEINER SEITE', enc: [['kamacuras', 'kamacuras'], ['gigan']], music: 'stage', ally: 'anguirus',
       text: ['DEIN ALTER FREUND ANGUIRUS', 'KÄMPFT MIT DIR GEGEN DEN', 'CYBORG GIGAN AUS DEM ALL.', 'VERBÜNDETE TRIFFST DU NIE!'] },
-    { id: 'lake', name: 'ASHINO-SEE', sub: 'HAKONE IN DER ABENDDÄMMERUNG', enc: [['kumonga'], ['biolanteRose']], music: 'stage',
+    { id: 'lake', name: 'ASHINO-SEE', sub: 'HAKONE IN DER ABENDDÄMMERUNG', enc: [['kumonga'], ['superx2'], ['biolanteRose']], music: 'stage',
       text: ['IM SEE BLÜHT BIOLANTE - EINE', 'ROSE AUS GODZILLAS ZELLEN.', 'BESIEGST DU SIE, ZEIGT SIE', 'IHRE WAHRE GESTALT...'] },
     { id: 'atoll', name: 'LETCHI-ATOLL', sub: 'SÜDSEE, 1966', enc: [['ebirah'], ['ebirah', 'kamacuras'], ['megalon']], music: 'island',
       text: ['IM ATOLL LAUERT EBIRAH,', 'DER RIESENHUMMER.', 'AUS DEM UNTERWASSERREICH', 'SEATOPIA STEIGT MEGALON!'] },
@@ -189,7 +202,7 @@
     { id: 'fuji', name: 'BERG FUJI', sub: 'DÖRFER AM HEILIGEN BERG', enc: [['rodan'], ['rodan', 'kamacuras'], ['ghidorah']], music: 'stage',
       text: ['RODAN KREIST ÜBER DEM FUJI.', 'DANACH LANDET DER', 'DREIKÖPFIGE DRACHE', 'KING GHIDORAH!'] },
     { id: 'fukuoka', name: 'FUKUOKA', sub: 'DIE KRISTALLSTADT', enc: [['moguera'], ['spacegodzilla']], music: 'stage',
-      text: ['SPACEGODZILLA KOMMT AUS', 'DEM ALL. ER ZIEHT SEINE', 'KRAFT AUS DEN KRISTALL-', 'TÜRMEN DER STADT...'] },
+      text: ['SPACEGODZILLA KOMMT AUS', 'DEM ALL. SEINE KRISTALL-', 'TÜRME HEILEN IHN - JE', 'WENIGER, DESTO SCHWÄCHER!'] },
     { id: 'sapporo', name: 'SAPPORO', sub: 'SCHNEEFESTIVAL IN GEFAHR', enc: [['titanosaurus'], ['battra', 'rodan'], ['mkg']], music: 'stage',
       text: ['AUS DEM JAHR 2204 KEHRT', 'GHIDORAH ZURÜCK - ALS', 'CYBORG: MECHA-KING', 'GHIDORAH!'] },
     { id: 'shinjuku', name: 'SHINJUKU', sub: 'DAS FINALE', enc: [['gigan', 'megalon'], ['destoroyah']], music: 'stage',
@@ -197,7 +210,7 @@
     { id: 'island', name: 'MONSTERINSEL', sub: 'GEHEIMLEVEL: BOSS-RUSH', enc: [['mecha'], ['biolanteRose'], ['spacegodzilla'], ['mkg'], ['destoroyah']], music: 'island', secret: true,
       text: ['DU HAST DIE MONSTERINSEL', 'ENTDECKT! BESIEGE ALLE', 'FÜNF RIVALEN', 'HINTEREINANDER.'] }
   ];
-  var LAST = 9, ISLAND = 10;
+  var LAST = 10, ISLAND = 11;
   // Gegner, in die sich ein Monster verwandeln kann (für das Vorladen der Sprites)
   function chainOf(t) { var o = [t]; while (MON[t].next) { t = MON[t].next; o.push(t); } return o; }
 
@@ -415,11 +428,6 @@
     if (!m || m.dead || m.enter > 0) return false;
     if (m.shield > 0) { particles(m.x, m.y, 30 + m.z, 3, ['#8af', '#fff'], 1, 0.3, 0, 1); num(m.x, m.y, 60 + m.z, 'BLOCK', '#8fe8ff'); return false; }
     if (m.def.cocoon) { if (Math.random() < 0.3) num(m.x, m.y, 40, 'KOKON', '#f0e8c8'); return false; }
-    if (m.def.crystals && L.crystalsLeft > 0) {
-      if (Math.random() < 0.25) { num(m.x, m.y, 60 + m.z, 'KRISTALLSCHILD', '#b8f0ff'); particles(m.x, m.y, 35, 3, ['#b8f0ff', '#e8b0ff'], 1, 0.4, 0, 1); }
-      if (!L.crystalHint && Math.random() < 0.08) { L.crystalHint = true; toast('DIE KRISTALLE SCHÜTZEN IHN!', '#8fe8ff', 3); }
-      return false;
-    }
     m.hp -= dmg; m.flash = 0.1;
     if (L.p) L.p.rage = Math.min(100, L.p.rage + dmg * 0.5);
     num(m.x + rnd(-0.3, 0.3), m.y, 50 + m.z, '-' + Math.round(dmg), big ? '#ffe04a' : '#ffffff');
@@ -427,7 +435,7 @@
     if (m.hp <= 0) {
       m.hp = 0; m.dead = true; m.deathT = 0; m.act = null;
       var pts = m.boss ? 5000 : 1500; G.score += pts;
-      Sound.sfx('roar', { kind: m.def.roar[0], pitch: m.def.roar[1] * 0.8 });
+      if (m.def.vehicle) { Sound.sfx('boom', true); Sound.sfx('collapse', 60); } else Sound.sfx('roar', { kind: m.def.roar[0], pitch: m.def.roar[1] * 0.8 });
       toast(m.def.name + ' BESIEGT! +' + pts, '#7aff7a');
     }
     return true;
@@ -452,6 +460,7 @@
       r: d.r, hp: d.hp * DIFF[save.opt.diff].hp, max: d.hp * DIFF[save.opt.diff].hp, step: 0, home: d.home ? [pos[0], pos[1], L.gen.lake ? L.gen.lake[2] : 3.5] : null
     };
     if (d.emerge) m.z = -80;
+    if (d.mirror) { m.mirrorHp = 75; m.mirrorOn = 0; }
     if (d.fly || d.phases) m.z = 110;
     return m;
   }
@@ -486,7 +495,7 @@
     if (list.some(function (t) { return MON[t].crystals; })) { L.crystalsLeft = 0; spawnCrystals(6); }
     Sound.play(boss ? 'boss' : 'mini');
     var d0 = MON[list[0]];
-    Sound.sfx('roar', { kind: d0.roar[0], pitch: d0.roar[1] });
+    if (d0.vehicle) { Sound.sfx('alarm'); Sound.sfx('zap'); } else Sound.sfx('roar', { kind: d0.roar[0], pitch: d0.roar[1] });
     toast(list.map(function (t) { return MON[t].name; }).join(' & ') + (list.length > 1 ? ' ERSCHEINEN!' : ' ERSCHEINT!'), '#ff5040', 3);
   }
   function moveToward(e, tx, ty, s) {
@@ -566,6 +575,7 @@
       return;
     }
     if (m.shield > 0) m.shield -= dt;
+    if (m.mirrorOn > 0) m.mirrorOn -= dt;
     if (ally) { m.calm = (m.calm || 0) + dt; if (m.calm > 4) m.hp = Math.min(m.max, m.hp + 2 * dt); }
     var T = pickTarget(m), idle = !T;
     if (idle) T = p;
@@ -578,10 +588,16 @@
       return;
     }
     if (d.crystals) {
-      if (L.crystalsLeft > 0 && m.hp < m.max) m.hp = Math.min(m.max, m.hp + L.crystalsLeft * 1.2 * dt);
-      // lässt immer wieder neue Kristalle wachsen
-      m.crysT = (m.crysT || 16) - dt;
-      if (m.crysT <= 0) { m.crysT = 16; if (L.crystalsLeft < 6) { spawnCrystals(1); toast(d.name + ' LÄSST EINEN NEUEN KRISTALL WACHSEN!', '#e8b0ff', 2.5); } }
+      // jeder Kristall heilt ihn – je weniger Kristalle, desto schwächer die Heilung
+      if (L.crystalsLeft > 0 && m.hp < m.max) {
+        var heal = L.crystalsLeft * 3.8 * dt; m.hp = Math.min(m.max, m.hp + heal);
+        m.healAcc = (m.healAcc || 0) + heal;
+        if (m.healAcc > 12) { num(m.x, m.y, 60 + m.z, '+' + Math.round(m.healAcc), '#c8b0ff'); m.healAcc = 0; }
+      }
+      // nur langsam wächst ein neuer Kristall nach (höchstens bis 4)
+      m.crysT = (m.crysT || 35) - dt;
+      if (m.crysT <= 0) { m.crysT = 35; if (L.crystalsLeft < 4) { spawnCrystals(1); toast(d.name + ' LÄSST EINEN NEUEN KRISTALL WACHSEN!', '#e8b0ff', 2.5); } }
+      if (!L.crystalHint && L.crystalsLeft >= 5 && m.hp > m.max * 0.9 && L.time > 25) { L.crystalHint = true; toast('DIE KRISTALLE HEILEN IHN - ZERSTÖRE EINIGE!', '#8fe8ff', 3.5); }
     }
     if (m.act && m.act.a.t === 'charge' && m.act.t > m.act.a.w) { m.trail = m.trail || []; m.trail.unshift([m.x, m.y, m.z]); if (m.trail.length > 4) m.trail.pop(); } else m.trail = null;
     if (m.stun > 0) { m.stun -= dt; return; }
@@ -793,7 +809,7 @@
       }
       if (!attacking && !p.breathing && !p.charge) updateView(p, wx, wy);
     }
-    L.units.forEach(function (u) { if (u.alive && u.kind === 'tank' && dist(u.x, u.y, p.x, p.y) < p.r) killUnit(u); });
+    L.units.forEach(function (u) { if (u.alive && u.kind !== 'jet' && dist(u.x, u.y, p.x, p.y) < p.r) killUnit(u); });
     // Nahkampf-Kombo: Klaue, Klaue, Schwanzhieb
     if ((hit('j') || hit('space')) && p.atkCd <= 0 && !p.breathing && !p.charge) {
       p.combo = p.comboT > 0 ? (p.combo + 1) % 3 : 0;
@@ -811,7 +827,7 @@
         var tail = p.atkKind === 'tail';
         var cx = tail ? p.x : p.x + p.dir[0] * 1.4, cy = tail ? p.y : p.y + p.dir[1] * 1.4, rad = tail ? (G.mini ? 1.8 : 2.8) : (G.mini ? 1.1 : 1.6);
         buildingsNear(cx, cy, rad, function (b) { damageBuilding(b, tail ? 90 : 70, true); });
-        L.units.forEach(function (u) { if (u.alive && u.kind === 'tank' && dist(u.x, u.y, cx, cy) < rad + 0.3) killUnit(u); });
+        L.units.forEach(function (u) { if (u.alive && u.kind !== 'jet' && dist(u.x, u.y, cx, cy) < rad + 0.3) killUnit(u); });
         L.cars.forEach(function (c) { if (c.alive && dist(c.x, c.y, cx, cy) < rad) crushCar(c, true); });
         playerHitMonsters(cx, cy, rad, (tail ? (G.mini ? 8 : 16) : (G.mini ? 6 : 11)) * (p.burning ? 1.4 : 1), tail ? 1.2 : 0.5, tail);
       }
@@ -855,6 +871,7 @@
         L.cars.forEach(function (c) { if (c.alive && segDist(c.x, c.y, p.x, p.y, ex, ey) < 0.5) crushCar(c, true); });
         L.mons.forEach(function (m) {
           if (!m.dead && segDist(m.x, m.y, p.x, p.y, ex, ey) < m.r + 0.4) {
+            if (m.def.mirror && m.mirrorHp > 0 && m.enter <= 0) { reflectBeam(m); return; }
             if (damageMon(m, 2.8 * (p.burning ? 1.4 : 1))) particles(m.x, m.y, 25 + m.z, 3, ['#8fe8ff', '#fff'], 1.2, 0.3, 10, 2);
           }
         });
@@ -871,7 +888,7 @@
     if (hit('l') && p.roarCd <= 0) {
       p.roarCd = 8; p.roarT = 1.4; Sound.sfx('roar', { kind: 'godzilla', pitch: G.mini ? 1.7 : 1 }); L.shake = 0.6;
       L.mons.forEach(function (m) { if (!m.dead && dist(m.x, m.y, p.x, p.y) < 8) { m.stun = 1.6; m.act = null; num(m.x, m.y, 60, 'BETÄUBT', '#ffe04a'); } });
-      L.units.forEach(function (u) { if (u.alive && u.kind === 'tank' && dist(u.x, u.y, p.x, p.y) < 5) killUnit(u); });
+      L.units.forEach(function (u) { if (u.alive && u.kind !== 'jet' && dist(u.x, u.y, p.x, p.y) < 5) killUnit(u); });
     }
     // Kernpuls (Wut-Leiste voll)
     if (hit('r') && p.rage >= 100 && !G.mini && !p.charge) {
@@ -888,6 +905,15 @@
     if (L.llama.alive && dist(L.llama.x, L.llama.y, p.x, p.y) < p.r + 0.3) llamaEgg();
   }
 
+  // Super-X2: der Feuerspiegel wirft den Atomstrahl zurück, bis er schmilzt
+  function reflectBeam(m) {
+    var p = L.p;
+    m.mirrorHp -= 2.8; m.mirrorOn = 0.25;
+    if (!p.dead && p.dance <= 0) { p.hp -= 1.4 * DIFF[save.opt.diff].dmg; p.calm = 0; if (p.hp <= 0) hurtPlayer(1); }
+    if (Math.random() < 0.3) num(p.x, p.y, 55, 'REFLEKTIERT', '#ffe890');
+    if (!L.mirrorHint) { L.mirrorHint = true; toast('DER FEUERSPIEGEL WIRFT DEINEN STRAHL ZURÜCK!', '#ffe890', 3); }
+    if (m.mirrorHp <= 0) { toast('DER FEUERSPIEGEL SCHMILZT!', '#ff9a40', 3); explode(m.x, m.y, m.z + 20, true); m.flash = 0.4; }
+  }
   function nuclearPulse() {
     var p = L.p;
     p.rage = 0; p.inv = 0.8;
@@ -1043,14 +1069,15 @@
     if (!L.def.secret && !p.dead) {
       L.spawnT -= dt; L.jetT -= dt;
       var tanks = L.units.filter(function (u) { return u.alive && u.kind === 'tank'; }).length;
-      var cap = L.mons.length ? 2 : 5;
+      var mil = L.def.military, cap = mil ? (L.mons.length ? 5 : 9) : (L.mons.length ? 2 : 5);
       if (L.spawnT <= 0 && tanks < cap) {
-        L.spawnT = L.mons.length ? 7 : 4;
+        L.spawnT = mil ? 2.2 : (L.mons.length ? 7 : 4);
         var s = edgeSpawn();
-        if (s) L.units.push({ kind: 'tank', x: s[0], y: s[1], z: 0, alive: true, cd: rnd(1, 3), face: 1 });
+        var masers = L.units.filter(function (u) { return u.alive && u.kind === 'maser'; }).length;
+        if (s) L.units.push({ kind: mil && masers < 3 && Math.random() < 0.4 ? 'maser' : 'tank', x: s[0], y: s[1], z: 0, alive: true, cd: rnd(1, 3), face: 1 });
       }
       if (L.jetT <= 0) {
-        L.jetT = L.mons.length ? 16 : 10;
+        L.jetT = mil ? 5 : (L.mons.length ? 16 : 10);
         var ang = Math.random() * 6.283;
         L.units.push({ kind: 'jet', x: p.x - Math.cos(ang) * 18, y: p.y - Math.sin(ang) * 18, z: 50, vx: Math.cos(ang) * 7, vy: Math.sin(ang) * 7, alive: true, fired: false, life: 6, face: (Math.cos(ang) - Math.sin(ang)) > 0 ? 1 : -1 });
       }
@@ -1058,7 +1085,17 @@
     L.units.forEach(function (u) {
       if (!u.alive) return;
       var dx = p.x - u.x, dy = p.y - u.y, d = Math.sqrt(dx * dx + dy * dy) || 0.01;
-      if (u.kind === 'tank') {
+      if (u.kind === 'maser') {
+        // Maser-Kanone: hält Abstand, lädt auf und feuert einen Strahl
+        if (d > 7) { u.x += dx / d * 0.9 * dt; u.y += dy / d * 0.9 * dt; }
+        u.face = (dx - dy) > 0 ? 1 : -1;
+        u.cd -= dt;
+        if (u.cd <= 0 && d < 11 && !p.dead) {
+          u.cd = rnd(3, 4.5); Sound.sfx('zap');
+          L.fx.push({ k: 'ubeam', x0: u.x, y0: u.y, x1: p.x, y1: p.y, life: 0.4, max: 0.4 });
+          hurtPlayer(4);
+        }
+      } else if (u.kind === 'tank') {
         if (d > 5) { u.x += dx / d * 1.2 * dt; u.y += dy / d * 1.2 * dt; }
         u.face = (dx - dy) > 0 ? 1 : -1;
         u.cd -= dt;
@@ -1111,6 +1148,7 @@
         L.allies.forEach(function (a) { if (q.life > 0 && !a.dead && !inAir(a) && dist(q.x, q.y, a.x, a.y) < a.r + 0.2) { q.life = 0; hurtAlly(a, q.dmg); explode(q.x, q.y, q.z, false); } });
         if (q.life > 0 && dist(q.x, q.y, p.x, p.y) < p.r * 0.9) {
           q.life = 0; hurtPlayer(q.dmg);
+          if (q.kind === 'cadmium') { p.en = Math.max(0, p.en - 35); toast('KADMIUM! ATOM-ENERGIE GELÄHMT', '#c8d0d8', 2); particles(p.x, p.y, 40, 10, ['#c8d0d8', '#8a9098'], 1, 0.6, 10, 2); }
           if (q.kind === 'web' || q.kind === 'silk') { p.slow = 2.5; toast('IM NETZ GEFANGEN!', '#ffffff', 1.5); particles(p.x, p.y, 20, 10, ['#ffffff', '#dddddd'], 1, 0.6, 10, 2); }
           else explode(q.x, q.y, q.z, false);
         }
@@ -1392,9 +1430,7 @@
         ctx.globalAlpha = 0.5 + 0.3 * Math.sin(L.time * 15 + b.x);
         beamLine(pts, ['rgba(180,120,255,0.5)', '#b8f0ff'], [3, 1]);
       });
-      ctx.globalAlpha = 0.35 + 0.15 * Math.sin(L.time * 8);
-      ctx.strokeStyle = '#c8b0ff'; ctx.lineWidth = 2;
-      ctx.beginPath(); ctx.ellipse(s[0], s[1] - vsC.ay * 0.5 - m.z, vsC.w * 0.42, vsC.ay * 0.62, 0, 0, 6.283); ctx.stroke();
+
       ctx.restore();
     }
     if (m.shield > 0) {
@@ -1407,8 +1443,10 @@
       ctx.fillStyle = '#ffe04a'; ctx.fillRect(s[0] + Math.cos(an) * 14, s[1] - set.ay - m.z + 4 + Math.sin(an) * 3, 2, 2);
     }
   }
+  var MASER = null;
   function drawUnit(u) {
     var s = spos(u.x, u.y, u.z || 0);
+    if (u.kind === 'maser') { MASER = MASER || Sprites.maser(); ctx.drawImage(u.face < 0 ? MASER.l : MASER.r, s[0] - 12, s[1] - 15); return; }
     if (u.kind === 'tank') ctx.drawImage(u.face < 0 ? SPR.tank.l : SPR.tank.r, s[0] - 9, s[1] - 9);
     else ctx.drawImage(u.face < 0 ? SPR.jet.l : SPR.jet.r, s[0] - 11, s[1] - 6);
   }
@@ -1444,6 +1482,7 @@
       var g = spos(q.x, q.y, 0); ctx.fillStyle = 'rgba(0,0,0,.3)'; ctx.fillRect(g[0] - 3, g[1] - 1, 6, 2);
     }
     else if (q.kind === 'web') { ctx.strokeStyle = '#ffffff'; ctx.lineWidth = 1; ctx.beginPath(); ctx.arc(s[0], s[1], 4, 0, 6.283); ctx.moveTo(s[0] - 4, s[1]); ctx.lineTo(s[0] + 4, s[1]); ctx.moveTo(s[0], s[1] - 4); ctx.lineTo(s[0], s[1] + 4); ctx.stroke(); }
+    else if (q.kind === 'cadmium') { ctx.fillStyle = '#9aa2aa'; ctx.fillRect(s[0] - 2, s[1] - 2, 5, 3); ctx.fillStyle = '#e8eef4'; ctx.fillRect(s[0] - 1, s[1] - 2, 2, 1); smoke(q.x, q.y, q.z, 1); }
     else if (q.kind === 'needle') { ctx.strokeStyle = '#e8e0c0'; ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(s[0] - 3, s[1]); ctx.lineTo(s[0] + 3, s[1] - 1); ctx.stroke(); }
     else if (q.kind === 'ring') { ctx.strokeStyle = '#f4f4f4'; ctx.lineWidth = 1; ctx.beginPath(); ctx.ellipse(s[0], s[1], 5, 3, 0, 0, 6.283); ctx.stroke(); }
   }
@@ -1685,6 +1724,14 @@
       });
     }
     if (p.view !== 'back') drawBeam();
+    L.mons.forEach(function (m) {
+      if (!(m.mirrorOn > 0) || !m.set.mirror) return;
+      var s0 = spos(m.x, m.y, 0), mx2 = s0[0] + m.set.mirror.x * (m.face < 0 ? -1 : 1), my2 = s0[1] + m.set.mirror.y - m.z, mp = mouthOf(p);
+      ctx.save(); ctx.globalCompositeOperation = 'lighter';
+      radial(mx2, my2, 16, '#ffffff', 'rgba(255,220,120,0.9)');
+      glowBeam(mx2, my2, mp[0], mp[1], ['rgba(255,200,60,0.25)', 'rgba(255,220,120,0.5)', '#fff2c0', '#ffffff'], 3, 6);
+      ctx.restore();
+    });
     L.fx.forEach(function (f) {
       var k = f.life / f.max;
       if (f.k === 'beam') {
@@ -1714,6 +1761,11 @@
         var pw = spos(f.x0, f.y0, 0);
         ctx.save(); ctx.globalCompositeOperation = 'lighter';
         radial(pw[0], pw[1] - 8, 26 * (1.2 - k * 0.5), 'rgba(255,240,160,' + k + ')', 'rgba(255,200,60,' + k * 0.5 + ')');
+        ctx.restore();
+      } else if (f.k === 'ubeam') {
+        var u0 = spos(f.x0, f.y0, 10), u1 = spos(f.x1, f.y1, 30);
+        ctx.save(); ctx.globalCompositeOperation = 'lighter'; ctx.globalAlpha = Math.min(1, k * 2.5);
+        bolt(u0[0], u0[1], u1[0], u1[1], ['rgba(120,220,255,0.4)', '#9af0ff', '#ffffff'], 4);
         ctx.restore();
       } else if (f.k === 'vine') {
         drawVineAttack(f, k);
@@ -1789,7 +1841,7 @@
     ctx.strokeRect(Math.round(mx + (L.camX - W / 2 - Bd.left) * kx) + 0.5, Math.round(my + (L.camY - H / 2 - Bd.top) * ky) + 0.5, Math.round(W * kx), Math.round(H * ky));
     ctx.restore();
     L.allies.forEach(function (m) { if (!m.dead) md(m.x, m.y, '#40ffe0', 4); });
-    L.units.forEach(function (u) { if (u.kind === 'tank') md(u.x, u.y, '#c8c8a0', 1); });
+    L.units.forEach(function (u) { if (u.kind !== 'jet') md(u.x, u.y, '#c8c8a0', 1); });
     L.items.forEach(function (it) { md(it.x, it.y, '#ffe040', 2); });
     L.mons.forEach(function (m) { if (!m.dead) md(m.x, m.y, Math.floor(L.time * 4) % 2 ? '#ff3030' : '#ff9090', 4); });
     md(p.x, p.y, '#5aff50', 3);
