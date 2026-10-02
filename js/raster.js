@@ -140,14 +140,30 @@ var Pix = (function () {
     }
     this.d = o;
   };
+  // Umriss: feste Farbe oder 'soft' = dunklere Variante der angrenzenden Farbe (weniger Comic-Look)
   P.outline = function (c) {
-    var w = this.w, h = this.h, d = this.d, o = d.slice();
+    var w = this.w, h = this.h, d = this.d, o = d.slice(), soft = c === 'soft';
     for (var y = 0; y < h; y++) for (var x = 0; x < w; x++) {
       var i = y * w + x;
       if (d[i]) continue;
-      if ((x > 0 && d[i - 1]) || (x < w - 1 && d[i + 1]) || (y > 0 && d[i - w]) || (y < h - 1 && d[i + w])) o[i] = c;
+      var n = (x > 0 && d[i - 1]) || (x < w - 1 && d[i + 1]) || (y > 0 && d[i - w]) || (y < h - 1 && d[i + w]);
+      if (n) o[i] = soft ? shade(n, -0.62) : c;
     }
     this.d = o;
+  };
+  // Farben dämpfen (entsättigen + leicht abdunkeln) für einen natürlicheren Look
+  var gradeCache = {};
+  P.grade = function (desat, dark) {
+    var d = this.d;
+    for (var i = 0; i < d.length; i++) {
+      var c = d[i]; if (!c) continue;
+      var key = c + desat + dark, g = gradeCache[key];
+      if (!g) {
+        var v = rgb(c), l = v[0] * 0.3 + v[1] * 0.55 + v[2] * 0.15, f = 1 - dark;
+        g = gradeCache[key] = hex((v[0] + (l - v[0]) * desat) * f, (v[1] + (l - v[1]) * desat) * f, (v[2] + (l - v[2]) * desat) * f);
+      }
+      d[i] = g;
+    }
   };
   P.recolor = function (from, to, cond) {
     for (var y = 0; y < this.h; y++) for (var x = 0; x < this.w; x++) {
