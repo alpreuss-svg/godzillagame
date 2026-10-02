@@ -76,6 +76,10 @@ var World = (function () {
 
   // Standard-Hochhaus
   function office(m, i, j, R, h, night, style) {
+    var s = officeSprite(R, h, night, m.pal === PAL.snow, (i * 7 + j) % 6, style);
+    return m.add(i, j, s, { hp: 40 + s.tall * 2, score: 50 + s.tall * 3 });
+  }
+  function officeSprite(R, h, night, snow, seed, style) {
     var styles = night ? ['glass', 'office', 'dark', 'brown', 'teal', 'white'] : ['glass', 'office', 'white', 'brown', 'teal', 'gold'];
     var sty = style !== undefined ? styles[style % styles.length] : styles[Math.floor(R() * styles.length)];
     h = Math.round(h / 4) * 4 + 8;
@@ -87,10 +91,10 @@ var World = (function () {
     } else secs = [{ a: 14, h: h }];
     var roofs = h > 70 ? ['ant', 'ant', 'heli', 'ac'] : ['ant', 'tank', 'tank', 'ac', 'ac', null];
     var tspr = Sprites.tower({
-      secs: secs, st: sty, night: !!night, lit: night ? 0.45 : 0, seed: (i * 7 + j) % 6, shop: h < 60 || R() < 0.6,
-      awn: ['#b03a2a', '#2a6a3a', '#2a4a8a', '#c8a020'][Math.floor(R() * 4)], roof: roofs[Math.floor(R() * roofs.length)], shadow: !night, snow: m.pal === PAL.snow
+      secs: secs, st: sty, night: !!night, lit: night ? 0.45 : 0, seed: seed, shop: h < 60 || R() < 0.6,
+      awn: ['#b03a2a', '#2a6a3a', '#2a4a8a', '#c8a020'][Math.floor(R() * 4)], roof: roofs[Math.floor(R() * roofs.length)], shadow: !night, snow: !!snow
     });
-    return m.add(i, j, tspr, { hp: 40 + h * 2, score: 50 + h * 3 });
+    return tspr;
   }
   function house(m, i, j, R, night) {
     var roofs = ['#a83a28', '#34507c', '#44444c', '#7c5028'];
@@ -143,7 +147,7 @@ var World = (function () {
       if (R() < 0.62) office(m, i, j, R, 12 + R() * 22 + close * 70 * R(), true);
     }
     return {
-      map: m, start: [4.5, 18.5], llama: [15.5, 5.5], bossAt: [33, 33], night: true,
+      map: m, start: [3.5, 18.5], llama: [15.5, 5.5], bossAt: [33, 33], night: true, seaStart: true,
       bg: null
     };
   }
@@ -204,7 +208,7 @@ var World = (function () {
       else if (j > 12 && r < 0.3) special(m, i, j, 'oiltank', { hp: 30, score: 150 });
       else if (r < 0.62) office(m, i, j, R, 10 + R() * 34, false);
     }
-    return { map: m, start: [18.5, 30.5], llama: [2.5, 3.5], bossAt: [17, 6], smog: true };
+    return { map: m, start: [18.5, 34.5], llama: [2.5, 3.5], bossAt: [17, 6], smog: true, seaStart: true };
   }
 
   function genShinjuku() {
@@ -256,7 +260,7 @@ var World = (function () {
       if (tt === T.GRASS && R() < 0.28) special(m, i, j, R() < 0.7 ? 'palm' : 'tree', { hp: 10, score: 10 });
       else if (tt === T.SAND && R() < 0.07) special(m, i, j, 'palm', { hp: 10, score: 10 });
     }
-    return { map: m, start: [12.5, 24.5], llama: [28.5, 28.5], bossAt: [26, 8] };
+    return { map: m, start: [3.5, 25.5], llama: [28.5, 28.5], bossAt: [26, 8], seaStart: true };
   }
 
   function genNagoya() {
@@ -281,7 +285,7 @@ var World = (function () {
     special(m, 30, 4, 'reactor', { hp: 90, score: 500, nuclear: true });
     for (j = 0; j < H; j += 2) if (m.T(7, j) === T.CONCRETE && R() < 0.5) special(m, 7, j, 'oiltank', { hp: 30, score: 150 });
     cityFill(m, R, true, 7, 0, W, H, 14, 26, 64, 22, 20, 0.6);
-    return { map: m, start: [30.5, 31.5], llama: [33.5, 33.5], bossAt: [14, 8], crystals: true };
+    return { map: m, start: [1.5, 20.5], llama: [33.5, 33.5], bossAt: [26, 8], crystals: true, seaStart: true };
   }
 
   function genSapporo() {
@@ -391,28 +395,72 @@ var World = (function () {
   }
 
   /* ---------- Boden vorrendern (einmal pro Level) ---------- */
+  /* ---------- Gelände außerhalb des Spielfelds (Kulisse) ---------- */
+  var MARGIN = 10;
+  // Kachel außerhalb: Randkachel fortsetzen, Straßen laufen geradeaus weiter
+  function extTile(m, i, j) {
+    var ci = Math.max(0, Math.min(m.W - 1, i)), cj = Math.max(0, Math.min(m.H - 1, j));
+    var t = m.T(ci, cj), ox = ci !== i, oy = cj !== j;
+    if (!ox && !oy) return t;
+    if (t === T.CROSS) t = ox && oy ? T.CONCRETE : ox ? T.ROADX : T.ROADY;
+    else if (t === T.ROADX && (oy)) t = T.CONCRETE;
+    else if (t === T.ROADY && (ox)) t = T.CONCRETE;
+    // in der Ferne gelegentlich neue Querstraßen
+    if (t === T.CONCRETE && ((ox && (i % 6 === 0)) || (oy && (j % 6 === 0)))) t = ox ? T.ROADY : T.ROADX;
+    return t;
+  }
+  function hexA(h, a) { var c = Pix.rgb(h); return 'rgba(' + c[0] + ',' + c[1] + ',' + c[2] + ',' + a + ')'; }
+  function fogged(spr, col) {
+    if (spr.fog) return spr.fog;
+    var c = document.createElement('canvas'); c.width = spr.img.width; c.height = spr.img.height;
+    var g = c.getContext('2d'); g.drawImage(spr.img, 0, 0);
+    g.globalCompositeOperation = 'source-atop'; g.fillStyle = hexA(col, 0.38); g.fillRect(0, 0, c.width, c.height);
+    spr.fog = { img: c, ax: spr.ax, ay: spr.ay, h: spr.h, tall: spr.tall, a: spr.a };
+    return spr.fog;
+  }
+  // nicht zerstörbare Kulissen-Gebäude und Bäume rund um das Spielfeld
+  function decorate(m) {
+    var out = [], R = rng(4242 + m.W * 7), M = MARGIN, night = m.pal === PAL.night || m.pal === PAL.red;
+    var tree = m.pal === PAL.snow ? 'snowpine' : (m.pal === PAL.tropic || m.pal === PAL.island) ? 'palm' : 'tree';
+    for (var j = -M; j < m.H + M; j++) for (var i = -M; i < m.W + M; i++) {
+      if (i >= 0 && j >= 0 && i < m.W && j < m.H) continue;
+      var t = extTile(m, i, j), r = R(), spr = null;
+      if (t === T.CONCRETE && r < 0.6) spr = officeSprite(R, 12 + R() * 40, night, m.pal === PAL.snow, (i * 7 + j) % 6);
+      else if ((t === T.GRASS || t === T.PARK) && r < 0.22) spr = Sprites.special(tree);
+      else if (t === T.SAND && tree === 'palm' && r < 0.08) spr = Sprites.special('palm');
+      if (spr) {
+        var f = fogged(spr, m.pal.sky);
+        out.push({ x: i + 0.5, y: j + 0.5, spr: f, hp: 1e9, max: 1e9, score: 0, r: 0.5, dead: false, burn: 0, kind: 'deco', tall: f.tall || f.h, flash: 0, deco: true });
+      }
+    }
+    return out;
+  }
+
+  /* ---------- Boden vorrendern (einmal pro Level), inkl. Kulisse ---------- */
   function renderGround(m) {
-    var W = m.W, H = m.H, OX = H * 16, OY = 4, EDGE = 14;
+    var W = m.W, H = m.H, M = MARGIN, OX = (H + 2 * M) * 16, OY = 2 * M * 8 + 4;
     var cv = document.createElement('canvas');
-    cv.width = (W + H) * 16; cv.height = (W + H) * 8 + OY + EDGE + 2;
+    cv.width = (W + H + 4 * M) * 16; cv.height = (W + H + 4 * M) * 8 + OY;
     var g = cv.getContext('2d'), cache = {};
-    for (var j = 0; j < H; j++) for (var i = 0; i < W; i++) {
-      var t = m.T(i, j), v = (i * 3 + j * 5) % 3, key = t + '_' + v;
+    for (var j = -M; j < H + M; j++) for (var i = -M; i < W + M; i++) {
+      var t = extTile(m, i, j), v = ((i + 99) * 3 + (j + 99) * 5) % 3, key = t + '_' + v;
       var img = cache[key] || (cache[key] = tileImage(t, m.pal, v));
       g.drawImage(img, (i - j) * 16 + OX - 16, (i + j) * 8 + OY);
     }
-    // Erdkante (SimCity-Look)
-    var e1 = m.pal.edge, e2 = sh(m.pal.edge, -0.3);
-    for (i = 0; i < W; i++) { // untere rechte Kante (j = H-1)
-      var x = (i - (H - 1)) * 16 + OX, y = (i + H - 1) * 8 + OY + 8;
-      g.fillStyle = e2; g.beginPath(); g.moveTo(x - 16, y); g.lineTo(x, y + 8); g.lineTo(x, y + 8 + EDGE); g.lineTo(x - 16, y + EDGE); g.fill();
+    // Dunst über der Kulisse (nah leicht, fern stärker)
+    function P(i, j) { return [(i - j) * 16 + OX, (i + j) * 8 + OY]; }
+    function ring(a, b) {
+      g.beginPath();
+      [P(-b, -b), P(W + b, -b), P(W + b, H + b), P(-b, H + b)].forEach(function (p, k) { k ? g.lineTo(p[0], p[1]) : g.moveTo(p[0], p[1]); });
+      g.closePath();
+      [P(-a, -a), P(W + a, -a), P(W + a, H + a), P(-a, H + a)].forEach(function (p, k) { k ? g.lineTo(p[0], p[1]) : g.moveTo(p[0], p[1]); });
+      g.closePath();
     }
-    for (j = 0; j < H; j++) { // untere linke Seite gehört zu i = W-1
-      var x2 = (W - 1 - j) * 16 + OX, y2 = (W - 1 + j) * 8 + OY + 8;
-      g.fillStyle = e1; g.beginPath(); g.moveTo(x2, y2 + 8); g.lineTo(x2 + 16, y2); g.lineTo(x2 + 16, y2 + EDGE); g.lineTo(x2, y2 + 8 + EDGE); g.fill();
-    }
-    return { cv: cv, OX: OX, OY: OY };
+    g.fillStyle = hexA(m.pal.sky, 0.22); ring(0, M); g.fill('evenodd');
+    g.fillStyle = hexA(m.pal.sky, 0.28); ring(4, M); g.fill('evenodd');
+    g.fillStyle = hexA(m.pal.sky, 0.35); ring(7, M); g.fill('evenodd');
+    return { cv: cv, OX: OX, OY: OY, M: M };
   }
 
-  return { T: T, TW: TW, TH: TH, gen: { tokyo: genTokyo, osaka: genOsaka, lake: genLake, atoll: genAtoll, yokohama: genYokohama, nagoya: genNagoya, fuji: genFuji, fukuoka: genFukuoka, sapporo: genSapporo, shinjuku: genShinjuku, island: genIsland }, renderGround: renderGround, PAL: PAL, rng: rng };
+  return { T: T, TW: TW, TH: TH, gen: { tokyo: genTokyo, osaka: genOsaka, lake: genLake, atoll: genAtoll, yokohama: genYokohama, nagoya: genNagoya, fuji: genFuji, fukuoka: genFukuoka, sapporo: genSapporo, shinjuku: genShinjuku, island: genIsland }, renderGround: renderGround, decorate: decorate, PAL: PAL, rng: rng };
 })();

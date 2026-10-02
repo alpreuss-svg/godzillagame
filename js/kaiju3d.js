@@ -505,33 +505,79 @@
     r.outline('#5a5040');
     return r;
   }
+  // weiche Flügelformen aus kubischen Bézier-Kurven
+  function cub(s, n, out) {
+    for (var i = 0; i <= n; i++) {
+      var t = i / n, u = 1 - t;
+      out.push([u * u * u * s[0][0] + 3 * u * u * t * s[1][0] + 3 * u * t * t * s[2][0] + t * t * t * s[3][0],
+        u * u * u * s[0][1] + 3 * u * u * t * s[1][1] + 3 * u * t * t * s[2][1] + t * t * t * s[3][1]]);
+    }
+    return out;
+  }
+  function wingPts(segs, tf) { var p = []; segs.forEach(function (s) { cub(s, 12, p); }); return p.map(tf); }
+  function inset(pts, k) {
+    var cx = 0, cy = 0; pts.forEach(function (p) { cx += p[0]; cy += p[1]; }); cx /= pts.length; cy /= pts.length;
+    return pts.map(function (p) { return [cx + (p[0] - cx) * k, cy + (p[1] - cy) * k]; });
+  }
+  var MOTH = {
+    mothra: {
+      fore: [[[1, 13], [8, 3], [20, -1], [29, 3]], [[29, 3], [34, 6], [33, 15], [27, 18]], [[27, 18], [19, 21], [9, 20], [2, 19]]],
+      hind: [[[2, 19], [11, 19], [21, 22], [25, 28]], [[25, 28], [26, 35], [17, 40], [10, 37]], [[10, 37], [5, 34], [2, 28], [1, 21]]],
+      border: '#4a2410', base: '#eaa232', base2: '#d4801e', body: '#7a4e28', fur: '#f2e8cc', head: '#f0e6d0', eye: '#3ac8ff'
+    },
+    battra: {
+      fore: [[[1, 13], [8, 2], [22, -2], [32, 1]], [[32, 1], [30, 8], [31, 14], [24, 18]], [[24, 18], [17, 21], [9, 20], [2, 19]]],
+      hind: [[[2, 19], [12, 19], [22, 22], [26, 30]], [[26, 30], [22, 34], [18, 42], [11, 38]], [[11, 38], [5, 34], [2, 28], [1, 21]]],
+      border: '#0e0606', base: '#2e161a', base2: '#241014', body: '#1e1416', fur: '#3a2226', head: '#2a1a1c', eye: '#ff2a1a'
+    }
+  };
   function moth(f, battra) {
-    var k = 2.0, r = new R(60 * k + 2, 40 * k + 2); r.k = k; r.ox = 1; r.oy = 1;
-    var fl = f.atk ? 0 : [0, 1, 2, 1][f.stand ? 0 : f.phase || 0], sp = [1, 0.66, 0.32][fl], cx = 30;
-    var C = battra ? { w1: '#3a1c1c', w2: '#2a1414', s1: '#e8a020', s2: '#ff3a1a', s3: '#c83a1a', body: '#1e1416', head: '#2a1a1c', eye: '#ff2a1a' }
-      : { w1: '#e89a2a', w2: '#d07a1a', s1: '#5a3014', s2: '#ffe04a', s3: '#3a7ac8', body: '#6a4020', head: '#f0e8d0', eye: '#3ac8ff' };
-    function m(side, x) { return cx + side * x * sp; }
+    var k = 2.0, r = new R(66 * k + 2, 46 * k + 2); r.k = k; r.ox = 1; r.oy = 1 + 2 * k;
+    var C = battra ? MOTH.battra : MOTH.mothra;
+    var fl = f.atk ? 0 : [0, 1, 2, 1][f.stand ? 0 : f.phase || 0], sp = [1, 0.7, 0.38][fl], lift = [0, 2.5, 5][fl], cx = 33;
     [-1, 1].forEach(function (s) {
+      var tf = function (p) { return [cx + s * p[0] * sp, p[1] - lift * (p[0] / 30)]; };
+      var P = function (x, y) { return tf([x, y]); };
+      // Hinterflügel
+      r.layer = 0;
+      var hp = wingPts(C.hind, tf); r.poly(hp, C.border); r.poly(inset(hp, 0.8), C.base2);
+      // Vorderflügel
+      r.layer = 1;
+      var fp = wingPts(C.fore, tf); r.poly(fp, C.border); r.poly(inset(fp, 0.82), C.base);
       if (battra) {
-        r.poly([[m(s, 1), 14], [m(s, 10), 5], [m(s, 16), 7], [m(s, 26), 0], [m(s, 23), 9], [m(s, 28), 13], [m(s, 4), 19]], C.w1);
-        r.poly([[m(s, 1), 18], [m(s, 14), 22], [m(s, 20), 32], [m(s, 11), 28], [m(s, 2), 24]], C.w2);
-        r.line(m(s, 4), 14, m(s, 12), 9, C.s2); r.line(m(s, 12), 9, m(s, 16), 13, C.s2); r.line(m(s, 16), 13, m(s, 24), 6, C.s2);
-        r.ell(m(s, 12), 24, 2 * sp + 0.6, 1.6, C.s1);
+        var z = [P(4, 12), P(10, 7), P(14, 11), P(20, 5), P(24, 9), P(28, 4)];
+        for (var i = 1; i < z.length; i++) r.line(z[i - 1][0], z[i - 1][1], z[i][0], z[i][1], '#ff7a1a', 0.9);
+        r.ell(P(19, 14)[0], P(19, 14)[1], 2.2 * sp + 0.4, 1.6, '#d8301a');
+        r.ell(P(14, 30)[0], P(14, 30)[1], 3 * sp + 0.5, 2.4, '#b02018');
+        r.ell(P(14, 30)[0], P(14, 30)[1], 1.2 * sp + 0.3, 1, '#ffb030');
       } else {
-        r.poly([[m(s, 1), 14], [m(s, 22), 3], [m(s, 26), 12], [m(s, 4), 19]], C.w1);
-        r.poly([[m(s, 1), 18], [m(s, 18), 24], [m(s, 14), 31], [m(s, 2), 24]], C.w2);
-        r.ell(m(s, 16), 9, 3.4 * sp + 0.6, 2.6, C.s1); r.ell(m(s, 16), 9, 1.6 * sp + 0.4, 1.3, C.s2);
-        r.ell(m(s, 10), 23, 2.2 * sp + 0.5, 2, C.s3);
-        r.line(m(s, 3), 15, m(s, 24), 8, sh(C.w1, -0.25));
+        var e1 = P(19, 9); r.ell(e1[0], e1[1], 3.8 * sp + 0.5, 3, '#2a1408'); r.ell(e1[0], e1[1], 2.6 * sp + 0.4, 2, '#ffd84a'); r.ell(e1[0], e1[1], 1.1 * sp + 0.3, 0.9, '#3a7ac8');
+        var e2 = P(15, 30); r.ell(e2[0], e2[1], 3 * sp + 0.5, 2.5, '#2a1408'); r.ell(e2[0], e2[1], 1.8 * sp + 0.3, 1.5, '#e86a2a');
+        r.ell(P(8, 15)[0], P(8, 15)[1], 1.4 * sp + 0.3, 1.2, '#7a3a14');
       }
     });
-    r.layer = 1;
-    r.ell(cx, 17, 3, 10, C.body); r.ell(cx, 7.5, 3, 2.6, C.head);
-    if (battra) r.poly([[cx - 1, 6], [cx, -0.5], [cx + 1, 6]], C.s1);
-    r.shade2({ tex: (function () { var o = {}; o[C.body] = 0.3; return o; })(), seed: battra ? 6 : 2 });
-    r.dot(cx - 1.4, 7, C.eye); r.dot(cx + 1.4, 7, C.eye);
-    if (!battra) { r.line(cx - 1, 5, cx - 5, 0.5, C.head); r.line(cx + 1, 5, cx + 5, 0.5, C.head); }
-    if (f.atk) { r.ell(cx - 5, 1, 1.4, 1.4, '#ffffff'); r.ell(cx + 5, 1, 1.4, 1.4, '#ffffff'); }
+    r.layer = 3;
+    r.ell(cx, 25, 3.2, 11, C.body);
+    r.recolor(C.body, sh(C.body, -0.25), function (x, y) { return y % Math.round(3 * k) === 0; });
+    r.ell(cx, 12, 4.4, 4.2, C.fur);
+    r.ell(cx, 6.5, 3, 2.6, C.head);
+    if (battra) r.poly([[cx - 1.2, 5], [cx, -1.5], [cx + 1.2, 5]], '#e8a020');
+    var tx = {}; tx[C.base] = 0.12; tx[C.base2] = 0.12; tx[C.fur] = 0.3; tx[C.body] = 0.25;
+    r.shade2({ tex: tx, seed: battra ? 6 : 2 });
+    // Adern
+    [-1, 1].forEach(function (s) {
+      function P2(x, y) { return [cx + s * x * sp, y - lift * (x / 30)]; }
+      var a = P2(3, 14), b = P2(24, 6), c = P2(26, 15), d = P2(20, 30), vc = battra ? '#120808' : sh(C.base, -0.3);
+      r.line(a[0], a[1], b[0], b[1], vc); r.line(a[0], a[1], c[0], c[1], vc); r.line(a[0], a[1] + 5, d[0], d[1], vc);
+      if (!battra) for (var j = 0; j < 5; j++) { var w = P2(10 + j * 4.5, 1 + j * 0.4 + (j > 3 ? 2 : 0)); r.dot(w[0], w[1] + 0.8, '#fff6dc'); }
+    });
+    r.dot(cx - 1.4, 6.2, C.eye); r.dot(cx + 1.4, 6.2, C.eye);
+    // gefiederte Fühler
+    [-1, 1].forEach(function (s) {
+      r.line(cx + s, 4.5, cx + s * 6, -1.5, battra ? '#5a3030' : '#f0e6d0');
+      for (var q = 1; q < 4; q++) r.dot(cx + s * (1 + q * 1.4) - s * 0.6, 4 - q * 1.6 - 0.8, battra ? '#5a3030' : '#e0d4b8');
+    });
+    if (f.atk) { r.ell(cx - 6, -1.5, 1.4, 1.4, '#ffffff'); r.ell(cx + 6, -1.5, 1.4, 1.4, '#ffffff'); }
     r.outline(OUT);
     return r;
   }
@@ -540,9 +586,9 @@
   Sprites.reg('battraLarva', function () { return H.mkSet(function (f) { return larva(f, true); }, 36 * KL + 1, 30 * KL + 1, { mouth: { x: 40 * KL, y: -16 * KL } }); });
   Sprites.reg('mothraCocoon', function () { return H.mkSet(cocoon, 32 * KC + 1, 37 * KC + 1, { mouth: { x: 0, y: -12 * KC } }); });
   function mothSet(battra) {
-    var S = H.mkSet(function (f) { return moth(f, battra); }, 30 * K2 + 1, 32 * K2 + 1);
-    S.mouths = [{ x: -5 * K2, y: -31 * K2 }, { x: 5 * K2, y: -31 * K2 }];
-    S.mouth = { x: 0, y: -25 * K2 };
+    var S = H.mkSet(function (f) { return moth(f, battra); }, 33 * K2 + 1, 36 * K2 + 1);
+    S.mouths = [{ x: -6 * K2, y: -37.5 * K2 }, { x: 6 * K2, y: -37.5 * K2 }];
+    S.mouth = { x: 0, y: -30 * K2 };
     S.sym = true;
     return S;
   }

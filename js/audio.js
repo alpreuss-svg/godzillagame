@@ -30,6 +30,7 @@ var Sound = (function () {
     for (var c = 0; c < 2; c++) { var d = ir.getChannelData(c); for (var i = 0; i < len; i++) d[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / len, 3); }
     verb.buffer = ir;
     var vg = ctx.createGain(); vg.gain.value = 0.35; verb.connect(vg); vg.connect(comp);
+    setTimeout(function () { Object.keys(ROARS).forEach(function (k) { makeRoar(k); }); }, 300);
     noiseBuf = ctx.createBuffer(1, ctx.sampleRate, ctx.sampleRate);
     var nd = noiseBuf.getChannelData(0);
     for (i = 0; i < nd.length; i++) nd[i] = Math.random() * 2 - 1;
@@ -271,60 +272,100 @@ var Sound = (function () {
     return (curveCache = c);
   }
 
-  /* Kaiju-Schrei: "gestrichene Saite" mit Stick-Slip-Rauheit, Formanten, Verzerrung und Hall.
-     Typen: godzilla, mecha (metallisch), rodan (schrill), ghidorah (Triller), deep (tief/gurgelnd) */
-  function roar(kind, pitch) {
-    var t = ctx.currentTime, p = pitch || 1;
-    var cfg = {
-      godzilla: { pts: [[0, 230], [0.14, 470], [0.55, 560], [0.95, 520], [1.12, 420], [1.35, 480], [2.5, 250]], len: 2.6, am: 34, rough: 30 },
-      mecha: { pts: [[0, 300], [0.2, 620], [1.0, 560], [1.8, 300]], len: 1.9, am: 70, rough: 12, ring: 140 },
-      rodan: { pts: [[0, 600], [0.12, 1150], [0.7, 980], [1.2, 700]], len: 1.3, am: 45, rough: 40 },
-      ghidorah: { pts: [[0, 700], [0.1, 1300], [1.2, 1100], [1.6, 800]], len: 1.7, am: 16, rough: 20, trill: true },
-      deep: { pts: [[0, 110], [0.3, 190], [1.2, 160], [2.0, 80]], len: 2.1, am: 22, rough: 18 }
-    }[kind || 'godzilla'];
-    var len = cfg.len;
-    var mix = ctx.createGain(), am = ctx.createGain();
-    var o1 = ctx.createOscillator(), o2 = ctx.createOscillator(), o3 = ctx.createOscillator();
-    o1.type = 'sawtooth'; o2.type = 'square'; o3.type = 'sawtooth';
-    [o1, o2, o3].forEach(function (o, i) {
-      var mul = [1, 1.008, 0.5][i];
-      cfg.pts.forEach(function (pt, j) {
-        var f = pt[1] * p * mul;
-        if (j === 0) o.frequency.setValueAtTime(f, t); else o.frequency.linearRampToValueAtTime(f, t + pt[0]);
-      });
-    });
-    // Stick-Slip-Rauheit: Rauschen moduliert die Tonhöhe
-    var ns = ctx.createBufferSource(); ns.buffer = noiseBuf; ns.loop = true;
-    var nf = ctx.createBiquadFilter(); nf.type = 'lowpass'; nf.frequency.value = 90;
-    var ng = ctx.createGain(); ng.gain.value = cfg.rough * p;
-    ns.connect(nf); nf.connect(ng); ng.connect(o1.frequency); ng.connect(o2.frequency);
-    // Amplitudenrattern
-    var lfo = ctx.createOscillator(); lfo.type = cfg.trill ? 'square' : 'triangle'; lfo.frequency.value = cfg.am;
-    var lg = ctx.createGain(); lg.gain.value = cfg.trill ? 0.5 : 0.3;
-    am.gain.value = 0.7; lfo.connect(lg); lg.connect(am.gain);
-    o1.connect(mix); o2.connect(mix); var g3 = ctx.createGain(); g3.gain.value = 0.5; o3.connect(g3); g3.connect(mix);
-    var node = mix;
-    if (cfg.ring) {
-      var rm = ctx.createGain(); rm.gain.value = 0; var ro = ctx.createOscillator(); ro.frequency.value = cfg.ring;
-      ro.connect(rm.gain); mix.connect(rm); node = rm; ro.start(t); ro.stop(t + len + 0.1);
+  /* Kaiju-Schreie: Sample für Sample berechnet (keine Gleitton-Oszillatoren -> keine "Sirene").
+     Anregung = unregelmäßiger Impulszug wie eine mit Leder gestrichene Kontrabass-Saite (Stick-Slip):
+     zufällig schwankende Periode, gelegentliche Unterharmonische (Knurren), Rauhigkeit, Atemrauschen.
+     Danach Formantfilter (Rachen), Sättigung und Hüllkurve. Typen: godzilla, mecha, rodan, ghidorah, deep. */
+  var ROARS = {
+    godzilla: { len: 2.9, pts: [[0, 140], [0.14, 290], [0.4, 345], [0.95, 330], [1.18, 290], [1.32, 230], [1.46, 300], [2.1, 270], [2.9, 130]],
+      jit: 0.16, sub: 0.3, breath: 0.22, form: [[620, 5, 1], [1150, 6, 0.85], [2350, 7, 0.55], [3500, 8, 0.3]], drive: 2.6, grit: 0.45, gap: [1.24, 1.38] },
+    mecha: { len: 2.1, pts: [[0, 180], [0.2, 330], [1.2, 300], [2.1, 160]],
+      jit: 0.05, sub: 0.15, breath: 0.08, form: [[900, 12, 1], [1900, 14, 0.8], [3300, 14, 0.5]], drive: 3.2, grit: 0.25, ring: 155 },
+    rodan: { len: 1.5, pts: [[0, 420], [0.1, 760], [0.6, 700], [1.5, 420]],
+      jit: 0.12, sub: 0.1, breath: 0.3, form: [[1400, 6, 1], [2700, 7, 0.7], [4200, 8, 0.4]], drive: 2.2, grit: 0.35 },
+    ghidorah: { len: 1.9, pts: [[0, 520], [0.12, 880], [1.3, 780], [1.9, 560]],
+      jit: 0.08, sub: 0.05, breath: 0.15, form: [[1200, 8, 1], [2400, 9, 0.7], [3800, 9, 0.4]], drive: 2.4, grit: 0.2, gate: 13 },
+    deep: { len: 2.4, pts: [[0, 60], [0.3, 105], [1.5, 92], [2.4, 48]],
+      jit: 0.22, sub: 0.55, breath: 0.35, form: [[280, 5, 1], [640, 6, 0.8], [1300, 6, 0.45]], drive: 3, grit: 0.5 }
+  };
+  var roarBufs = {};
+  function contour(pts, t) {
+    for (var i = 1; i < pts.length; i++) if (t <= pts[i][0]) {
+      var a = pts[i - 1], b = pts[i], k = (t - a[0]) / (b[0] - a[0] || 1);
+      k = k * k * (3 - 2 * k);
+      return a[1] + (b[1] - a[1]) * k;
     }
-    var ws = ctx.createWaveShaper(); ws.curve = distCurve(); ws.oversample = '2x';
-    node.connect(am); am.connect(ws);
-    // Formanten (Rachenraum)
-    var env = ctx.createGain();
-    [[650, 5, 0.9], [1250, 6, 0.7], [2700, 7, 0.35]].forEach(function (fm) {
-      var bp = ctx.createBiquadFilter(); bp.type = 'bandpass'; bp.frequency.value = fm[0] * (0.7 + 0.3 * p); bp.Q.value = fm[1];
-      var bg = ctx.createGain(); bg.gain.value = fm[2] * 2.2; ws.connect(bp); bp.connect(bg); bg.connect(env);
-    });
-    var lp = ctx.createBiquadFilter(); lp.type = 'lowpass'; lp.frequency.value = 900; var lpg = ctx.createGain(); lpg.gain.value = 0.35;
-    ws.connect(lp); lp.connect(lpg); lpg.connect(env);
-    env.gain.setValueAtTime(0.0001, t); env.gain.linearRampToValueAtTime(0.5, t + 0.1);
-    env.gain.setValueAtTime(0.5, t + len * 0.4); env.gain.linearRampToValueAtTime(0.3, t + len * 0.44);
-    env.gain.linearRampToValueAtTime(0.45, t + len * 0.52); env.gain.linearRampToValueAtTime(0.0001, t + len);
-    env.connect(sfx);
-    var wg = ctx.createGain(); wg.gain.value = 0.6; env.connect(wg); wg.connect(verb);
-    [o1, o2, o3, ns, lfo].forEach(function (o) { o.start(t); o.stop(t + len + 0.1); });
-    noise(t, len * 0.9, 'bandpass', 1600 * p, 700 * p, 0.12, 1.2, 0.3); // Atemgeräusch
+    return pts[pts.length - 1][1];
+  }
+  function makeRoar(kind) {
+    if (roarBufs[kind]) return roarBufs[kind];
+    var C = ROARS[kind], sr = ctx.sampleRate, n = Math.floor(sr * C.len);
+    var buf = ctx.createBuffer(1, n, sr), out = buf.getChannelData(0);
+    var seed = 12345 + kind.length * 777;
+    function rnd() { seed = (seed * 1664525 + 1013904223) >>> 0; return seed / 4294967296; }
+    // Formant-Biquads (RBJ-Bandpass), Zustände pro Filter
+    var F = C.form.map(function (f) { return { f: f[0], q: f[1], g: f[2], x1: 0, x2: 0, y1: 0, y2: 0, b0: 0, b2: 0, a1: 0, a2: 0 }; });
+    function coef(fl, scale) {
+      var w = 2 * Math.PI * fl.f * scale / sr, al = Math.sin(w) / (2 * fl.q), a0 = 1 + al;
+      fl.b0 = al / a0; fl.b2 = -al / a0; fl.a1 = -2 * Math.cos(w) / a0; fl.a2 = (1 - al) / a0;
+    }
+    var next = 0, pulseAmp = 0, flip = 0, lp = 0, rough = 0, peak = 0.0001, f0 = C.pts[0][1];
+    for (var i = 0; i < n; i++) {
+      var t = i / sr;
+      if ((i & 63) === 0) {
+        f0 = contour(C.pts, t);
+        var sc = 0.85 + 0.3 * (f0 - C.pts[0][1]) / (C.pts[1][1] - C.pts[0][1] + 1); // Rachen öffnet sich mit der Tonhöhe
+        sc = Math.max(0.8, Math.min(1.25, sc));
+        F.forEach(function (fl) { coef(fl, sc); });
+        rough += (rnd() - 0.5) * 0.4; rough *= 0.9;
+      }
+      // Stick-Slip-Impulse mit zufälliger Periode
+      var ex = 0;
+      if (i >= next) {
+        flip = 1 - flip;
+        var per = sr / (f0 * (1 + rough * 0.15)) * (1 + (rnd() - 0.5) * C.jit);
+        if (rnd() < C.sub && flip) per *= 2; // Unterharmonische -> Knurren
+        next = i + Math.max(8, per);
+        pulseAmp = 0.7 + rnd() * 0.6;
+        ex = pulseAmp;
+      }
+      // Reibung zwischen den Impulsen + Atem
+      var nz = rnd() * 2 - 1;
+      lp += (nz - lp) * 0.25;
+      ex += lp * C.grit * (0.4 + pulseAmp * 0.6) + nz * C.breath * 0.35;
+      pulseAmp *= 0.9993;
+      // Formanten
+      var y = 0;
+      for (var k = 0; k < F.length; k++) {
+        var fl = F[k], yo = fl.b0 * ex + fl.b2 * fl.x2 - fl.a1 * fl.y1 - fl.a2 * fl.y2;
+        fl.x2 = fl.x1; fl.x1 = ex; fl.y2 = fl.y1; fl.y1 = yo;
+        y += yo * fl.g;
+      }
+      if (C.ring) y *= 0.55 + 0.45 * Math.sin(2 * Math.PI * C.ring * t);
+      if (C.gate) y *= 0.35 + 0.65 * (Math.sin(2 * Math.PI * C.gate * t) > -0.2 ? 1 : 0);
+      // Hüllkurve: Einsatz, zweiteiliger Schrei, Ausklang
+      var env = Math.min(1, t / 0.12) * Math.min(1, (C.len - t) / (C.len * 0.35));
+      if (C.gap && t > C.gap[0] && t < C.gap[1]) env *= 0.45 + 0.55 * Math.abs((t - (C.gap[0] + C.gap[1]) / 2) / ((C.gap[1] - C.gap[0]) / 2));
+      env *= 0.85 + 0.15 * Math.sin(t * 2 * Math.PI * 6.3 + rough * 3);
+      y = Math.tanh(y * C.drive * 6) * env;
+      out[i] = y;
+      if (Math.abs(y) > peak) peak = Math.abs(y);
+    }
+    for (i = 0; i < n; i++) out[i] *= 0.9 / peak;
+    roarBufs[kind] = buf;
+    return buf;
+  }
+  function roar(kind, pitch) {
+    kind = ROARS[kind] ? kind : 'godzilla';
+    var t = ctx.currentTime, src = ctx.createBufferSource(), g = ctx.createGain(), hp = ctx.createBiquadFilter();
+    src.buffer = makeRoar(kind);
+    src.playbackRate.value = pitch || 1;
+    hp.type = 'highpass'; hp.frequency.value = 50;
+    g.gain.value = 0.85;
+    src.connect(hp); hp.connect(g); g.connect(sfx);
+    var w = ctx.createGain(); w.gain.value = 0.55; g.connect(w); w.connect(verb);
+    src.start(t);
+    if (kind === 'godzilla' || kind === 'deep') sweep('sine', t, 0.6, 70, 35, 0.35); // Bauchresonanz
   }
 
   var fx = {

@@ -77,7 +77,7 @@
         { t: 'volley', min: 4, max: 14, w: 0.35, dur: 1.3, n: 6, proj: 'missile', dmg: 3, spd: 4 }]
     },
     biolante: {
-      name: 'BIOLANTE', hp: 360, r: 2.3, speed: 0.45, pref: 0, home: true, emerge: true, cd: [1.2, 2.2], roar: ['deep', 0.8], atk: [
+      name: 'BIOLANTE', hp: 380, r: 2.8, speed: 0.45, pref: 0, home: true, emerge: true, cd: [1.2, 2.2], roar: ['deep', 0.8], atk: [
         { t: 'melee', max: 4.6, w: 0.55, dur: 0.9, dmg: 12, kb: 1.2 },
         { t: 'marks', min: 0, max: 14, w: 0.6, dur: 0.8, n: 3, mark: 'vine', dmg: 9 },
         { t: 'lob', min: 3, max: 13, w: 0.35, dur: 1.0, n: 5, proj: 'sap', dmg: 6 }]
@@ -169,17 +169,17 @@
   var LEVELS = [
     { id: 'tokyo', name: 'TOKIO', sub: 'HAFENVIERTEL BEI NACHT', enc: [['kamacuras'], ['kamacuras', 'kamacuras'], ['mecha']], music: 'stage',
       text: ['MECHAGODZILLA WURDE IN DER', 'BUCHT VON TOKIO GESICHTET.', 'VORHER SCHWÄRMEN RIESIGE', 'GOTTESANBETERINNEN AUS...'] },
-    { id: 'osaka', name: 'OSAKA', sub: 'DIE BURG AM YODO-FLUSS', enc: [['anguirus'], ['gigan']], music: 'stage',
-      text: ['WIE 1955: ANGUIRUS WILL', 'OSAKA FÜR SICH.', 'UND AUS DEM ALL KOMMT', 'DER CYBORG GIGAN!'] },
+    { id: 'osaka', name: 'OSAKA', sub: 'MIT ANGUIRUS AN DEINER SEITE', enc: [['kamacuras', 'kamacuras'], ['gigan']], music: 'stage', ally: 'anguirus',
+      text: ['DEIN ALTER FREUND ANGUIRUS', 'KÄMPFT MIT DIR GEGEN DEN', 'CYBORG GIGAN AUS DEM ALL.', 'VERBÜNDETE TRIFFST DU NIE!'] },
     { id: 'lake', name: 'ASHINO-SEE', sub: 'HAKONE IN DER ABENDDÄMMERUNG', enc: [['kumonga'], ['biolante']], music: 'stage',
       text: ['EINE RIESENSPINNE BEWACHT', 'DAS UFER. IM SEE LAUERT', 'BIOLANTE - GEBOREN AUS', 'GODZILLAS ZELLEN.'] },
     { id: 'atoll', name: 'LETCHI-ATOLL', sub: 'SÜDSEE, 1966', enc: [['ebirah'], ['ebirah', 'kamacuras'], ['megalon']], music: 'island',
       text: ['IM ATOLL LAUERT EBIRAH,', 'DER RIESENHUMMER.', 'AUS DEM UNTERWASSERREICH', 'SEATOPIA STEIGT MEGALON!'] },
     { id: 'yokohama', name: 'YOKOHAMA', sub: 'INDUSTRIEHAFEN IM SMOG', enc: [['kamacuras', 'kumonga'], ['hedorah']], music: 'stage',
       text: ['DER SMOG DER FABRIKEN HAT', 'EIN MONSTER GEBOREN:', 'HEDORAH, DAS SMOGMONSTER.', 'VORSICHT VOR GIFTWOLKEN!'] },
-    { id: 'nagoya', name: 'NAGOYA', sub: 'DIE SCHUTZGÖTTIN DER ERDE', enc: [['battraLarva'], ['mothraLarva']], music: 'stage',
-      text: ['BATTRA, DER SCHWARZE MOTTEN-', 'KRIEGER, IST ERWACHT. UND', 'MOTHRA KRIECHT HERAN -', 'SIE WIRD SICH VERPUPPEN!'] },
-    { id: 'fuji', name: 'BERG FUJI', sub: 'DÖRFER AM HEILIGEN BERG', enc: [['rodan'], ['anguirus', 'rodan'], ['ghidorah']], music: 'stage',
+    { id: 'nagoya', name: 'NAGOYA', sub: 'MIT MOTHRA AN DEINER SEITE', enc: [['kumonga'], ['battraLarva']], music: 'stage', ally: 'mothraImago',
+      text: ['MOTHRA, DIE SCHUTZGÖTTIN,', 'FLIEGT AN DEINER SEITE.', 'IHR SCHWARZER RIVALE BATTRA', 'WIRD SICH VERWANDELN!'] },
+    { id: 'fuji', name: 'BERG FUJI', sub: 'DÖRFER AM HEILIGEN BERG', enc: [['rodan'], ['rodan', 'kamacuras'], ['ghidorah']], music: 'stage',
       text: ['RODAN KREIST ÜBER DEM FUJI.', 'DANACH LANDET DER', 'DREIKÖPFIGE DRACHE', 'KING GHIDORAH!'] },
     { id: 'fukuoka', name: 'FUKUOKA', sub: 'DIE KRISTALLSTADT', enc: [['moguera'], ['spacegodzilla']], music: 'stage',
       text: ['SPACEGODZILLA KOMMT AUS', 'DEM ALL. SEINE KRISTALL-', 'TÜRME GEBEN IHM ENERGIE -', 'ZERSTÖRE SIE ZUERST!'] },
@@ -239,7 +239,7 @@
       }
     } else if (c === 'MOTHRA') {
       if (G.state === 'play' && !L.mothraUsed) {
-        if (L.def.id === 'nagoya') toast('MOTHRA KÄMPFT HEUTE GEGEN DICH!', '#ffb84a');
+        if (L.def.ally === 'mothraImago') toast('MOTHRA IST SCHON AN DEINER SEITE!', '#ffb84a');
         else { L.mothraUsed = true; summonMothra(); }
       }
     } else if (c === 'TANZ') {
@@ -258,7 +258,9 @@
     G.lvl = i; G.levelStartScore = G.score;
     var def = LEVELS[i], gen = World.gen[def.id](), m = gen.map;
     if (gen.island) m.b.push({ x: 15.5, y: 15.5, spr: { img: SPR.volcano, ax: 60, ay: 56, h: 56 }, hp: 1e9, max: 1e9, score: 0, r: 1.8, dead: false, burn: 0, kind: 'deco', tall: 56, flash: 0 });
+    m.b = m.b.concat(World.decorate(m)); // Kulisse rund um das Spielfeld
     sortB(m);
+    if (def.ally) SPR[def.ally];
     // Sprites aller Gegner dieses Levels (inkl. Verwandlungen) jetzt erzeugen
     def.enc.forEach(function (e) { e.forEach(function (t) { chainOf(t).forEach(function (u) { return SPR[u]; }); }); });
     var set = G.mini ? SPR.minilla : SPR.godzilla;
@@ -267,9 +269,9 @@
       p: {
         x: gen.start[0], y: gen.start[1], z: 0, dir: [0.7071, -0.7071], face: 1, r: G.mini ? 0.6 : 0.95, hp: 100, en: 100, anim: 0,
         atk: 0, atkT: 0, atkKind: '', atkHit: true, atkCd: 0, combo: 0, comboT: 0, breathing: false, btick: 0, roarCd: 0, roarT: 0,
-        inv: 0, flash: 0, dead: false, deathT: 0, dance: 0, set: set, moving: false, calm: 5, slow: 0, rage: 0, view: 'side', charge: null
+        inv: 0, flash: 0, dead: false, deathT: 0, dance: 0, set: set, moving: false, calm: 5, slow: 0, rage: 0, view: 'side', charge: null, emerge: gen.seaStart ? 58 : 0
       },
-      mons: [], enc: def.enc.map(function (a) { return a.slice(); }), encIdx: 0, encTimer: def.secret ? 3 : 14, warn: 0,
+      mons: [], allies: [], allyDone: false, barrier: null, enc: def.enc.map(function (a) { return a.slice(); }), encIdx: 0, encTimer: def.secret ? 3 : 14, warn: 0,
       units: [], proj: [], fx: [], parts: [], marks: [], toasts: [], nums: [], items: [], cars: [], people: [],
       spawnT: 3, jetT: 9, carT: 2, shake: 0, hurtFlash: 0, camX: 0, camY: 0, sx: 0, sy: 0,
       llama: { x: gen.llama[0], y: gen.llama[1], hx: gen.llama[0], hy: gen.llama[1], t: 0, vx: 0, vy: 0, alive: true, face: 1 },
@@ -278,8 +280,11 @@
     initTraffic();
     if (gen.snow) for (var sn = 0; sn < (Q() ? 90 : 35); sn++) L.snow.push([Math.random() * W, Math.random() * H, rnd(0.5, 1.5)]);
     // Minikarte einmalig verkleinert vorrendern
+    var c0 = gpos(0, 0), c1 = gpos(m.W, 0), c2 = gpos(m.W, m.H), c3 = gpos(0, m.H);
+    L.bounds = { left: c3[0], right: c1[0], top: c0[1], bottom: c2[1] };
     L.mini = document.createElement('canvas'); L.mini.width = 92; L.mini.height = 48;
-    var mg = L.mini.getContext('2d'); mg.drawImage(L.ground.cv, 0, 0, 92, 48);
+    var mg = L.mini.getContext('2d'), Bd = L.bounds;
+    mg.drawImage(L.ground.cv, Bd.left, Bd.top, Bd.right - Bd.left, Bd.bottom - Bd.top, 0, 0, 92, 48);
     var gp = gpos(L.p.x, L.p.y); L.camX = gp[0]; L.camY = gp[1] - 30;
     G.state = 'intro'; G.t = 0;
     Sound.play('title');
@@ -389,9 +394,13 @@
     if (p.hp <= 0) { p.hp = 0; p.dead = true; p.deathT = 0; p.breathing = false; Sound.breath(false); Sound.sfx('roar', { kind: 'godzilla', pitch: 0.6 }); Sound.stop(); }
   }
   function clampPos(e) {
-    var m = L.map;
+    var m = L.map, x = e.x, y = e.y;
     e.x = Math.max(0.5, Math.min(m.W - 0.5, e.x));
     e.y = Math.max(0.5, Math.min(m.H - 0.5, e.y));
+    // unsichtbare Wand: kurz aufschimmern lassen, wenn Godzilla dagegen läuft
+    if (e === L.p && (x !== e.x || y !== e.y) && (!L.barrier || L.barrier.t < 0.3)) {
+      L.barrier = { t: 0.6, x: e.x, y: e.y, ex: x !== e.x ? (x < e.x ? 0 : m.W) : null, ey: y !== e.y ? (y < e.y ? 0 : m.H) : null };
+    }
   }
 
   /* ================= Monster ================= */
@@ -481,11 +490,53 @@
     if (ax > 0.15) e.face = sdx > 0 ? 1 : -1;
   }
 
+  /* ---------- Teams: Gegner greifen Godzilla & Verbündete an, Verbündete greifen Gegner an ---------- */
+  function isAlly(m) { return m.team === 'ally'; }
+  function foesOf(m) {
+    if (isAlly(m)) return L.mons.filter(function (e) { return !e.dead && e.enter <= 0 && !e.def.cocoon; });
+    var t = []; if (!L.p.dead) t.push(L.p);
+    L.allies.forEach(function (a) { if (!a.dead && a.enter <= 0) t.push(a); });
+    return t;
+  }
+  function pickTarget(m) {
+    var best = null, bd = 1e9;
+    foesOf(m).forEach(function (t) { var d = dist(t.x, t.y, m.x, m.y) * (t === L.p ? 0.8 : 1); if (d < bd) { bd = d; best = t; } });
+    return best;
+  }
+  function hitTarget(m, T, dmg, kx, ky) {
+    if (T === L.p) hurtPlayer(dmg, kx, ky);
+    else if (isAlly(T)) hurtAlly(T, dmg);
+    else damageMon(T, dmg);
+  }
+  function hurtAlly(a, dmg) {
+    if (a.dead || a.inv > 0) return;
+    dmg *= 0.7 * DIFF[save.opt.diff].dmg;
+    a.inv = 0.3; a.hp -= dmg; a.flash = 0.12; a.calm = 0;
+    num(a.x, a.y, 50 + a.z, '-' + Math.round(dmg), '#ffb0b0');
+    if (a.hp <= 0) {
+      a.hp = 0; a.dead = true; a.deathT = 0; a.act = null;
+      toast(a.def.name + ' IST ERSCHÖPFT UND ZIEHT SICH ZURÜCK!', '#ffb84a', 3);
+      Sound.sfx('roar', { kind: a.def.roar[0], pitch: a.def.roar[1] * 0.8 });
+    }
+  }
+  function spawnAlly(type) {
+    var p = L.p, d = MON[type];
+    var a = makeMon(type, false, 0, 1);
+    a.team = 'ally'; a.home = null; a.calm = 0;
+    if (d.fly || d.phases) { a.x = Math.max(1, p.x - 4); a.y = Math.min(L.map.H - 1, p.y + 4); a.z = 110; }
+    else { a.x = Math.max(1, Math.min(L.map.W - 1, p.x - 6)); a.y = Math.max(1, Math.min(L.map.H - 1, p.y + 3)); a.z = 0; a.enter = 1.5; }
+    L.allies.push(a);
+    Sound.sfx('roar', { kind: d.roar[0], pitch: d.roar[1] });
+    toast(d.name + ' KÄMPFT AN DEINER SEITE!', '#7aff7a', 4);
+  }
+
   function updateMon(m, dt) {
-    var p = L.p, d = m.def;
+    var p = L.p, d = m.def, ally = isAlly(m);
     m.flash = Math.max(0, m.flash - dt);
+    if (m.inv > 0) m.inv -= dt;
     if (m.dead) {
       m.deathT += dt;
+      if (ally) { m.z += 45 * dt; if (!d.fly) m.x -= dt * 2; return; } // Verbündeter zieht sich zurück
       if ((d.fly || d.phases) && m.z > 0) m.z = Math.max(0, m.z - 70 * dt);
       else m.z -= dt * 16;
       if (Math.random() < 0.3) explode(m.x + rnd(-1, 1), m.y + rnd(-1, 1), rnd(10, 40) + Math.max(0, m.z), Math.random() < 0.3);
@@ -494,15 +545,17 @@
     if (m.enter > 0) {
       m.enter -= dt;
       if (d.emerge) m.z = Math.min(0, -80 * (m.enter / 2.5));
-      else if (d.fly || d.phases) m.z = (d.fly || 34) + (110 - (d.fly || 34)) * (m.enter / 2.5);
+      else if (d.fly || d.phases) m.z = (d.fly || 34) + (110 - (d.fly || 34)) * Math.max(0, m.enter / 2.5);
       else moveToward(m, p.x, p.y, d.speed * dt);
       if (Math.random() < 0.2) L.shake = Math.max(L.shake, 0.1);
       m.anim += dt * 4;
       return;
     }
     if (m.shield > 0) m.shield -= dt;
-    var dx = p.x - m.x, dy = p.y - m.y, dd = Math.sqrt(dx * dx + dy * dy) || 0.01;
-    // Blickrichtung (Seite / Front / Rücken) mit Hysterese
+    if (ally) { m.calm = (m.calm || 0) + dt; if (m.calm > 4) m.hp = Math.min(m.max, m.hp + 2 * dt); }
+    var T = pickTarget(m), idle = !T;
+    if (idle) T = p;
+    var dx = T.x - m.x, dy = T.y - m.y, dd = Math.sqrt(dx * dx + dy * dy) || 0.01;
     if (!m.act || m.act.a.t !== 'charge') updateView(m, dx, dy);
     if (d.cocoon) {
       m.cocoonT -= dt; m.anim = 0;
@@ -513,12 +566,11 @@
     if (d.crystals && L.crystalsLeft > 0 && m.hp < m.max) m.hp = Math.min(m.max, m.hp + L.crystalsLeft * 1.6 * dt);
     if (m.act && m.act.a.t === 'charge' && m.act.t > m.act.a.w) { m.trail = m.trail || []; m.trail.unshift([m.x, m.y, m.z]); if (m.trail.length > 4) m.trail.pop(); } else m.trail = null;
     if (m.stun > 0) { m.stun -= dt; return; }
-    // Flugphasen
     if (d.phases) {
       m.phaseT -= dt;
       if (m.phaseT <= 0 && !m.act) {
         m.phase = m.phase === 'air' ? 'ground' : 'air'; m.phaseT = m.phase === 'air' ? 8 : 6;
-        if (m.phase === 'ground') toast(d.name + ' LANDET!', '#ffe04a');
+        if (m.phase === 'ground' && !ally) toast(d.name + ' LANDET!', '#ffe04a');
       }
       var tz = m.phase === 'air' ? 34 : 0;
       m.z += (tz - m.z) * Math.min(1, dt * 2);
@@ -526,14 +578,12 @@
       var fz = (m.act && m.act.a.swoop && m.act.t > m.act.a.w) ? 6 : d.fly;
       m.z += (fz - m.z) * Math.min(1, dt * 4);
     }
-    if (!m.act || m.act.a.t !== 'charge') {
-      var sdx = dx - dy; if (Math.abs(sdx) > 0.2) m.face = sdx > 0 ? 1 : -1;
-    }
-    // Überlappung
-    if (!inAir(m) && dd < m.r + p.r) {
-      var push = (m.r + p.r - dd);
-      p.x += dx / dd * push * 0.7; p.y += dy / dd * push * 0.7; clampPos(p);
-      if (!d.home) { m.x -= dx / dd * push * 0.3; m.y -= dy / dd * push * 0.3; }
+    // nicht mit Godzilla überlappen (Verbündete weichen sanft aus)
+    var pdx = p.x - m.x, pdy = p.y - m.y, pdd = Math.sqrt(pdx * pdx + pdy * pdy) || 0.01;
+    if (!inAir(m) && pdd < m.r + p.r && !p.dead) {
+      var push = (m.r + p.r - pdd);
+      if (!ally) { p.x += pdx / pdd * push * 0.7; p.y += pdy / pdd * push * 0.7; clampPos(p); }
+      if (!d.home) { m.x -= pdx / pdd * push * (ally ? 1 : 0.3); m.y -= pdy / pdd * push * (ally ? 1 : 0.3); }
     }
     if (!inAir(m)) buildingsNear(m.x, m.y, m.r * 0.7, function (bl) { damageBuilding(bl, 150 * dt, false); });
     if (d.shield && m.hp < m.max / 2) {
@@ -541,71 +591,80 @@
       if (m.shieldCd <= 0) { m.shield = 3.5; m.shieldCd = 12; toast(d.name + ': SPIEGELSCHILD!', '#8fe8ff'); Sound.sfx('zap'); }
     }
     if (!m.act) {
-      // Bewegung
+      if (idle) { // Verbündeter ohne Gegner: Godzilla begleiten
+        if (dd > 4) moveToward(m, p.x - 2.5, p.y + 2.5, d.speed * dt); else m.anim += dt;
+        clampPos(m); return;
+      }
       if (d.phases && m.phase === 'air') {
         m.ang += dt * 0.45;
-        moveToward(m, p.x + Math.cos(m.ang) * 6, p.y + Math.sin(m.ang) * 6, d.speed * dt);
+        moveToward(m, T.x + Math.cos(m.ang) * 6, T.y + Math.sin(m.ang) * 6, d.speed * dt);
       } else if (d.fly) {
         m.ang += dt * 0.6;
-        moveToward(m, p.x + Math.cos(m.ang) * d.pref, p.y + Math.sin(m.ang) * d.pref, d.speed * dt);
-      } else if (dd > d.pref) moveToward(m, p.x, p.y, (d.phases ? 1.8 : d.speed) * dt);
+        moveToward(m, T.x + Math.cos(m.ang) * d.pref, T.y + Math.sin(m.ang) * d.pref, d.speed * dt);
+      } else if (dd > d.pref) moveToward(m, T.x, T.y, (d.phases ? 1.8 : d.speed) * dt);
       else if (dd < d.pref - 1.5 && d.pref > 3) moveToward(m, m.x - dx, m.y - dy, d.speed * 0.6 * dt);
       else m.anim += dt * 1.5;
       if (m.home) {
         var hd = dist(m.x, m.y, m.home[0], m.home[1]);
         if (hd > m.home[2]) { m.x = m.home[0] + (m.x - m.home[0]) / hd * m.home[2]; m.y = m.home[1] + (m.y - m.home[1]) / hd * m.home[2]; }
       }
-      if (dd < 12) m.cd -= dt * (m.hp < m.max / 2 ? 1.35 : 1);
-      if (m.cd <= 0 && !p.dead) {
+      if (dd < 12) m.cd -= dt * (m.hp < m.max / 2 ? 1.35 : 1) * (ally ? 1.15 : 1);
+      if (m.cd <= 0) {
         var opts = d.atk.filter(function (a) {
           if (dd < (a.min || 0) || dd > a.max) return false;
           if (a.ground && inAir(m)) return false;
           if (a.air && !inAir(m)) return false;
           if (a.t === 'melee' && inAir(m)) return false;
+          if (ally && a.t === 'gust') return false;
           return true;
         });
         if (opts.length) {
           var a = opts[Math.floor(Math.random() * opts.length)];
-          m.act = { a: a, t: 0, fired: 0, tx: p.x, ty: p.y, dx: dx / dd, dy: dy / dd, hitDone: false };
+          m.act = { a: a, t: 0, fired: 0, T: T, tx: T.x, ty: T.y, dx: dx / dd, dy: dy / dd, hitDone: false };
           if (a.t === 'marks') {
-            for (var i = 0; i < a.n; i++) L.marks.push({ x: p.x + (i ? rnd(-2, 2) : 0), y: p.y + (i ? rnd(-2, 2) : 0), r: a.mark === 'smog' ? 1.4 : a.mark === 'powder' ? 1.5 : 1.1, t: 0, dur: 1.0, kind: a.mark, dmg: a.dmg });
+            for (var i = 0; i < a.n; i++) L.marks.push({ x: T.x + (i ? rnd(-2, 2) : 0), y: T.y + (i ? rnd(-2, 2) : 0), r: a.mark === 'smog' ? 1.4 : a.mark === 'powder' ? 1.5 : 1.1, t: 0, dur: 1.0, kind: a.mark, dmg: a.dmg, team: m.team || 'enemy' });
           }
           m.cd = rnd(d.cd[0], d.cd[1]);
         } else m.cd = 0.3;
       }
-    } else runAct(m, dt, dd, dx, dy);
+    } else runAct(m, dt);
     clampPos(m);
   }
 
-  function runAct(m, dt, dd, dx, dy) {
-    var A = m.act, a = A.a, p = L.p;
+  function runAct(m, dt) {
+    var A = m.act, a = A.a, ally = isAlly(m);
+    if (!A.T || A.T.dead) A.T = pickTarget(m) || L.p;
+    var T = A.T, dx = T.x - m.x, dy = T.y - m.y, dd = Math.sqrt(dx * dx + dy * dy) || 0.01;
     A.t += dt;
     var fire = A.t >= a.w && !A.fired;
     if (a.t === 'melee') {
       if (fire) {
         A.fired = 1; Sound.sfx('swing');
-        L.fx.push({ k: 'swoosh', x0: m.x + A.dx * 1.2, y0: m.y + A.dy * 1.2, z: 30, dir: m.face, life: 0.18, max: 0.18, col: '#ffb0a0' });
-        if (dd < a.max + 0.4) { hurtPlayer(a.dmg, dx / dd * a.kb, dy / dd * a.kb); spark(p.x, p.y, 35, true); G.hitstop = 0.06; }
+        L.fx.push({ k: 'swoosh', x0: m.x + A.dx * 1.2, y0: m.y + A.dy * 1.2, z: 30, dir: m.face, life: 0.18, max: 0.18, col: ally ? '#b0ffb0' : '#ffb0a0' });
+        if (dd < a.max + 0.4) { hitTarget(m, T, a.dmg, dx / dd * a.kb, dy / dd * a.kb); spark(T.x, T.y, 35, true); if (T === L.p) G.hitstop = 0.06; }
       }
     } else if (a.t === 'charge') {
       if (A.t > a.w && A.t < a.dur) {
-        if (!A.fired) { A.fired = 1; Sound.sfx('whip'); }
+        if (!A.fired) { A.fired = 1; Sound.sfx('whip'); A.hit = []; }
         m.x += A.dx * a.spd * dt; m.y += A.dy * a.spd * dt; m.anim += dt * 12;
         if (Math.random() < 0.5) smoke(m.x, m.y, 2, 1);
         buildingsNear(m.x, m.y, m.r, function (bl) { damageBuilding(bl, 300 * dt, false); });
-        if (!A.hitDone && dist(m.x, m.y, p.x, p.y) < m.r + p.r + 0.2) {
-          A.hitDone = true; hurtPlayer(a.dmg, A.dx * 1.4, A.dy * 1.4); spark(p.x, p.y, 30, true); G.hitstop = 0.07; Sound.sfx('heavy');
-        }
+        foesOf(m).forEach(function (v) {
+          if (A.hit.indexOf(v) < 0 && dist(m.x, m.y, v.x, v.y) < m.r + v.r + 0.2) {
+            A.hit.push(v); hitTarget(m, v, a.dmg, A.dx * 1.4, A.dy * 1.4); spark(v.x, v.y, 30, true); Sound.sfx('heavy');
+            if (v === L.p) G.hitstop = 0.07;
+          }
+        });
       }
     } else if (a.t === 'beam') {
       var tx = m.x + (A.tx - m.x) * 1.7, ty = m.y + (A.ty - m.y) * 1.7;
       if (fire) {
         A.fired = 1; Sound.sfx(a.beam === 'grav' ? 'zap' : 'laser');
-        var heads = a.heads || 1;
+        var heads = a.heads || 1, victims = foesOf(m);
         for (var h = 0; h < heads; h++) {
           var ox = h ? rnd(-1.8, 1.8) : 0, oy = h ? rnd(-1.8, 1.8) : 0, ex = tx + ox, ey = ty + oy;
           L.fx.push({ k: 'beam', style: a.beam, x0: m.x, y0: m.y, x1: ex, y1: ey, life: 0.45, max: 0.45, src: m, head: h });
-          if (segDist(p.x, p.y, m.x, m.y, ex, ey) < 0.9) hurtPlayer(a.dmg);
+          victims.forEach(function (v) { if (segDist(v.x, v.y, m.x, m.y, ex, ey) < 0.9 + (v.r || 0) * 0.3) hitTarget(m, v, a.dmg); });
           for (var s = 2; s <= 12; s++) { var bl = L.map.occ[Math.floor(m.x + (ex - m.x) * s / 12) + ',' + Math.floor(m.y + (ey - m.y) * s / 12)]; if (bl) damageBuilding(bl, 60, false); }
           if (a.beam === 'grav') explode(ex, ey, 2, false);
         }
@@ -614,17 +673,17 @@
       while (A.t > a.w && A.fired < a.n && A.t > a.w + A.fired * 0.14) {
         A.fired++;
         Sound.sfx(a.t === 'lob' ? 'splat' : 'shot');
-        var mo = m.set.mouth || { x: 0, y: -30 };
-        if (a.t === 'lob') L.proj.push({ kind: a.proj, sx: m.x, sy: m.y, x: m.x, y: m.y, z: 40, tx: p.x + rnd(-1.6, 1.6), ty: p.y + rnd(-1.6, 1.6), t: 0, dur: 1.1, from: 'e', dmg: a.dmg, life: 2 });
+        var mo = m.set.mouth || { x: 0, y: -30 }, from = ally ? 'a' : 'e';
+        if (a.t === 'lob') L.proj.push({ kind: a.proj, sx: m.x, sy: m.y, x: m.x, y: m.y, z: 40, tx: T.x + rnd(-1.6, 1.6), ty: T.y + rnd(-1.6, 1.6), t: 0, dur: 1.1, from: from, dmg: a.dmg, life: 2 });
         else {
           var ang = Math.atan2(dy, dx) + (a.n > 1 ? rnd(-0.5, 0.5) : 0) + (a.proj === 'missile' ? rnd(-0.8, 0.8) : 0);
-          L.proj.push({ kind: a.proj, x: m.x, y: m.y, z: Math.max(20, -mo.y * 0.8) + Math.max(0, m.z), vx: Math.cos(ang) * a.spd, vy: Math.sin(ang) * a.spd, life: 3, from: 'e', dmg: a.dmg });
+          L.proj.push({ kind: a.proj, x: m.x, y: m.y, z: Math.max(20, -mo.y * 0.8) + Math.max(0, m.z), vx: Math.cos(ang) * a.spd, vy: Math.sin(ang) * a.spd, life: 3, from: from, dmg: a.dmg, tgt: T });
         }
       }
     } else if (a.t === 'gust') {
-      if (A.t > a.w) {
-        p.x += dx / dd * 3.2 * dt; p.y += dy / dd * 3.2 * dt; clampPos(p);
-        if (Math.random() < 0.6) particles(p.x + rnd(-1, 1), p.y + rnd(-1, 1), 10, 1, ['#dde', '#fff'], 2, 0.4, 0, 1);
+      if (A.t > a.w && T === L.p) {
+        T.x += dx / dd * 3.2 * dt; T.y += dy / dd * 3.2 * dt; clampPos(T);
+        if (Math.random() < 0.6) particles(T.x + rnd(-1, 1), T.y + rnd(-1, 1), 10, 1, ['#dde', '#fff'], 2, 0.4, 0, 1);
         if (!A.fired) { A.fired = 1; Sound.sfx('whip'); }
       }
     }
@@ -666,6 +725,16 @@
       if (p.dance <= 0) p.z = 0;
       return;
     }
+    // Auftauchen aus dem Meer & Waten (nie wieder tief versinken)
+    var wt = L.map.at(p.x, p.y), deepW = wt === T.DEEP, wet = deepW || wt === T.WATER;
+    if (p.emerge > 0) {
+      p.emerge = Math.max(0, p.emerge - dt * (p.moving ? 17 : 5));
+      if (Math.random() < 0.6) particles(p.x + rnd(-0.6, 0.6), p.y + rnd(-0.6, 0.6), 2, 2, ['#e8f4ff', '#9ad0ff', '#ffffff'], 1.2, 0.6, 30, 2);
+      if (p.emerge === 0) { Sound.sfx('roar', { kind: 'godzilla' }); L.shake = 0.5; toast('GODZILLA BETRITT DAS LAND!', '#9ef4ff', 2.5); }
+    }
+    p.wade = wet ? (deepW ? 9 : 4) : 0;
+    p.z = -Math.max(p.emerge, p.wade * (G.mini ? 0.6 : 1));
+    if (wet && p.moving && Math.random() < 0.5) particles(p.x + rnd(-0.5, 0.5), p.y + rnd(-0.5, 0.5), 1, 2, ['#e8f4ff', '#9ad0ff'], 1.4, 0.5, 40, 2);
     var ix = (down('arrowright') || down('d') ? 1 : 0) - (down('arrowleft') || down('a') ? 1 : 0);
     var iy = (down('arrowdown') || down('s') ? 1 : 0) - (down('arrowup') || down('w') ? 1 : 0);
     var wx = ix + iy, wy = iy - ix, l = Math.sqrt(wx * wx + wy * wy);
@@ -997,13 +1066,17 @@
           q.life = 0;
           particles(q.x, q.y, 2, 8, { sap: ['#ff9a2a', '#ffcc4a'], sludge: ['#4a5a3a', '#7a8a5a'], water: ['#6ab8ff', '#e0f4ff'], napalm: ['#ff5a1a', '#ffd040', '#ffffff'] }[q.kind], 1.2, 0.5, 30, 2);
           if (q.kind === 'napalm') { decal(q.x, q.y, 'scorch'); smoke(q.x, q.y, 3, 2); }
-          if (dist(q.x, q.y, p.x, p.y) < 1.1) hurtPlayer(q.dmg);
+          if (q.from === 'a') L.mons.forEach(function (m) { if (!m.dead && dist(q.x, q.y, m.x, m.y) < m.r + 0.6) damageMon(m, q.dmg); });
+          else {
+            if (dist(q.x, q.y, p.x, p.y) < 1.1) hurtPlayer(q.dmg);
+            L.allies.forEach(function (a) { if (!a.dead && dist(q.x, q.y, a.x, a.y) < a.r + 0.6) hurtAlly(a, q.dmg); });
+          }
           if (q.kind === 'sludge') L.marks.push({ x: q.x, y: q.y, r: 1.0, t: 1, dur: 1, kind: 'smog', dmg: 3, done: false });
         }
         return;
       }
       if (q.kind === 'missile') {
-        var dx = p.x - q.x, dy = p.y - q.y, d = Math.sqrt(dx * dx + dy * dy) || 0.01;
+        var hq = q.tgt && !q.tgt.dead ? q.tgt : p, dx = hq.x - q.x, dy = hq.y - q.y, d = Math.sqrt(dx * dx + dy * dy) || 0.01;
         q.vx += dx / d * 5 * dt; q.vy += dy / d * 5 * dt;
         var v = Math.sqrt(q.vx * q.vx + q.vy * q.vy), mv = 5.5; if (v > mv) { q.vx *= mv / v; q.vy *= mv / v; }
         if (q.fall) q.z = Math.max(20, q.z - 12 * dt);
@@ -1011,7 +1084,8 @@
       }
       q.x += q.vx * dt; q.y += q.vy * dt;
       if (q.from === 'e') {
-        if (dist(q.x, q.y, p.x, p.y) < p.r * 0.9) {
+        L.allies.forEach(function (a) { if (q.life > 0 && !a.dead && !inAir(a) && dist(q.x, q.y, a.x, a.y) < a.r + 0.2) { q.life = 0; hurtAlly(a, q.dmg); explode(q.x, q.y, q.z, false); } });
+        if (q.life > 0 && dist(q.x, q.y, p.x, p.y) < p.r * 0.9) {
           q.life = 0; hurtPlayer(q.dmg);
           if (q.kind === 'web' || q.kind === 'silk') { p.slow = 2.5; toast('IM NETZ GEFANGEN!', '#ffffff', 1.5); particles(p.x, p.y, 20, 10, ['#ffffff', '#dddddd'], 1, 0.6, 10, 2); }
           else explode(q.x, q.y, q.z, false);
@@ -1040,7 +1114,11 @@
         m.done = true;
         L.fx.push({ k: m.kind === 'vine' || m.kind === 'crystal' || m.kind === 'powder' ? m.kind : 'erupt', x0: m.x, y0: m.y, life: m.kind === 'crystal' ? 1.2 : 0.6, max: m.kind === 'crystal' ? 1.2 : 0.6 });
         Sound.sfx(m.kind === 'vine' ? 'splat' : 'boom', false);
-        if (dist(m.x, m.y, p.x, p.y) < m.r) { hurtPlayer(m.dmg); spark(p.x, p.y, 20, false); }
+        if (m.team === 'ally') L.mons.forEach(function (e) { if (!e.dead && dist(m.x, m.y, e.x, e.y) < m.r + e.r * 0.5) damageMon(e, m.dmg); });
+        else {
+          if (dist(m.x, m.y, p.x, p.y) < m.r) { hurtPlayer(m.dmg); spark(p.x, p.y, 20, false); }
+          L.allies.forEach(function (a) { if (!a.dead && dist(m.x, m.y, a.x, a.y) < m.r + a.r * 0.5) hurtAlly(a, m.dmg); });
+        }
         var bl = L.map.occ[Math.floor(m.x) + ',' + Math.floor(m.y)]; if (bl) damageBuilding(bl, 60, false);
       }
     });
@@ -1123,10 +1201,15 @@
         G.state = 'clear'; G.t = 0; Sound.breath(false); Sound.play('win'); unlockNext(); return;
       }
     }
+    // Verbündeter kommt nach kurzer Zeit dazu
+    if (L.def.ally && !L.allyDone && L.time > 2.5) { L.allyDone = true; spawnAlly(L.def.ally); }
     L.mons.forEach(function (m) { updateMon(m, dt); });
-    // Monster voneinander trennen
-    for (var i = 0; i < L.mons.length; i++) for (var j = i + 1; j < L.mons.length; j++) {
-      var a = L.mons[i], b = L.mons[j], d = dist(a.x, a.y, b.x, b.y) || 0.01, mn = (a.r + b.r) * 0.8;
+    L.allies.forEach(function (m) { updateMon(m, dt); });
+    L.allies = L.allies.filter(function (m) { return !(m.dead && m.deathT > 2.5); });
+    // Monster voneinander trennen (Gegner und Verbündete)
+    var all = L.mons.concat(L.allies);
+    for (var i = 0; i < all.length; i++) for (var j = i + 1; j < all.length; j++) {
+      var a = all[i], b = all[j], d = dist(a.x, a.y, b.x, b.y) || 0.01, mn = (a.r + b.r) * 0.8;
       if (d < mn && !inAir(a) && !inAir(b)) { var push = (mn - d) / 2, ux = (a.x - b.x) / d, uy = (a.y - b.y) / d; a.x += ux * push; a.y += uy * push; b.x -= ux * push; b.y -= uy * push; }
     }
     var before = L.mons.length;
@@ -1146,9 +1229,11 @@
     var gp = gpos(L.p.x, L.p.y);
     L.camX += (gp[0] - L.camX) * Math.min(1, dt * 5);
     L.camY += (gp[1] - 30 - L.camY) * Math.min(1, dt * 5);
-    var gc = L.ground.cv;
-    L.camX = Math.max(W / 2 - 40, Math.min(gc.width - W / 2 + 40, L.camX));
-    L.camY = Math.max(H / 2 - 90, Math.min(gc.height - H / 2 + 30, L.camY));
+    // Kamera: Spielfeld plus etwas Kulisse
+    var Bd = L.bounds, mx0 = Bd.left + W / 2 - 70, mx1 = Bd.right - W / 2 + 70, my0 = Bd.top + H / 2 - 110, my1 = Bd.bottom - H / 2 + 50;
+    L.camX = mx0 > mx1 ? (mx0 + mx1) / 2 : Math.max(mx0, Math.min(mx1, L.camX));
+    L.camY = my0 > my1 ? (my0 + my1) / 2 : Math.max(my0, Math.min(my1, L.camY));
+    if (L.barrier) { L.barrier.t -= dt; if (L.barrier.t <= 0) L.barrier = null; }
     L.shake = Math.max(0, L.shake - dt);
   }
 
@@ -1197,6 +1282,7 @@
     if (p.inv > 0 && !p.charge && Math.floor(p.inv * 30) % 2 && solid) return;
     var ox = p.charge ? Math.round(Math.sin(L.time * 70) * (p.charge.kind === 'pulse' ? 1.5 : 0.8)) : 0;
     drawSprite(set, key, idx, p, s[0] + ox, s[1]);
+    if (p.wade && solid && p.emerge <= 0) { ctx.strokeStyle = 'rgba(230,245,255,0.6)'; ctx.lineWidth = 1; ctx.beginPath(); ctx.ellipse(s[0], s[1], 16 + Math.sin(L.time * 6) * 2, 7, 0, 0, 6.283); ctx.stroke(); }
     // Kernpuls: ganzer Körper glüht zum Ende des Aufladens
     if (solid && p.charge && p.charge.kind === 'pulse' && p.charge.t > 0.6) {
       var vs = viewSet(set, p), fr = vs.breath, img = p.face < 0 ? fr.l : fr.r, ax = p.face < 0 ? vs.w - vs.ax : vs.ax;
@@ -1224,8 +1310,28 @@
       });
       ctx.globalAlpha = 1;
     }
+    // im Wasser waten Bodenmonster leicht ein
+    var wd = 0;
+    if (!inAir(m) && m.z >= 0 && !m.def.emerge && !m.dead && L.map.isWater(m.x, m.y)) wd = L.map.at(m.x, m.y) === T.DEEP ? 8 : 4;
+    m.z -= wd;
     drawSprite(set, key, idx, m, s[0] + ox, s[1]);
+    m.z += wd;
+    if (wd && solid) { ctx.strokeStyle = 'rgba(230,245,255,0.55)'; ctx.lineWidth = 1; ctx.beginPath(); ctx.ellipse(s[0], s[1], m.r * 13 + Math.sin(L.time * 6) * 2, m.r * 6, 0, 0, 6.283); ctx.stroke(); }
     if (!solid) return;
+    // glühender Kern (Biolante)
+    if (set.core && !m.dead) {
+      var cpx = s[0] + set.core.x * (m.face < 0 ? -1 : 1), cpy = s[1] + set.core.y - m.z, pr = 22 + Math.sin(L.time * 3) * 5;
+      ctx.globalCompositeOperation = 'lighter';
+      var gcg = ctx.createRadialGradient(cpx, cpy, 0, cpx, cpy, pr);
+      gcg.addColorStop(0, 'rgba(255,170,60,0.55)'); gcg.addColorStop(0.5, 'rgba(255,80,20,0.25)'); gcg.addColorStop(1, 'rgba(0,0,0,0)');
+      ctx.fillStyle = gcg; ctx.beginPath(); ctx.arc(cpx, cpy, pr, 0, 6.283); ctx.fill();
+      ctx.globalCompositeOperation = 'source-over';
+    }
+    // Verbündete: grüne Markierung über dem Kopf
+    if (isAlly(m) && !m.dead) {
+      var vs0 = viewSet(set, m), hy0 = s[1] - vs0.ay - m.z - 8;
+      ctx.fillStyle = '#40ffe0'; ctx.beginPath(); ctx.moveTo(s[0] - 4, hy0 - 5); ctx.lineTo(s[0] + 4, hy0 - 5); ctx.lineTo(s[0], hy0); ctx.fill();
+    }
     // Energie sammelt sich am Maul/Auge, bevor ein Strahl oder Geschoss kommt
     if (tele && (A.a.t === 'beam' || A.a.t === 'volley' || A.a.t === 'lob')) {
       var k = A.t / A.a.w, col = A.a.t === 'beam' ? ORB[A.a.beam] || '#ffffff' : (A.a.t === 'lob' ? '#ff9a2a' : '#ffffff');
@@ -1317,7 +1423,8 @@
       ctx.strokeStyle = Math.floor(mk.t * 12) % 2 ? '#ff3030' : '#ffe04a'; ctx.lineWidth = 1;
       ctx.beginPath(); ctx.ellipse(s[0], s[1], 16 * mk.r, 8 * mk.r, 0, 0, 6.283); ctx.stroke();
     });
-    if (!p.dead) { s = spos(p.x, p.y, 0); shadow(s[0], s[1], G.mini ? 10 : 18); }
+    if (!p.dead && p.z > -15) { s = spos(p.x, p.y, 0); shadow(s[0], s[1], G.mini ? 10 : 18); }
+    L.allies.forEach(function (mo) { if (mo.z > -5) { s = spos(mo.x, mo.y, 0); shadow(s[0], s[1], mo.r * 13); } });
     L.mons.forEach(function (mo) {
       if (mo.z > -5) { s = spos(mo.x, mo.y, 0); shadow(s[0], s[1], mo.r * 13); }
       var A = mo.act;
@@ -1338,7 +1445,7 @@
     if (L.mothra) { s = spos(L.mothra.x, L.mothra.y, 0); shadow(s[0], s[1], 12); }
 
     var dyn = [{ d: p.x + p.y, f: drawPlayer }];
-    L.mons.forEach(function (mo) { dyn.push({ d: mo.x + mo.y + (inAir(mo) ? 3 : 0), f: drawMon, e: mo }); });
+    L.mons.concat(L.allies).forEach(function (mo) { dyn.push({ d: mo.x + mo.y + (inAir(mo) ? 3 : 0), f: drawMon, e: mo }); });
     L.units.forEach(function (u) { dyn.push({ d: u.x + u.y + (u.kind === 'jet' ? 50 : 0), f: drawUnit, e: u }); });
     L.cars.forEach(function (c) { if (onScreen(c.x, c.y, 20)) dyn.push({ d: c.x + c.y, f: drawCar, e: c }); });
     L.people.forEach(function (h) { if (onScreen(h.x, h.y, 10)) dyn.push({ d: h.x + h.y, f: drawPerson, e: h }); });
@@ -1349,7 +1456,7 @@
 
     var ps = spos(p.x, p.y, 0), pd = p.x + p.y;
     var foc = [[ps[0] - 24, ps[1] - 88 - p.z, 52, 88, pd]];
-    L.mons.forEach(function (mo) { if (!mo.dead) { var ms = spos(mo.x, mo.y, mo.z); foc.push([ms[0] - mo.set.ax * 0.8, ms[1] - mo.set.ay, mo.set.w * 0.8, mo.set.ay, mo.x + mo.y]); } });
+    L.mons.concat(L.allies).forEach(function (mo) { if (!mo.dead) { var ms = spos(mo.x, mo.y, mo.z); foc.push([ms[0] - mo.set.ax * 0.8, ms[1] - mo.set.ay, mo.set.w * 0.8, mo.set.ay, mo.x + mo.y]); } });
     var bl = m.b, di = 0;
     for (var i = 0; i < bl.length; i++) {
       var bb = bl[i], bd = bb.x + bb.y;
@@ -1377,12 +1484,12 @@
     if (Q()) {
       ctx.globalAlpha = 0.3;
       if (!p.dead) drawPlayer();
-      L.mons.forEach(function (mo) { if (!mo.dead) drawMon(mo); });
+      L.mons.concat(L.allies).forEach(function (mo) { if (!mo.dead) drawMon(mo); });
       ctx.globalAlpha = 1;
     }
 
     drawFx();
-    if (L.mothra) { var mo = L.mothra; s = spos(mo.x, mo.y, mo.z + Math.sin(L.time * 4) * 3); ctx.drawImage(SPR.mothra[Math.floor(L.time * 12) % 4], s[0] - 29, s[1] - 19); }
+    if (L.mothra) { var mo = L.mothra; s = spos(mo.x, mo.y, mo.z + Math.sin(L.time * 4) * 3); var ms2 = SPR.mothraImago, mf = ms2.walk[Math.floor(L.time * 10) % 4].r; ctx.drawImage(mf, s[0] - ms2.ax, s[1] - ms2.ay); }
     L.parts.forEach(function (q) {
       var s2 = spos(q.x, q.y, q.z), sz = q.gr ? q.s + (q.max - q.life) * q.gr : q.s;
       ctx.globalAlpha = Math.min(q.gr ? 0.75 : 1, q.life / q.max * 1.5);
@@ -1477,6 +1584,23 @@
   function drawFx() {
     var p = L.p;
     ctx.lineCap = 'round';
+    // unsichtbare Wand schimmert kurz auf
+    if (L.barrier) {
+      var B = L.barrier, al = Math.min(1, B.t * 2.2), segs = [];
+      if (B.ex !== null) segs.push([[B.ex, B.y - 3], [B.ex, B.y + 3]]);
+      if (B.ey !== null) segs.push([[B.x - 3, B.ey], [B.x + 3, B.ey]]);
+      segs.forEach(function (sg) {
+        var a = spos(sg[0][0], sg[0][1], 0), b = spos(sg[1][0], sg[1][1], 0);
+        var gr = ctx.createLinearGradient(0, a[1] - 70, 0, a[1]);
+        gr.addColorStop(0, 'rgba(140,220,255,0)'); gr.addColorStop(1, 'rgba(140,220,255,' + (0.35 * al) + ')');
+        ctx.fillStyle = gr; ctx.beginPath(); ctx.moveTo(a[0], a[1]); ctx.lineTo(b[0], b[1]); ctx.lineTo(b[0], b[1] - 70); ctx.lineTo(a[0], a[1] - 70); ctx.fill();
+        ctx.strokeStyle = 'rgba(210,245,255,' + (0.5 * al) + ')'; ctx.lineWidth = 1;
+        for (var k = 0; k <= 8; k++) {
+          var t = k / 8, x = a[0] + (b[0] - a[0]) * t, y = a[1] + (b[1] - a[1]) * t;
+          ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(x, y - 40 - Math.sin(L.time * 12 + k) * 12); ctx.stroke();
+        }
+      });
+    }
     if (p.view !== 'back') drawBeam();
     L.fx.forEach(function (f) {
       var k = f.life / f.max;
@@ -1573,10 +1697,13 @@
     var mx = W - 97, my = 41;
     ctx.fillStyle = 'rgba(0,0,0,.55)'; ctx.fillRect(mx - 2, my - 2, 96, 52);
     ctx.globalAlpha = 0.85; ctx.drawImage(L.mini, mx, my); ctx.globalAlpha = 1;
-    var gc = L.ground.cv, kx = 92 / gc.width, ky = 48 / gc.height;
-    function md(x, y, c, s) { var g = gpos(x, y); ctx.fillStyle = c; ctx.fillRect(Math.round(mx + g[0] * kx - s / 2), Math.round(my + g[1] * ky - s / 2), s, s); }
+    var Bd = L.bounds, kx = 92 / (Bd.right - Bd.left), ky = 48 / (Bd.bottom - Bd.top);
+    function md(x, y, c, s) { var g = gpos(x, y); ctx.fillStyle = c; ctx.fillRect(Math.round(mx + (g[0] - Bd.left) * kx - s / 2), Math.round(my + (g[1] - Bd.top) * ky - s / 2), s, s); }
+    ctx.save(); ctx.beginPath(); ctx.rect(mx, my, 92, 48); ctx.clip();
     ctx.strokeStyle = 'rgba(255,255,255,.5)'; ctx.lineWidth = 1;
-    ctx.strokeRect(Math.round(mx + (L.camX - W / 2) * kx) + 0.5, Math.round(my + (L.camY - H / 2) * ky) + 0.5, Math.round(W * kx), Math.round(H * ky));
+    ctx.strokeRect(Math.round(mx + (L.camX - W / 2 - Bd.left) * kx) + 0.5, Math.round(my + (L.camY - H / 2 - Bd.top) * ky) + 0.5, Math.round(W * kx), Math.round(H * ky));
+    ctx.restore();
+    L.allies.forEach(function (m) { if (!m.dead) md(m.x, m.y, '#40ffe0', 4); });
     L.units.forEach(function (u) { if (u.kind === 'tank') md(u.x, u.y, '#c8c8a0', 1); });
     L.items.forEach(function (it) { md(it.x, it.y, '#ffe040', 2); });
     L.mons.forEach(function (m) { if (!m.dead) md(m.x, m.y, Math.floor(L.time * 4) % 2 ? '#ff3030' : '#ff9090', 4); });
@@ -1585,6 +1712,13 @@
     if (full && Math.floor(L.time * 3) % 2) { text('R = KERNPULS!', 8, hy, '#9ef4ff'); hy += 10; }
     if (p.roarCd > 0) { text('BRÜLLEN ' + Math.ceil(p.roarCd), 8, hy, '#aaa'); hy += 10; }
     if (p.comboT > 0 && p.combo > 0) { text('KOMBO ' + (p.combo + 1) + (p.combo === 1 ? ' > SCHWANZ!' : ''), 8, hy, '#ffe04a'); hy += 10; }
+    L.allies.forEach(function (a, i) {
+      if (a.dead) return;
+      var y = H - 46 - i * 22;
+      ctx.fillStyle = 'rgba(0,0,0,.45)'; ctx.fillRect(4, y - 2, 124, 20);
+      text('MIT DIR: ' + a.def.name.replace(' (LARVE)', ''), 8, y, '#40ffe0');
+      bar(8, y + 11, 116, 4, a.hp / a.max, '#40e0c0', '#0a2a24');
+    });
     var alive = L.mons.filter(function (m) { return !m.dead || m.deathT < 1; });
     alive.forEach(function (m, i) {
       var y = H - 24 - (alive.length - 1 - i) * 22;
