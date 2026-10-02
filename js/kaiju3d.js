@@ -595,6 +595,103 @@
   Sprites.reg('mothraImago', function () { return mothSet(false); });
   Sprites.reg('battra', function () { return mothSet(true); });
 
+  /* ======================= Biolante – Rosenform (erste Gestalt im Film) ======================= */
+  var RP = { trunk: '#2c4428', dark: '#1a2a18', mid: '#3c5a34', leaf: '#2e5e2a', leafL: '#4c8a3c', vein: '#86b06a',
+    petal: '#c8202a', petalD: '#7a0e16', petalL: '#ee5a5e', maw: '#3a0608', tooth: '#f2ecd8', trap: '#36583a', trapIn: '#a01828',
+    glow: ['#ffd060', '#ffb030', '#ff8a20', '#ffe890'] };
+  var RK = 1.5;
+  function trapR(r, x, y, dx, dy, s, o, col) {
+    var l = Math.sqrt(dx * dx + dy * dy) || 1; dx /= l; dy /= l;
+    var nx = -dy, ny = dx;
+    function P(a, b) { return [x + dx * a + nx * b, y + dy * a + ny * b]; }
+    r.poly([P(-1, 0), P(s * 0.4, -s * 0.5 - o * s * 0.4), P(s * 1.4, -s * 0.35 - o * s * 0.85), P(s * 1.55, -o * s * 0.45), P(s * 0.4, -o * 0.3)], col);
+    r.poly([P(-1, 0), P(s * 0.4, s * 0.5 + o * s * 0.4), P(s * 1.4, s * 0.35 + o * s * 0.85), P(s * 1.55, o * s * 0.45), P(s * 0.4, o * 0.3)], col);
+    if (o > 0.2) r.poly([P(0.3, 0), P(s * 1.35, -o * s * 0.7), P(s * 1.45, o * s * 0.7)], RP.trapIn);
+  }
+  // gezacktes Blatt entlang einer Richtung
+  function leafR(r, x, y, dx, dy, len, wid, col) {
+    var l = Math.sqrt(dx * dx + dy * dy); dx /= l; dy /= l;
+    var nx = -dy, ny = dx, L = [], Rr = [];
+    for (var i = 0; i <= 12; i++) {
+      var t = i / 12, w = wid * Math.sin(Math.PI * Math.min(1, t * 1.1)) * (i % 2 ? 1.12 : 0.88);
+      var cx = x + dx * len * t, cy = y + dy * len * t;
+      L.push([cx + nx * w, cy + ny * w]); Rr.push([cx - nx * w, cy - ny * w]);
+    }
+    r.poly(L.concat(Rr.reverse()), col);
+    return [x, y, x + dx * len, y + dy * len];
+  }
+  function rose(f) {
+    var r = new R(100 * RK + 4, 104 * RK + 4); r.k = RK; r.ox = 2; r.oy = 2;
+    var ph = f.stand ? 0 : (f.phase || 0), s = [0, 1.5, 0, -1.5][ph], atk = f.atk;
+    var A = atk ? 1 : f.stand ? 0.15 : [0.1, 0.45, 0.8, 0.45][ph];
+    var traps = [], veins = [], i;
+    function tent(x0, y0, x1, y1, x2, y2, col, sz) {
+      r.curve(x0, y0, x1, y1, x2, y2, 2.6, 1.4, col);
+      sz *= 1.3; var op = 0.4 + 0.5 * A;
+      traps.push([x2, y2, x2 - x1, y2 - y1, sz, op]);
+      trapR(r, x2, y2, x2 - x1, y2 - y1, sz, op, col === RP.dark ? RP.dark : RP.trap);
+    }
+    r.layer = 0;
+    tent(40, 72, 14, 58 + s, 6, 36 + s, RP.dark, 3.4);
+    tent(62, 70, 90, 60 - s, 96, 38 - s, RP.dark, 3.4);
+    tent(46, 52, 22, 32, 14, 14 - s, RP.dark, 3);
+    r.layer = 1;
+    veins.push(leafR(r, 47, 34, -1, -0.45, 32, 8, RP.leaf));
+    veins.push(leafR(r, 53, 34, 1, -0.5, 32, 8, RP.leaf));
+    veins.push(leafR(r, 48, 26, -0.6, -1, 22, 6, RP.leaf));
+    r.layer = 2;
+    r.ell(50, 92, 26, 8, RP.dark);
+    r.ell(50, 80, 21, 14, RP.trunk); r.ell(50, 62, 17, 16, RP.trunk); r.ell(50, 44, 12, 14, RP.trunk); r.ell(50, 31, 8, 8, RP.trunk);
+    for (i = 0; i < 90; i++) {
+      var x = 32 + hash(i, 4, 3) * 36, y = 26 + hash(i, 5, 3) * 66;
+      var cur = r.get(Math.floor(r.tx(x)), Math.floor(r.ty(y)));
+      if (cur === RP.trunk) r.line(x, y, x + (hash(i, 6, 3) - 0.5) * 2, y + 3 + hash(i, 7, 3) * 6, i % 2 ? RP.dark : RP.mid);
+    }
+    // glühende Kernbrust (wie Maiskörner)
+    r.layer = 3;
+    r.ell(53, 68, 8, 12, '#5a1a08');
+    for (var cy = 58; cy <= 78; cy += 2.4) for (var cx = 47; cx <= 59; cx += 2.4) {
+      var dx2 = (cx - 53) / 7, dy2 = (cy - 68) / 11;
+      if (dx2 * dx2 + dy2 * dy2 < 1) r.ell(cx + ((cy * 5) % 2 ? 0.6 : 0), cy, 1.05, 1.05, RP.glow[Math.floor(hash(cx * 7, cy * 7, 3) * 4)]);
+    }
+    r.layer = 4;
+    veins.push(leafR(r, 44, 48, -1, 0.15, 34, 9, RP.leafL));
+    veins.push(leafR(r, 56, 46, 1, 0.05, 34, 9, RP.leafL));
+    // Rosenblüte mit Zahnmaul
+    r.layer = 5;
+    var rx = 50, ry = 16;
+    for (i = 0; i < 10; i++) { var a = i / 10 * 6.283; r.ell(rx + Math.cos(a) * 9, ry + Math.sin(a) * 6.5, 6, 4.5, i % 2 ? RP.petalD : RP.petal); }
+    for (i = 0; i < 8; i++) { var a2 = i / 8 * 6.283 + 0.3; r.ell(rx + Math.cos(a2) * 5.5, ry + Math.sin(a2) * 4, 4.5, 3.4, i % 2 ? RP.petal : RP.petalL); }
+    for (i = 0; i < 6; i++) { var a3 = i / 6 * 6.283 + 0.6; r.ell(rx + Math.cos(a3) * 2.8, ry + Math.sin(a3) * 2, 3, 2.4, i % 2 ? RP.petalL : RP.petal); }
+    r.ell(rx, ry + 0.5, 4.2, 0.6 + 3.4 * A, RP.maw);
+    // vordere Ranken
+    r.layer = 6;
+    tent(44, 84, 18, 92, 4, 76, RP.trap, 3.4);
+    tent(58, 84, 86, 94, 98, 78, RP.trap, 3.4);
+    var tx = {}; tx[RP.trunk] = 0.4; tx[RP.leaf] = 0.25; tx[RP.leafL] = 0.25; tx[RP.petal] = 0.15; tx[RP.trap] = 0.3;
+    var sk = {}; RP.glow.forEach(function (c) { sk[c] = 1; }); sk[RP.maw] = 1; sk[RP.trapIn] = 1;
+    r.shade2({ tex: tx, skip: sk, seed: 77, grad: 0.1 });
+    veins.forEach(function (v) { r.line(v[0], v[1], v[0] + (v[2] - v[0]) * 0.9, v[1] + (v[3] - v[1]) * 0.9, RP.vein); });
+    if (A > 0.2) for (i = 0; i < 10; i++) { var at = i / 10 * 6.283; r.dot(rx + Math.cos(at) * 3.6, ry + 0.5 + Math.sin(at) * (0.4 + 3 * A), RP.tooth); }
+    traps.forEach(function (q) {
+      var x = q[0], y = q[1], dx = q[2], dy = q[3], l = Math.sqrt(dx * dx + dy * dy) || 1; dx /= l; dy /= l;
+      var nx = -dy, ny = dx, sz = q[4], op = q[5];
+      for (var j = 1; j <= 4; j++) {
+        var a = sz * (0.3 + j * 0.27), w = op * sz * 0.5 * (a / (sz * 1.4)) + 0.5;
+        r.dot(x + dx * a - nx * w, y + dy * a - ny * w, RP.tooth); r.dot(x + dx * a + nx * w, y + dy * a + ny * w, RP.tooth);
+      }
+    });
+    r.outline('soft');
+    return r;
+  }
+  Sprites.reg('biolanteRose', function () {
+    var S = H.mkSet(rose, 50 * RK + 2, 88 * RK + 2);
+    S.mouth = { x: 0, y: (16 - 88) * RK };
+    S.core = { x: (53 - 50) * RK, y: (68 - 88) * RK, r: 14 };
+    S.sym = true;
+    return S;
+  });
+
   /* ======================= Ebirah ======================= */
   function ebirah(f) {
     var r = H.mk(92, 52);

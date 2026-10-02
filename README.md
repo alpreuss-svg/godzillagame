@@ -37,15 +37,18 @@ und Schwierigkeit (Leicht/Normal/Schwer) einstellen.
 |---|---|---|---|
 | 1 | Tokio – Hafenviertel bei Nacht | Kamacuras (1, dann 2) | Mechagodzilla (Spiegelschild) |
 | 2 | Osaka – **mit Anguirus als Verbündetem** | Kamacuras ×2 | Gigan |
-| 3 | Ashino-See – Hakone in der Dämmerung | Kumonga (Netze bremsen) | Biolante |
+| 3 | Ashino-See – Hakone in der Dämmerung | Kumonga (Netze bremsen) | Biolante: erst Rosenform, dann Bestie (wie im Film) |
 | 4 | Letchi-Atoll – Südsee | Ebirah, dann Ebirah + Kamacuras | Megalon |
 | 5 | Yokohama – Industriehafen im Smog | Kamacuras + Kumonga | Hedorah (Giftwolken) |
 | 6 | Nagoya – **mit Mothra als Verbündeter** | Kumonga | Battra (Larve → Falter) |
 | 7 | Berg Fuji | Rodan, dann Rodan + Kamacuras | King Ghidorah |
-| 8 | Fukuoka – Kristallstadt | Moguera | SpaceGodzilla (Kristalltürme heilen ihn) |
+| 8 | Fukuoka – Kristallstadt | Moguera | SpaceGodzilla (unverwundbar, solange Kristalle stehen) |
 | 9 | Sapporo – Schneefestival | Titanosaurus, dann Battra + Rodan | Mecha-King Ghidorah |
 | 10 | Shinjuku – das Finale | Gigan + Megalon | Destoroyah |
 | ? | ??? | – | Geheimlevel (Boss-Rush gegen fünf) |
+
+**Boss-Auftritt:** Bosse erscheinen wie im Kino mit schwarzen Balken, Kameraschwenk und Namenseinblendung.
+**Burning Godzilla:** Unter 30 % HP glüht Godzilla rot (wie 1995) und teilt 40 % mehr Schaden aus.
 
 **Verbündete:** Anguirus und Mothra kämpfen in ihren Leveln an deiner Seite (grüne Markierung, eigene Lebensleiste).
 Es gibt kein Friendly Fire – deine Angriffe treffen sie nie. Gegner greifen aber auch sie an.

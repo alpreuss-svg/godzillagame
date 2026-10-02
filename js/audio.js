@@ -279,8 +279,7 @@ var Sound = (function () {
   var ROARS = {
     // wie 1954: Kontrabass-Saite, mit harzigem Lederhandschuh gestrichen, verlangsamt abgespielt
     godzilla: { bow: true, slow: 2, len: 2.7, pts: [[0, 170], [0.12, 320], [0.5, 355], [0.95, 340], [1.12, 300], [1.25, 205], [1.4, 275], [1.9, 240], [2.7, 115]],
-      press: [0.95, 0.75], split: 1.2, rasp: 0.7, gap: [1.18, 1.3], dry: 0.5, drive: 1.9,
-      pulse: 0.85, sub: 0.3, jit: 0.2, grit: 0.5, breath: 0.22, flutter: 0.3,
+      press: [0.93, 0.72], split: 1.2, rasp: 0.55, gap: [1.18, 1.3], dry: 0.55, drive: 1.8,
       form: [[1000, 4, 1], [2300, 5, 0.8], [4600, 6, 0.5], [6800, 7, 0.25]] },
     mecha: { len: 2.1, pts: [[0, 180], [0.2, 330], [1.2, 300], [2.1, 160]],
       jit: 0.05, sub: 0.15, breath: 0.08, form: [[900, 12, 1], [1900, 14, 0.8], [3300, 14, 0.5]], drive: 3.2, grit: 0.25, ring: 155 },
@@ -315,15 +314,12 @@ var Sound = (function () {
       d.b[d.w] = x; d.w = (d.w + 1) % SZ; return y;
     }
     var neck = DL(), bridge = DL(), lastN = 0, lastB = 0, lp = 0, beta = 0.127, jit = 0, peak = 1e-4;
-    var next = 0, flip = 0, pa = 0, glp = 0, wob = 0, flt = 0;
     var F = C.form.map(function (f) {
       var w = 2 * Math.PI * f[0] / sr, al = Math.sin(w) / (2 * f[1]), a0 = 1 + al;
       return { g: f[2], b0: al / a0, b2: -al / a0, a1: -2 * Math.cos(w) / a0, a2: (1 - al) / a0, x1: 0, x2: 0, y1: 0, y2: 0 };
     });
     for (var i = 0; i < n; i++) {
-      // Tonhöhe zittert unruhig statt glatt zu gleiten (sonst klingt es nach Sirene)
-      wob += (rnd() - 0.5) * 0.004; wob *= 0.999;
-      var t = i / sr * slow, f0 = contour(C.pts, t) * slow * (1 + 0.03 * Math.sin(2 * Math.PI * 5.3 * t) + wob), period = sr / f0;
+      var t = i / sr * slow, f0 = contour(C.pts, t) * slow, period = sr / f0;
       var env = Math.min(1, t / 0.08) * Math.min(1, (C.len - t) / (C.len * 0.3));
       if (C.gap && t > C.gap[0] && t < C.gap[1]) env *= 0.4;
       jit += (rnd() - 0.5) * 0.3; jit *= 0.995;
@@ -335,20 +331,7 @@ var Sound = (function () {
       var nv = dv * bt;
       lastN = tick(neck, bridgeRefl + nv, Math.max(2, period * (1 - beta) - 1));
       lastB = tick(bridge, nutRefl + nv, Math.max(2, period * beta));
-      // dazu die rauen Reibimpulse (Haften/Abreißen des Handschuhs) mit Unterharmonischen = Knurren
-      var pex = 0;
-      if (i >= next) {
-        flip = 1 - flip;
-        var per = period * (1 + (rnd() - 0.5) * C.jit);
-        if (flip && rnd() < C.sub) per *= 2;
-        next = i + Math.max(6, per); pa = 0.7 + rnd() * 0.6; pex = pa;
-      }
-      pa *= 0.9992;
-      var nz = rnd() * 2 - 1; glp += (nz - glp) * 0.25;
-      // unregelmäßiges Flattern der Lautstärke
-      flt += (rnd() - 0.5) * 0.08; flt *= 0.97;
-      var am = 1 - C.flutter * (0.5 + 0.5 * Math.sin(2 * Math.PI * 34 * t / slow * slow + flt * 6));
-      var ex = (lastB * 1.2 + pex * C.pulse + glp * C.grit * (0.4 + pa * 0.6) + nz * C.breath * 0.3) * am, y = ex * C.dry;
+      var ex = lastB, y = ex * C.dry;
       for (var k = 0; k < F.length; k++) {
         var fl = F[k], yo = fl.b0 * ex + fl.b2 * fl.x2 - fl.a1 * fl.y1 - fl.a2 * fl.y2;
         fl.x2 = fl.x1; fl.x1 = ex; fl.y2 = fl.y1; fl.y1 = yo; y += yo * fl.g;
@@ -425,11 +408,11 @@ var Sound = (function () {
     src.buffer = makeRoar(kind);
     src.playbackRate.value = (pitch || 1) / (src.buffer.slow || 1);
     hp.type = 'highpass'; hp.frequency.value = 50;
-    g.gain.value = 0.5;
+    g.gain.value = 0.28;
     src.connect(hp); hp.connect(g); g.connect(sfx);
-    var w = ctx.createGain(); w.gain.value = 0.4; g.connect(w); w.connect(verb);
+    var w = ctx.createGain(); w.gain.value = 0.22; g.connect(w); w.connect(verb);
     src.start(t);
-    if (kind === 'godzilla' || kind === 'deep') sweep('sine', t, 0.6, 70, 35, 0.35); // Bauchresonanz
+    if (kind === 'godzilla' || kind === 'deep') sweep('sine', t, 0.6, 70, 35, 0.15); // Bauchresonanz
   }
 
   var fx = {
@@ -451,7 +434,7 @@ var Sound = (function () {
       f.type = 'lowpass'; f.frequency.setValueAtTime(400, t); f.frequency.exponentialRampToValueAtTime(3000, t + d);
       g.gain.setValueAtTime(0.001, t); g.gain.exponentialRampToValueAtTime(0.18, t + d * 0.95); g.gain.exponentialRampToValueAtTime(0.001, t + d + 0.1);
       o.connect(f); o2.connect(f); f.connect(g); g.connect(sfx);
-      var w = ctx.createGain(); w.gain.value = 0.4; g.connect(w); w.connect(verb);
+      var w = ctx.createGain(); w.gain.value = 0.22; g.connect(w); w.connect(verb);
       o.start(t); o2.start(t); o.stop(t + d + 0.15); o2.stop(t + d + 0.15);
     },
     collapse: function (tall) {

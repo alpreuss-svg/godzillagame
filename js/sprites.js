@@ -168,11 +168,14 @@ var Sprites = (function () {
     // Hals & Kopf (vorne, leicht gesenkt)
     r.layer = 4;
     r.curve(62, 40, 70, 36, 78, 38, 9, 7, BP.body);
-    var jo = atk ? 1.25 : 1;
+    // Maul öffnet und schließt sich (A = Öffnung), nur beim Angriff ganz weit
+    var A = atk ? 1.3 : f.stand ? 0.2 : [0.15, 0.55, 0.95, 0.55][ph];
     r.poly([[72, 30], [84, 27], [98, 28], [110, 32], [109, 35], [99, 36], [80, 40], [72, 38]], BP.body);
-    r.poly([[76, 44], [100, 46 + 2 * jo], [108, 52 + 3 * jo], [98, 54 + 3 * jo], [82, 52], [74, 48]], BP.body);
-    r.poly([[78, 38], [104, 35.5], [104, 46 + 2 * jo], [98, 51 + 3 * jo], [80, 48]], BP.mouth);
-    r.poly([[78, 39], [86, 38], [86, 47], [80, 47]], BP.mouthD);
+    r.poly([[74, 41 + 3 * A], [100, 37 + 10 * A], [108, 39 + 13 * A], [98, 42 + 13 * A], [82, 44 + 8 * A], [72, 42 + 3 * A]], BP.body);
+    if (A > 0.25) {
+      r.poly([[78, 38.5], [104, 35.5], [104, 37 + 10 * A], [98, 40 + 11 * A], [80, 40 + 7 * A]], BP.mouth);
+      r.poly([[78, 39], [85, 38], [85, 39 + 6 * A], [80, 39 + 6 * A]], BP.mouthD);
+    }
     for (i = 0; i < 10; i++) { var hx = 70 + i * 2.6, hy = 28 - i * 0.2; r.poly([[hx - 2, hy + 2], [hx + 2, hy + 2], [hx - 2 + hash(i, 9, 3) * 2, hy - 4 - hash(i, 10, 3) * 4]], i % 2 ? BP.mid : BP.body); }
     // vordere Tentakel
     r.layer = 5;
@@ -183,11 +186,12 @@ var Sprites = (function () {
     var sk = {}; BP.cells.forEach(function (c) { sk[c] = 1; }); sk[BP.mouth] = 1; sk[BP.trapIn] = 1;
     r.shade2({ tex: tx, skip: sk, seed: 41, grad: 0.12 });
     for (var tq = 0; tq < 11; tq++) {
-      var a1 = tq / 10, ux = 80 + a1 * 24, uy = 39 - a1 * 3.4, lx = 80 + a1 * 22, ly = 47.5 + a1 * 4 * jo;
-      r.poly([[ux - 0.6, uy], [ux + 0.6, uy], [ux, uy + 2 + (tq % 3 === 0 ? 1.6 : 0)]], BP.tooth);
-      r.poly([[lx - 0.6, ly], [lx + 0.6, ly], [lx, ly - 2 - (tq % 3 === 1 ? 1.5 : 0)]], BP.tooth);
+      var a1 = tq / 10, ux = 80 + a1 * 24, uy = 39 - a1 * 3.4, lx = 80 + a1 * 22, ly = 40.5 + 7 * A + a1 * (3 * A - 3.4);
+      var tl = A > 0.25 ? 2 : 1.2;
+      r.poly([[ux - 0.6, uy], [ux + 0.6, uy], [ux, uy + tl + (tq % 3 === 0 ? 1.4 : 0)]], BP.tooth);
+      r.poly([[lx - 0.6, ly], [lx + 0.6, ly], [lx, ly - tl - (tq % 3 === 1 ? 1.3 : 0)]], BP.tooth);
     }
-    r.poly([[101, 35], [103.5, 35], [102.4, 42]], BP.tooth); r.poly([[96, 53 + 3 * (jo - 1)], [98.5, 53 + 3 * (jo - 1)], [97.5, 46]], BP.tooth);
+    r.poly([[101, 35], [103.5, 35], [102.4, 40 + 2 * A]], BP.tooth);
     r.ell(82, 31, 1.4, 1, BP.eye); r.line(78.5, 29.6, 85, 30, '#141408');
     traps.forEach(function (q) {
       var x = q[0], y = q[1], dx = q[2], dy = q[3], l = Math.sqrt(dx * dx + dy * dy) || 1; dx /= l; dy /= l;

@@ -102,6 +102,13 @@
         { t: 'charge', min: 3, max: 10, w: 0.65, dur: 1.1, spd: 9, dmg: 11, ground: true },
         { t: 'marks', min: 0, max: 12, w: 0.5, dur: 0.8, n: 4, mark: 'oxy', dmg: 8 }]
     },
+    biolanteRose: {
+      name: 'BIOLANTE (ROSE)', hp: 260, r: 2.0, speed: 0, pref: 0, home: true, emerge: true, next: 'biolante', cd: [1, 1.8], roar: ['deep', 1.25],
+      morphText: 'BIOLANTE VERWANDELT SICH IN IHRE WAHRE GESTALT!', atk: [
+        { t: 'marks', min: 0, max: 16, w: 0.6, dur: 0.9, n: 3, mark: 'vine', dmg: 10 },
+        { t: 'lob', min: 3, max: 14, w: 0.35, dur: 1.0, n: 6, proj: 'sap', dmg: 6 },
+        { t: 'melee', max: 4.2, w: 0.5, dur: 0.9, dmg: 10, kb: 1.2 }]
+    },
     mothraLarva: {
       name: 'MOTHRA (LARVE)', hp: 150, r: 1.3, speed: 1.3, pref: 3, cd: [1, 1.8], roar: ['rodan', 1.8], next: 'mothraCocoon', atk: [
         { t: 'melee', max: 3, w: 0.45, dur: 0.8, dmg: 7, kb: 0.8 },
@@ -171,8 +178,8 @@
       text: ['MECHAGODZILLA WURDE IN DER', 'BUCHT VON TOKIO GESICHTET.', 'VORHER SCHWÄRMEN RIESIGE', 'GOTTESANBETERINNEN AUS...'] },
     { id: 'osaka', name: 'OSAKA', sub: 'MIT ANGUIRUS AN DEINER SEITE', enc: [['kamacuras', 'kamacuras'], ['gigan']], music: 'stage', ally: 'anguirus',
       text: ['DEIN ALTER FREUND ANGUIRUS', 'KÄMPFT MIT DIR GEGEN DEN', 'CYBORG GIGAN AUS DEM ALL.', 'VERBÜNDETE TRIFFST DU NIE!'] },
-    { id: 'lake', name: 'ASHINO-SEE', sub: 'HAKONE IN DER ABENDDÄMMERUNG', enc: [['kumonga'], ['biolante']], music: 'stage',
-      text: ['EINE RIESENSPINNE BEWACHT', 'DAS UFER. IM SEE LAUERT', 'BIOLANTE - GEBOREN AUS', 'GODZILLAS ZELLEN.'] },
+    { id: 'lake', name: 'ASHINO-SEE', sub: 'HAKONE IN DER ABENDDÄMMERUNG', enc: [['kumonga'], ['biolanteRose']], music: 'stage',
+      text: ['IM SEE BLÜHT BIOLANTE - EINE', 'ROSE AUS GODZILLAS ZELLEN.', 'BESIEGST DU SIE, ZEIGT SIE', 'IHRE WAHRE GESTALT...'] },
     { id: 'atoll', name: 'LETCHI-ATOLL', sub: 'SÜDSEE, 1966', enc: [['ebirah'], ['ebirah', 'kamacuras'], ['megalon']], music: 'island',
       text: ['IM ATOLL LAUERT EBIRAH,', 'DER RIESENHUMMER.', 'AUS DEM UNTERWASSERREICH', 'SEATOPIA STEIGT MEGALON!'] },
     { id: 'yokohama', name: 'YOKOHAMA', sub: 'INDUSTRIEHAFEN IM SMOG', enc: [['kamacuras', 'kumonga'], ['hedorah']], music: 'stage',
@@ -182,12 +189,12 @@
     { id: 'fuji', name: 'BERG FUJI', sub: 'DÖRFER AM HEILIGEN BERG', enc: [['rodan'], ['rodan', 'kamacuras'], ['ghidorah']], music: 'stage',
       text: ['RODAN KREIST ÜBER DEM FUJI.', 'DANACH LANDET DER', 'DREIKÖPFIGE DRACHE', 'KING GHIDORAH!'] },
     { id: 'fukuoka', name: 'FUKUOKA', sub: 'DIE KRISTALLSTADT', enc: [['moguera'], ['spacegodzilla']], music: 'stage',
-      text: ['SPACEGODZILLA KOMMT AUS', 'DEM ALL. SEINE KRISTALL-', 'TÜRME GEBEN IHM ENERGIE -', 'ZERSTÖRE SIE ZUERST!'] },
+      text: ['SPACEGODZILLA KOMMT AUS', 'DEM ALL. ER ZIEHT SEINE', 'KRAFT AUS DEN KRISTALL-', 'TÜRMEN DER STADT...'] },
     { id: 'sapporo', name: 'SAPPORO', sub: 'SCHNEEFESTIVAL IN GEFAHR', enc: [['titanosaurus'], ['battra', 'rodan'], ['mkg']], music: 'stage',
       text: ['AUS DEM JAHR 2204 KEHRT', 'GHIDORAH ZURÜCK - ALS', 'CYBORG: MECHA-KING', 'GHIDORAH!'] },
     { id: 'shinjuku', name: 'SHINJUKU', sub: 'DAS FINALE', enc: [['gigan', 'megalon'], ['destoroyah']], music: 'stage',
       text: ['DESTOROYAH, DER ZERSTÖRER,', 'IST AUS DEM MEERESGRUND', 'ERWACHT. DER LETZTE KAMPF', 'UM TOKIO BEGINNT!'] },
-    { id: 'island', name: 'MONSTERINSEL', sub: 'GEHEIMLEVEL: BOSS-RUSH', enc: [['mecha'], ['biolante'], ['spacegodzilla'], ['mkg'], ['destoroyah']], music: 'island', secret: true,
+    { id: 'island', name: 'MONSTERINSEL', sub: 'GEHEIMLEVEL: BOSS-RUSH', enc: [['mecha'], ['biolanteRose'], ['spacegodzilla'], ['mkg'], ['destoroyah']], music: 'island', secret: true,
       text: ['DU HAST DIE MONSTERINSEL', 'ENTDECKT! BESIEGE ALLE', 'FÜNF RIVALEN', 'HINTEREINANDER.'] }
   ];
   var LAST = 9, ISLAND = 10;
@@ -408,6 +415,11 @@
     if (!m || m.dead || m.enter > 0) return false;
     if (m.shield > 0) { particles(m.x, m.y, 30 + m.z, 3, ['#8af', '#fff'], 1, 0.3, 0, 1); num(m.x, m.y, 60 + m.z, 'BLOCK', '#8fe8ff'); return false; }
     if (m.def.cocoon) { if (Math.random() < 0.3) num(m.x, m.y, 40, 'KOKON', '#f0e8c8'); return false; }
+    if (m.def.crystals && L.crystalsLeft > 0) {
+      if (Math.random() < 0.25) { num(m.x, m.y, 60 + m.z, 'KRISTALLSCHILD', '#b8f0ff'); particles(m.x, m.y, 35, 3, ['#b8f0ff', '#e8b0ff'], 1, 0.4, 0, 1); }
+      if (!L.crystalHint && Math.random() < 0.08) { L.crystalHint = true; toast('DIE KRISTALLE SCHÜTZEN IHN!', '#8fe8ff', 3); }
+      return false;
+    }
     m.hp -= dmg; m.flash = 0.1;
     if (L.p) L.p.rage = Math.min(100, L.p.rage + dmg * 0.5);
     num(m.x + rnd(-0.3, 0.3), m.y, 50 + m.z, '-' + Math.round(dmg), big ? '#ffe04a' : '#ffffff');
@@ -445,31 +457,33 @@
   }
   // Verwandlung: Larve -> Kokon -> Falter
   function morph(m, to) {
-    var d = MON[to], hpm = DIFF[save.opt.diff].hp;
+    var d = MON[to], hpm = DIFF[save.opt.diff].hp, mtxt = m.def.morphText;
     m.type = to; m.def = d; m.set = SPR[to]; m.hp = m.max = d.hp * hpm; m.act = null; m.stun = 0; m.flash = 0.4;
     m.cocoonT = d.cocoon || 0; m.cd = 1.5; m.view = 'side';
     L.whiteFlash = 0.25; L.shake = 0.4;
     particles(m.x, m.y, 20, 24, d.cocoon ? ['#ffffff', '#f0e8c8'] : ['#ffe04a', '#ffffff', '#ff8ad0', '#8fe8ff'], 2.2, 1, 10, 2);
     Sound.sfx('secret'); Sound.sfx('roar', { kind: d.roar[0], pitch: d.roar[1] });
-    toast(d.cocoon ? d.name.replace(' (KOKON)', '') + ' VERPUPPT SICH!' : d.name + ' IST GESCHLÜPFT!', '#ffb84a', 3);
+    toast(mtxt || (d.cocoon ? d.name.replace(' (KOKON)', '') + ' VERPUPPT SICH!' : d.name + ' IST GESCHLÜPFT!'), '#ffb84a', 3.5);
+    if (d.emerge && !d.cocoon) { m.z = -70; m.enter = 2.5; }
+    if (m.boss && !d.cocoon) L.cine = { t: 0, dur: 3, name: d.name, tgt: m };
   }
-  function spawnCrystals() {
-    var n = 0, m = L.map;
-    for (var tries = 0; tries < 200 && n < 6; tries++) {
+  function spawnCrystals(want) {
+    var n = 0, m = L.map; want = want || 6;
+    for (var tries = 0; tries < 200 && n < want; tries++) {
       var i = Math.floor(rnd(2, m.W - 2)), j = Math.floor(rnd(2, m.H - 2)), t = m.T(i, j);
       if (m.occ[i + ',' + j] || t === World.T.WATER || t === World.T.DEEP || dist(i, j, L.p.x, L.p.y) < 5) continue;
-      var b = m.add(i, j, Sprites.special('crystal'), { hp: 120, score: 400, egg: 'crystal' });
+      var b = m.add(i, j, Sprites.special('crystal'), { hp: 170, score: 400, egg: 'crystal' });
       if (b) { b.crystal = true; n++; explode(i + 0.5, j + 0.5, 5, false); }
     }
     sortB(m);
-    L.crystalsLeft = n;
-    toast('KRISTALLTÜRME! SIE HEILEN SPACEGODZILLA - ZERSTÖRE SIE!', '#8fe8ff', 4);
+    L.crystalsLeft += n;
   }
   function spawnEncounter() {
     var list = L.enc[L.encIdx], boss = L.encIdx === L.enc.length - 1;
     L.encIdx++; L.warn = 0;
     list.forEach(function (t, i) { L.mons.push(makeMon(t, boss, i, list.length)); });
-    if (list.some(function (t) { return MON[t].crystals; })) spawnCrystals();
+    if (boss) L.cine = { t: 0, dur: 3, name: list.map(function (t) { return MON[t].name.replace(' (ROSE)', '').replace(' (LARVE)', ''); }).join(' & '), tgt: L.mons[L.mons.length - 1] };
+    if (list.some(function (t) { return MON[t].crystals; })) { L.crystalsLeft = 0; spawnCrystals(6); }
     Sound.play(boss ? 'boss' : 'mini');
     var d0 = MON[list[0]];
     Sound.sfx('roar', { kind: d0.roar[0], pitch: d0.roar[1] });
@@ -563,7 +577,12 @@
       if (m.cocoonT <= 0) morph(m, d.next);
       return;
     }
-    if (d.crystals && L.crystalsLeft > 0 && m.hp < m.max) m.hp = Math.min(m.max, m.hp + L.crystalsLeft * 1.6 * dt);
+    if (d.crystals) {
+      if (L.crystalsLeft > 0 && m.hp < m.max) m.hp = Math.min(m.max, m.hp + L.crystalsLeft * 1.2 * dt);
+      // lässt immer wieder neue Kristalle wachsen
+      m.crysT = (m.crysT || 16) - dt;
+      if (m.crysT <= 0) { m.crysT = 16; if (L.crystalsLeft < 6) { spawnCrystals(1); toast(d.name + ' LÄSST EINEN NEUEN KRISTALL WACHSEN!', '#e8b0ff', 2.5); } }
+    }
     if (m.act && m.act.a.t === 'charge' && m.act.t > m.act.a.w) { m.trail = m.trail || []; m.trail.unshift([m.x, m.y, m.z]); if (m.trail.length > 4) m.trail.pop(); } else m.trail = null;
     if (m.stun > 0) { m.stun -= dt; return; }
     if (d.phases) {
@@ -622,7 +641,7 @@
           var a = opts[Math.floor(Math.random() * opts.length)];
           m.act = { a: a, t: 0, fired: 0, T: T, tx: T.x, ty: T.y, dx: dx / dd, dy: dy / dd, hitDone: false };
           if (a.t === 'marks') {
-            for (var i = 0; i < a.n; i++) L.marks.push({ x: T.x + (i ? rnd(-2, 2) : 0), y: T.y + (i ? rnd(-2, 2) : 0), r: a.mark === 'smog' ? 1.4 : a.mark === 'powder' ? 1.5 : 1.1, t: 0, dur: 1.0, kind: a.mark, dmg: a.dmg, team: m.team || 'enemy' });
+            for (var i = 0; i < a.n; i++) L.marks.push({ x: T.x + (i ? rnd(-2, 2) : 0), y: T.y + (i ? rnd(-2, 2) : 0), r: a.mark === 'smog' ? 1.4 : a.mark === 'powder' ? 1.5 : a.mark === 'vine' ? 1.5 : 1.1, t: 0, dur: 1.0, kind: a.mark, dmg: a.dmg, team: m.team || 'enemy' });
           }
           m.cd = rnd(d.cd[0], d.cd[1]);
         } else m.cd = 0.3;
@@ -719,6 +738,11 @@
     p.calm += dt;
     if (p.dead) { p.deathT += dt; p.z = -p.deathT * 12; return; }
     if (p.calm > 3 && p.hp < 100) p.hp = Math.min(100, p.hp + 2.5 * dt);
+    // Burning Godzilla (wie 1995): bei wenig Leben glüht er rot und wird stärker
+    var burn = !G.mini && p.hp < 30;
+    if (burn && !p.burning) { toast('BURNING GODZILLA! DEINE ANGRIFFE WERDEN STÄRKER!', '#ff6a2a', 3); Sound.sfx('roar', { kind: 'godzilla', pitch: 0.9 }); }
+    p.burning = burn;
+    if (burn && Math.random() < 0.45) particles(p.x + rnd(-0.6, 0.6), p.y + rnd(-0.6, 0.6), rnd(10, 60), 1, ['#ff6a1a', '#ffb040', '#ff3a1a'], 0.3, 0.8, -20, 2);
     if (p.dance > 0) {
       p.dance -= dt; p.z = Math.abs(Math.sin(p.dance * 9)) * 10;
       p.face = Math.floor(p.dance * 4) % 2 ? 1 : -1;
@@ -789,7 +813,7 @@
         buildingsNear(cx, cy, rad, function (b) { damageBuilding(b, tail ? 90 : 70, true); });
         L.units.forEach(function (u) { if (u.alive && u.kind === 'tank' && dist(u.x, u.y, cx, cy) < rad + 0.3) killUnit(u); });
         L.cars.forEach(function (c) { if (c.alive && dist(c.x, c.y, cx, cy) < rad) crushCar(c, true); });
-        playerHitMonsters(cx, cy, rad, tail ? (G.mini ? 8 : 16) : (G.mini ? 6 : 11), tail ? 1.2 : 0.5, tail);
+        playerHitMonsters(cx, cy, rad, (tail ? (G.mini ? 8 : 16) : (G.mini ? 6 : 11)) * (p.burning ? 1.4 : 1), tail ? 1.2 : 0.5, tail);
       }
     }
     // Atomstrahl / Rauchringe
@@ -831,7 +855,7 @@
         L.cars.forEach(function (c) { if (c.alive && segDist(c.x, c.y, p.x, p.y, ex, ey) < 0.5) crushCar(c, true); });
         L.mons.forEach(function (m) {
           if (!m.dead && segDist(m.x, m.y, p.x, p.y, ex, ey) < m.r + 0.4) {
-            if (damageMon(m, 2.8)) particles(m.x, m.y, 25 + m.z, 3, ['#8fe8ff', '#fff'], 1.2, 0.3, 10, 2);
+            if (damageMon(m, 2.8 * (p.burning ? 1.4 : 1))) particles(m.x, m.y, 25 + m.z, 3, ['#8fe8ff', '#fff'], 1.2, 0.3, 10, 2);
           }
         });
         if (L.llama.alive && segDist(L.llama.x, L.llama.y, p.x, p.y, ex, ey) < 0.6) llamaEgg();
@@ -875,7 +899,7 @@
     L.cars.forEach(function (c) { if (c.alive && dist(c.x, c.y, p.x, p.y) < 6) crushCar(c, true); });
     L.mons.forEach(function (m) {
       var d = dist(m.x, m.y, p.x, p.y);
-      if (d < 7 && damageMon(m, 45, true)) {
+      if (d < 7 && damageMon(m, 45 * (p.burning ? 1.4 : 1), true)) {
         m.stun = 1; m.act = null;
         if (!m.def.home) { m.x += (m.x - p.x) / (d || 1) * 2; m.y += (m.y - p.y) / (d || 1) * 2; clampPos(m); }
       }
@@ -1112,7 +1136,8 @@
       }
       if (m.t >= m.dur && !m.done) {
         m.done = true;
-        L.fx.push({ k: m.kind === 'vine' || m.kind === 'crystal' || m.kind === 'powder' ? m.kind : 'erupt', x0: m.x, y0: m.y, life: m.kind === 'crystal' ? 1.2 : 0.6, max: m.kind === 'crystal' ? 1.2 : 0.6 });
+        L.fx.push({ k: m.kind === 'vine' || m.kind === 'crystal' || m.kind === 'powder' ? m.kind : 'erupt', x0: m.x, y0: m.y, life: m.kind === 'crystal' ? 1.2 : m.kind === 'vine' ? 1.1 : 0.6, max: m.kind === 'crystal' ? 1.2 : m.kind === 'vine' ? 1.1 : 0.6, seed: Math.random() * 10 });
+        if (m.kind === 'vine') { L.shake = Math.max(L.shake, 0.3); dust(m.x, m.y, 2, 6, 1); decal(m.x, m.y, 'scorch'); }
         Sound.sfx(m.kind === 'vine' ? 'splat' : 'boom', false);
         if (m.team === 'ally') L.mons.forEach(function (e) { if (!e.dead && dist(m.x, m.y, e.x, e.y) < m.r + e.r * 0.5) damageMon(e, m.dmg); });
         else {
@@ -1226,7 +1251,9 @@
     updateMothra(dt);
     L.toasts.forEach(function (t) { t.t -= dt; });
     L.toasts = L.toasts.filter(function (t) { return t.t > 0; });
-    var gp = gpos(L.p.x, L.p.y);
+    if (L.cine) { L.cine.t += dt; if (L.cine.t > L.cine.dur) L.cine = null; }
+    var focus = (L.cine && L.cine.t < 2.3 && L.cine.tgt) ? L.cine.tgt : L.p;
+    var gp = gpos(focus.x, focus.y);
     L.camX += (gp[0] - L.camX) * Math.min(1, dt * 5);
     L.camY += (gp[1] - 30 - L.camY) * Math.min(1, dt * 5);
     // Kamera: Spielfeld plus etwas Kulisse
@@ -1282,6 +1309,14 @@
     if (p.inv > 0 && !p.charge && Math.floor(p.inv * 30) % 2 && solid) return;
     var ox = p.charge ? Math.round(Math.sin(L.time * 70) * (p.charge.kind === 'pulse' ? 1.5 : 0.8)) : 0;
     drawSprite(set, key, idx, p, s[0] + ox, s[1]);
+    if (p.burning && solid) {
+      var vsB = viewSet(set, p), gy0 = s[1] - vsB.ay * 0.5 - p.z, pr0 = vsB.ay * 0.6 + Math.sin(L.time * 9) * 4;
+      ctx.globalCompositeOperation = 'lighter';
+      var gB = ctx.createRadialGradient(s[0], gy0, 0, s[0], gy0, pr0);
+      gB.addColorStop(0, 'rgba(255,90,30,0.35)'); gB.addColorStop(0.6, 'rgba(255,40,10,0.15)'); gB.addColorStop(1, 'rgba(0,0,0,0)');
+      ctx.fillStyle = gB; ctx.beginPath(); ctx.arc(s[0], gy0, pr0, 0, 6.283); ctx.fill();
+      ctx.globalCompositeOperation = 'source-over';
+    }
     if (p.wade && solid && p.emerge <= 0) { ctx.strokeStyle = 'rgba(230,245,255,0.6)'; ctx.lineWidth = 1; ctx.beginPath(); ctx.ellipse(s[0], s[1], 16 + Math.sin(L.time * 6) * 2, 7, 0, 0, 6.283); ctx.stroke(); }
     // Kernpuls: ganzer Körper glüht zum Ende des Aufladens
     if (solid && p.charge && p.charge.kind === 'pulse' && p.charge.t > 0.6) {
@@ -1344,6 +1379,23 @@
         ctx.fillStyle = g; ctx.beginPath(); ctx.arc(mp[0], mp[1], rr * 2, 0, 6.283); ctx.fill();
       }
       ctx.globalCompositeOperation = 'source-over';
+    }
+    // SpaceGodzilla: Energie fließt von den Kristallen zu ihm, Schild leuchtet
+    if (m.def.crystals && L.crystalsLeft > 0 && !m.dead && m.enter <= 0) {
+      var vsC = viewSet(set, m), chx = s[0], chy = s[1] - vsC.ay * 0.55 - m.z;
+      ctx.save(); ctx.globalCompositeOperation = 'lighter';
+      L.map.b.forEach(function (b) {
+        if (!b.crystal || b.dead) return;
+        var cs = spos(b.x, b.y, 30), pts = [[cs[0], cs[1]]];
+        for (var q = 1; q < 6; q++) { var tq = q / 6; pts.push([cs[0] + (chx - cs[0]) * tq + rnd(-3, 3), cs[1] + (chy - cs[1]) * tq + rnd(-3, 3)]); }
+        pts.push([chx, chy]);
+        ctx.globalAlpha = 0.5 + 0.3 * Math.sin(L.time * 15 + b.x);
+        beamLine(pts, ['rgba(180,120,255,0.5)', '#b8f0ff'], [3, 1]);
+      });
+      ctx.globalAlpha = 0.35 + 0.15 * Math.sin(L.time * 8);
+      ctx.strokeStyle = '#c8b0ff'; ctx.lineWidth = 2;
+      ctx.beginPath(); ctx.ellipse(s[0], s[1] - vsC.ay * 0.5 - m.z, vsC.w * 0.42, vsC.ay * 0.62, 0, 0, 6.283); ctx.stroke();
+      ctx.restore();
     }
     if (m.shield > 0) {
       ctx.strokeStyle = 'rgba(140,230,255,' + (0.5 + Math.sin(L.time * 20) * 0.3) + ')'; ctx.lineWidth = 1;
@@ -1581,6 +1633,37 @@
     ctx.restore();
     ctx.fillStyle = 'rgba(60,140,255,0.07)'; ctx.fillRect(0, 0, W, H);
   }
+  // riesige Ranken mit Fallen-Maul brechen aus dem Boden, schnappen zu und ziehen sich zurück
+  function drawVineAttack(f, k) {
+    var vs = spos(f.x0, f.y0, 0), pr = 1 - k;
+    var rise = pr < 0.22 ? pr / 0.22 : pr > 0.72 ? Math.max(0, (1 - pr) / 0.28) : 1;
+    var snap = pr > 0.25 && pr < 0.55 ? Math.sin((pr - 0.25) / 0.3 * Math.PI) : 0;
+    // Erdrisse
+    ctx.strokeStyle = 'rgba(40,25,10,0.7)'; ctx.lineWidth = 1;
+    for (var c = 0; c < 5; c++) { var ca = c / 5 * 6.283 + f.seed; ctx.beginPath(); ctx.moveTo(vs[0], vs[1]); ctx.lineTo(vs[0] + Math.cos(ca) * 22, vs[1] + Math.sin(ca) * 10); ctx.stroke(); }
+    [[-16, 62, -10], [0, 86, 8], [15, 58, 14]].forEach(function (st, i) {
+      var bx = vs[0] + st[0], by = vs[1] + (i === 1 ? 2 : 0), h = st[1] * rise, lean = st[2] + Math.sin(L.time * 6 + i + f.seed) * 3;
+      if (h < 3) return;
+      var tx = bx + lean, ty = by - h, cx = bx - lean * 0.6, cy = by - h * 0.5;
+      ctx.lineCap = 'round';
+      ctx.strokeStyle = '#18240f'; ctx.lineWidth = 9; ctx.beginPath(); ctx.moveTo(bx, by); ctx.quadraticCurveTo(cx, cy, tx, ty); ctx.stroke();
+      ctx.strokeStyle = '#3c5428'; ctx.lineWidth = 6; ctx.beginPath(); ctx.moveTo(bx, by); ctx.quadraticCurveTo(cx, cy, tx, ty); ctx.stroke();
+      ctx.strokeStyle = '#64803e'; ctx.lineWidth = 1.5; ctx.beginPath(); ctx.moveTo(bx - 1, by); ctx.quadraticCurveTo(cx - 1, cy, tx - 1, ty); ctx.stroke();
+      // Fallen-Maul an der Spitze (nach unten zum Opfer geneigt)
+      var open = 0.95 - snap * 0.85, dirx = lean > 0 ? 1 : -1, s2 = 11;
+      ctx.save(); ctx.translate(tx, ty); ctx.rotate(dirx * 0.9);
+      ctx.fillStyle = '#3c5428';
+      ctx.beginPath(); ctx.moveTo(0, 0); ctx.quadraticCurveTo(-s2 * 0.2, -s2 * open, s2 * 1.5, -s2 * 0.5 * open); ctx.lineTo(s2 * 1.4, 0); ctx.fill();
+      ctx.beginPath(); ctx.moveTo(0, 0); ctx.quadraticCurveTo(-s2 * 0.2, s2 * open, s2 * 1.5, s2 * 0.5 * open); ctx.lineTo(s2 * 1.4, 0); ctx.fill();
+      ctx.fillStyle = '#b01c28'; ctx.beginPath(); ctx.moveTo(2, 0); ctx.lineTo(s2 * 1.35, -s2 * 0.42 * open); ctx.lineTo(s2 * 1.35, s2 * 0.42 * open); ctx.fill();
+      ctx.fillStyle = '#f2ecd8';
+      for (var t = 0; t < 5; t++) {
+        var px = 3 + t * 3, py = s2 * 0.42 * open * (px / (s2 * 1.4));
+        ctx.fillRect(px, -py - 1, 1, 3); ctx.fillRect(px + 1, py - 2, 1, 3);
+      }
+      ctx.restore();
+    });
+  }
   function drawFx() {
     var p = L.p;
     ctx.lineCap = 'round';
@@ -1632,10 +1715,12 @@
         ctx.save(); ctx.globalCompositeOperation = 'lighter';
         radial(pw[0], pw[1] - 8, 26 * (1.2 - k * 0.5), 'rgba(255,240,160,' + k + ')', 'rgba(255,200,60,' + k * 0.5 + ')');
         ctx.restore();
-      } else if (f.k === 'vine' || f.k === 'erupt') {
+      } else if (f.k === 'vine') {
+        drawVineAttack(f, k);
+      } else if (f.k === 'erupt') {
         var vs = spos(f.x0, f.y0, 0), hgt = Math.sin((1 - k) * Math.PI) * 28;
         for (var v = -2; v <= 2; v++) {
-          ctx.strokeStyle = f.k === 'vine' ? (v % 2 ? '#2e6a2a' : '#5aa83a') : (v % 2 ? '#a020ff' : '#e080ff'); ctx.lineWidth = 2;
+          ctx.strokeStyle = v % 2 ? '#a020ff' : '#e080ff'; ctx.lineWidth = 2;
           ctx.beginPath(); ctx.moveTo(vs[0] + v * 5, vs[1] + Math.abs(v)); ctx.lineTo(vs[0] + v * 3, vs[1] - hgt + Math.abs(v) * 4); ctx.stroke();
         }
       } else if (f.k === 'spark') {
@@ -1748,6 +1833,19 @@
     }
   }
 
+  // Kino-Auftritt: schwarze Balken, Name des Bosses
+  function drawCine() {
+    var C = L.cine; if (!C) return;
+    var a = Math.max(0, Math.min(1, C.t * 3, (C.dur - C.t) * 3)), bh = Math.round(30 * a);
+    ctx.fillStyle = '#000'; ctx.fillRect(0, 0, W, bh); ctx.fillRect(0, H - bh, W, bh);
+    if (C.t > 0.5) {
+      var ta = Math.min(1, (C.t - 0.5) * 2, (C.dur - C.t) * 2);
+      ctx.globalAlpha = ta;
+      text('- BOSS -', W / 2, H - bh - 40, '#ffcc6a', 'center');
+      text(C.name, W / 2, H - bh - 28, '#ff4a2a', 'center', 16);
+      ctx.globalAlpha = 1;
+    }
+  }
   function filmOverlay() {
     if (!G.film) return;
     ctx.fillStyle = 'rgba(255,255,255,.06)';
@@ -2002,7 +2100,7 @@
       case 'help': drawHelp(); break;
       case 'options': drawOptions(); break;
       case 'intro': drawIntro(); break;
-      case 'play': drawWorld(); drawHUD(); break;
+      case 'play': drawWorld(); drawHUD(); drawCine(); break;
       case 'pause':
         drawWorld(); drawHUD();
         ctx.fillStyle = 'rgba(0,0,0,.65)'; ctx.fillRect(0, 0, W, H);
