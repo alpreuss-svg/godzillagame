@@ -335,6 +335,20 @@ var Sound = (function () {
       sweep('sine', t, big ? 0.6 : 0.3, 110, 30, big ? 0.9 : 0.5);
     },
     hit: function () { var t = ctx.currentTime; sweep('sine', t, 0.18, 160, 45, 0.8); noise(t, 0.14, 'bandpass', 1400, 500, 0.5, 1.5); },
+    // tiefes Einatmen + ansteigendes Atom-Summen
+    charge: function (dur) {
+      var t = ctx.currentTime, d = dur || 0.6;
+      noise(t, d * 0.9, 'bandpass', 350, 1800, 0.4, 1.5, 0.3);
+      var o = ctx.createOscillator(), o2 = ctx.createOscillator(), g = ctx.createGain(), f = ctx.createBiquadFilter();
+      o.type = 'sawtooth'; o2.type = 'square';
+      o.frequency.setValueAtTime(70, t); o.frequency.exponentialRampToValueAtTime(420, t + d);
+      o2.frequency.setValueAtTime(140, t); o2.frequency.exponentialRampToValueAtTime(840, t + d);
+      f.type = 'lowpass'; f.frequency.setValueAtTime(400, t); f.frequency.exponentialRampToValueAtTime(3000, t + d);
+      g.gain.setValueAtTime(0.001, t); g.gain.exponentialRampToValueAtTime(0.18, t + d * 0.95); g.gain.exponentialRampToValueAtTime(0.001, t + d + 0.1);
+      o.connect(f); o2.connect(f); f.connect(g); g.connect(sfx);
+      var w = ctx.createGain(); w.gain.value = 0.4; g.connect(w); w.connect(verb);
+      o.start(t); o2.start(t); o.stop(t + d + 0.15); o2.stop(t + d + 0.15);
+    },
     collapse: function (tall) {
       var t = ctx.currentTime, len = 1 + Math.min(1.8, (tall || 40) / 50);
       noise(t, len, 'lowpass', 700, 60, 0.9, 0, 0.5);

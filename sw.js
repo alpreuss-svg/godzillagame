@@ -1,9 +1,9 @@
 /* Service Worker: Spiel offline spielbar machen.
    Bei jedem Update VERSION erhöhen, damit alte Caches gelöscht werden. */
-var VERSION = 'kaiju3000-v3';
+var VERSION = 'kaiju3000-v4';
 var ASSETS = [
   './', './index.html', './css/style.css', './manifest.webmanifest',
-  './js/raster.js', './js/sprites.js', './js/audio.js', './js/world.js', './js/game.js',
+  './js/raster.js', './js/sprites.js', './js/kaiju3d.js', './js/audio.js', './js/world.js', './js/game.js',
   './icons/icon-192.png', './icons/icon-512.png', './icons/icon-maskable-512.png'
 ];
 

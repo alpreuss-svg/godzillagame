@@ -88,7 +88,7 @@ var World = (function () {
     var roofs = h > 70 ? ['ant', 'ant', 'heli', 'ac'] : ['ant', 'tank', 'tank', 'ac', 'ac', null];
     var tspr = Sprites.tower({
       secs: secs, st: sty, night: !!night, lit: night ? 0.45 : 0, seed: (i * 7 + j) % 6, shop: h < 60 || R() < 0.6,
-      awn: ['#b03a2a', '#2a6a3a', '#2a4a8a', '#c8a020'][Math.floor(R() * 4)], roof: roofs[Math.floor(R() * roofs.length)], shadow: !night
+      awn: ['#b03a2a', '#2a6a3a', '#2a4a8a', '#c8a020'][Math.floor(R() * 4)], roof: roofs[Math.floor(R() * roofs.length)], shadow: !night, snow: m.pal === PAL.snow
     });
     return m.add(i, j, tspr, { hp: 40 + h * 2, score: 50 + h * 3 });
   }
@@ -109,6 +109,8 @@ var World = (function () {
     day: { grass: '#6c9c44', park: '#5a8c3c', water: '#3c7cbc', deep: '#2c64a0', sand: '#dcc890', concrete: '#a8a8a0', road: '#6a6a70', walk: '#b8b8b0', line: '#f0f0e8', field: '#9cb04c', rock: '#8a8278', dirt: '#9c7a4c', sky: '#8cc4ec', edge: '#6a4a2c' },
     smog: { grass: '#4c5a3a', park: '#44523a', water: '#3a4a44', deep: '#2c3a36', sand: '#8a8468', concrete: '#7a766c', road: '#4a4844', walk: '#8a867c', line: '#c8b870', field: '#6a7040', rock: '#5a544c', dirt: '#6a5a44', sky: '#4a4436', edge: '#3a2e20' },
     red: { grass: '#2a3424', park: '#2c3a26', water: '#1c2440', deep: '#141a30', sand: '#5c5040', concrete: '#4c4448', road: '#302a2e', walk: '#5c5258', line: '#d0a040', field: '#3c4028', rock: '#403838', dirt: '#4a3a2c', sky: '#2a0a10', edge: '#2a1810' },
+    snow: { grass: '#e6ecf2', park: '#d8e2ea', water: '#3a5a7a', deep: '#2a4a6a', sand: '#cfd4d8', concrete: '#bcc2ca', road: '#6e737c', walk: '#d2d8de', line: '#e8e8f0', field: '#dfe6ec', rock: '#8a8e96', dirt: '#a0a4aa', sky: '#8eaac4', edge: '#5a5048' },
+    tropic: { grass: '#4c9a3c', park: '#3c8a34', water: '#2a9ab8', deep: '#1a74a0', sand: '#ecd8a0', concrete: '#b0aca0', road: '#6a6a70', walk: '#c8c4b8', line: '#f0f0e8', field: '#8ab04c', rock: '#6a6058', dirt: '#8a6a44', sky: '#7ad0f0', edge: '#6a4a2c' },
     island: { grass: '#3c8a3c', park: '#2c7a34', water: '#2c8cb0', deep: '#1c6c94', sand: '#e8d49c', concrete: '#8a8a80', road: '#6a6a70', walk: '#b8b8b0', line: '#f0f0e8', field: '#7aa04c', rock: '#5a5048', dirt: '#7a5a3c', sky: '#f0a868', edge: '#5a3c24' }
   };
 
@@ -220,6 +222,80 @@ var World = (function () {
       if (R() < 0.55) office(m, i, j, R, 20 + R() * 30 + close * 70 * R(), true);
     }
     return { map: m, start: [3.5, 3.5], llama: [18.5, 16.5], bossAt: [30, 30], night: true, red: true };
+  }
+
+  function cityFill(m, R, night, x0, y0, x1, y1, hBase, hRand, hClose, cx, cy, dens) {
+    for (var j = y0; j < y1; j++) for (var i = x0; i < x1; i++) {
+      if (m.T(i, j) !== T.CONCRETE || m.occ[i + ',' + j]) continue;
+      var dc = Math.sqrt((i - cx) * (i - cx) + (j - cy) * (j - cy)), close = Math.max(0, 1 - dc / 18);
+      if (R() < 0.08) { m.S(i, j, T.PARK); if (R() < 0.6) special(m, i, j, m.pal === PAL.snow ? 'snowpine' : 'tree', { hp: 10, score: 10 }); continue; }
+      if (R() < (dens || 0.6)) office(m, i, j, R, hBase + R() * hRand + close * hClose * R(), night);
+    }
+  }
+
+  function genAtoll() {
+    var W = 34, H = 34, m = new Map(W, H, PAL.tropic), R = rng(1966), i, j;
+    for (j = 0; j < H; j++) for (i = 0; i < W; i++) {
+      var dx = (i + 0.5 - 17) / 11, dy = (j + 0.5 - 17) / 10, d = Math.sqrt(dx * dx + dy * dy) + (hash(i, j, 4) - 0.5) * 0.1;
+      var t = d > 1.15 ? T.DEEP : d > 1 ? T.WATER : d > 0.86 ? T.SAND : T.GRASS;
+      m.S(i, j, t);
+    }
+    // kleine Nebeninsel
+    for (j = 26; j < 31; j++) for (i = 26; i < 31; i++) m.S(i, j, (i === 26 || i === 30 || j === 26 || j === 30) ? T.SAND : T.GRASS);
+    // Fischerdorf (West) & Hafen
+    for (j = 12; j < 22; j++) for (i = 8; i < 14; i++) if (m.T(i, j) === T.GRASS) m.S(i, j, (j === 15 || j === 19) ? T.ROADX : (i === 11 ? T.ROADY : T.CONCRETE));
+    for (i = 4; i < 9; i++) m.S(i, 17, T.CONCRETE);
+    for (j = 12; j < 22; j++) for (i = 8; i < 14; i++) if (m.T(i, j) === T.CONCRETE && R() < 0.65) house(m, i, j, R, false);
+    // Hotelanlage (Ost)
+    for (j = 13; j < 21; j++) for (i = 20; i < 26; i++) if (m.T(i, j) === T.GRASS) m.S(i, j, (i === 23 || j === 17) ? (i === 23 && j === 17 ? T.CROSS : i === 23 ? T.ROADY : T.ROADX) : T.CONCRETE);
+    for (j = 13; j < 21; j++) for (i = 20; i < 26; i++) if (m.T(i, j) === T.CONCRETE && R() < 0.75) office(m, i, j, R, 16 + R() * 40, false, 2);
+    special(m, 16, 9, 'reactor', { hp: 90, score: 500, nuclear: true });
+    special(m, 15, 24, 'torii', { hp: 20, score: 100 });
+    for (j = 0; j < H; j++) for (i = 0; i < W; i++) {
+      var tt = m.T(i, j);
+      if (tt === T.GRASS && R() < 0.28) special(m, i, j, R() < 0.7 ? 'palm' : 'tree', { hp: 10, score: 10 });
+      else if (tt === T.SAND && R() < 0.07) special(m, i, j, 'palm', { hp: 10, score: 10 });
+    }
+    return { map: m, start: [12.5, 24.5], llama: [28.5, 28.5], bossAt: [26, 8] };
+  }
+
+  function genNagoya() {
+    var W = 36, H = 36, m = new Map(W, H, PAL.dusk), R = rng(1992), i, j;
+    for (j = 0; j < H; j++) for (i = 0; i < W; i++) m.S(i, j, i > 31 ? (i > 33 ? T.DEEP : T.WATER) : T.CONCRETE);
+    grid(m, 1, 1, 31, H, 6);
+    for (j = 4; j < 11; j++) for (i = 4; i < 11; i++) if (m.T(i, j) === T.CONCRETE) m.S(i, j, T.PARK);
+    for (j = 4; j < 11; j++) { m.S(3, j, T.WATER); m.S(11, j, T.WATER); }
+    special(m, 7, 7, 'castle', { hp: 150, score: 1500, r: 0.7, egg: 'nagoya' });
+    for (j = 4; j < 11; j++) for (i = 4; i < 11; i++) if (m.T(i, j) === T.PARK && !m.occ[i + ',' + j] && R() < 0.3) special(m, i, j, 'tree', { hp: 10, score: 10 });
+    special(m, 19, 15, 'tower', { hp: 140, score: 1000 });
+    special(m, 28, 30, 'reactor', { hp: 90, score: 500, nuclear: true });
+    cityFill(m, R, false, 0, 0, 31, H, 12, 22, 60, 20, 18, 0.62);
+    return { map: m, start: [27.5, 32.5], llama: [6.5, 9.5], bossAt: [8, 18] };
+  }
+
+  function genFukuoka() {
+    var W = 36, H = 36, m = new Map(W, H, PAL.night), R = rng(1994), i, j;
+    for (j = 0; j < H; j++) for (i = 0; i < W; i++) m.S(i, j, i < 6 ? (i < 3 ? T.DEEP : T.WATER) : i === 6 ? T.SAND : T.CONCRETE);
+    grid(m, 8, 1, W, H, 6);
+    special(m, 8, 16, 'ftower', { hp: 160, score: 1200, egg: 'ftower' });
+    special(m, 30, 4, 'reactor', { hp: 90, score: 500, nuclear: true });
+    for (j = 0; j < H; j += 2) if (m.T(7, j) === T.CONCRETE && R() < 0.5) special(m, 7, j, 'oiltank', { hp: 30, score: 150 });
+    cityFill(m, R, true, 7, 0, W, H, 14, 26, 64, 22, 20, 0.6);
+    return { map: m, start: [30.5, 31.5], llama: [33.5, 33.5], bossAt: [14, 8], crystals: true };
+  }
+
+  function genSapporo() {
+    var W = 36, H = 36, m = new Map(W, H, PAL.snow), R = rng(1972), i, j;
+    for (j = 0; j < H; j++) for (i = 0; i < W; i++) m.S(i, j, T.CONCRETE);
+    grid(m, 0, 0, W, H, 6);
+    // Odori-Park (Schneefestival) quer durch die Stadt
+    for (i = 0; i < W; i++) for (j = 15; j < 18; j++) if (m.T(i, j) === T.CONCRETE) m.S(i, j, T.PARK);
+    special(m, 3, 16, 'tower', { hp: 140, score: 1000 });
+    for (i = 6; i < W; i += 3) if (!m.occ[i + ',16'] && m.T(i, 16) === T.PARK) special(m, i, 16, 'snowpine', { hp: 10, score: 10 });
+    special(m, 32, 32, 'reactor', { hp: 90, score: 500, nuclear: true });
+    for (j = 24; j < H; j++) for (i = 0; i < 14; i++) if (m.T(i, j) === T.CONCRETE && R() < 0.6) house(m, i, j, R, false);
+    cityFill(m, R, false, 0, 0, W, H, 10, 22, 50, 22, 10, 0.6);
+    return { map: m, start: [4.5, 32.5], llama: [20.5, 16.5], bossAt: [30, 5], snow: true };
   }
 
   function genLake() {
@@ -338,5 +414,5 @@ var World = (function () {
     return { cv: cv, OX: OX, OY: OY };
   }
 
-  return { T: T, TW: TW, TH: TH, gen: { tokyo: genTokyo, osaka: genOsaka, lake: genLake, yokohama: genYokohama, fuji: genFuji, shinjuku: genShinjuku, island: genIsland }, renderGround: renderGround, PAL: PAL, rng: rng };
+  return { T: T, TW: TW, TH: TH, gen: { tokyo: genTokyo, osaka: genOsaka, lake: genLake, atoll: genAtoll, yokohama: genYokohama, nagoya: genNagoya, fuji: genFuji, fukuoka: genFukuoka, sapporo: genSapporo, shinjuku: genShinjuku, island: genIsland }, renderGround: renderGround, PAL: PAL, rng: rng };
 })();

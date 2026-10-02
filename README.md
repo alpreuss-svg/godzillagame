@@ -11,10 +11,10 @@ Du steuerst Godzilla, legst Städte in Schutt und Asche und kämpfst gegen Mecha
 |---|---|
 | Pfeiltasten / WASD | Laufen (einfach durch Häuser hindurch!) |
 | J oder Leertaste | Kombo: Klaue, Klaue, Schwanzhieb rundum |
-| K (halten) | Atomstrahl (verbraucht die blaue Leiste) |
+| K (halten) | Godzilla atmet ein, die Rückenplatten laden sich vom Schwanz aufwärts auf – dann Atomstrahl |
 | L | Brüllen – betäubt Gegner, verjagt Panzer |
 | R | **Kernpuls** – 360°-Atomexplosion, wenn die rote Wut-Leiste voll ist |
-| P / Esc | Pause |
+| P / Esc / Pause-Knopf | Pause-Menü (Weiter, Optionen, Steuerung, Neustart, Titel); pausiert auch automatisch, wenn das Fenster den Fokus verliert |
 | M | Ton an/aus |
 
 **Gamepad:** Stick/Steuerkreuz laufen, A Schlag, X/RT Strahl, Y Brüllen, RB/B Kernpuls, Start Pause.
@@ -38,11 +38,17 @@ und Schwierigkeit (Leicht/Normal/Schwer) einstellen.
 | 1 | Tokio – Hafenviertel bei Nacht | Kamacuras (1, dann 2) | Mechagodzilla (Spiegelschild) |
 | 2 | Osaka – Burg am Yodo-Fluss | Anguirus | Gigan |
 | 3 | Ashino-See – Hakone in der Dämmerung | Kumonga (Netze bremsen) | Biolante |
-| 4 | Yokohama – Industriehafen im Smog | Kamacuras + Kumonga | Hedorah (Giftwolken) |
-| 5 | Berg Fuji | Rodan, dann Anguirus + Rodan | King Ghidorah |
-| 6 | Shinjuku – das Finale | Gigan | Destoroyah |
-| ? | ??? | – | Geheimlevel |
+| 4 | Letchi-Atoll – Südsee | Ebirah, dann Ebirah + Kamacuras | Megalon |
+| 5 | Yokohama – Industriehafen im Smog | Kamacuras + Kumonga | Hedorah (Giftwolken) |
+| 6 | Nagoya | Battra-Larve (verwandelt sich!) | Mothra: Larve → Kokon → Falter |
+| 7 | Berg Fuji | Rodan, dann Anguirus + Rodan | King Ghidorah |
+| 8 | Fukuoka – Kristallstadt | Moguera | SpaceGodzilla (Kristalltürme heilen ihn) |
+| 9 | Sapporo – Schneefestival | Titanosaurus, dann Battra + Rodan | Mecha-King Ghidorah |
+| 10 | Shinjuku – das Finale | Gigan + Megalon | Destoroyah |
+| ? | ??? | – | Geheimlevel (Boss-Rush gegen fünf) |
 
+Godzilla, Mechagodzilla, SpaceGodzilla, Minilla, Titanosaurus, Megalon, Moguera, King Ghidorah und Mecha-King Ghidorah
+haben eine Seiten-, Front- und Rückenansicht – je nachdem, ob sie seitlich, auf den Betrachter zu oder von ihm weg laufen.
 In den Städten fahren Autos und laufen Menschen, die vor den Monstern fliehen. Panzer und Jets greifen an.
 Hochhäuser zeigen Schäden und stürzen mit Staubwolken und Trümmern ein; Fußabdrücke und Brandspuren bleiben
 auf dem Boden. Am Levelende gibt es eine Bewertung (S/A/B/C). Eine Minikarte zeigt alle Monster.
@@ -95,6 +101,6 @@ und dann http://localhost:8123 öffnen.
 ## Rechtliches
 
 Nicht-kommerzielles Fanprojekt. Godzilla, Mechagodzilla, King Ghidorah, Biolante, Minilla, Mothra, Anguirus, Rodan,
-Kamacuras, Kumonga, Gigan, Hedorah und Destoroyah sind Marken
+Kamacuras, Kumonga, Gigan, Hedorah, Destoroyah, Battra, Ebirah, Megalon, Moguera, Titanosaurus, SpaceGodzilla und Mecha-King Ghidorah sind Marken
 von Toho Co., Ltd. Dieses Projekt steht in keiner Verbindung zu Toho. Sämtlicher Code, alle Pixelgrafiken und die Musik
 wurden eigens für dieses Projekt erstellt.

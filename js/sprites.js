@@ -15,6 +15,17 @@ var Sprites = (function () {
     r.poly([p(0, -s * 0.7), p(s * 0.8, -s * 0.75), p(s * 0.7, -s * 0.45), p(s * 1.35, -s * 0.38), p(s * 1.05, -s * 0.12), p(s * 1.9, 0),
       p(s * 1.05, s * 0.14), p(s * 1.3, s * 0.4), p(s * 0.7, s * 0.42), p(s * 0.75, s * 0.72), p(0, s * 0.7)], c);
   }
+  // Showa-Rückenplatte: abgerundetes Ahornblatt (3 bzw. 5 Lappen), n = nach außen, d = entlang Basis
+  function plate(r, x, y, s, nx, ny, dx, dy, c) {
+    var pts = [], lobes = s > 5.5 ? 11 : 7;
+    for (var i = 0; i <= 28; i++) {
+      var th = -Math.PI / 2 + Math.PI * i / 28;
+      var rr = s * (0.8 + 0.3 * Math.cos(lobes * th)) * (1 - 0.34 * Math.abs(th) / (Math.PI / 2));
+      var a = rr * Math.cos(th) * 1.18, b = rr * Math.sin(th) * 1.05;
+      pts.push([x + nx * a + dx * b, y + ny * a + dy * b]);
+    }
+    r.poly(pts, c);
+  }
   function mkSet(fn, ax, ay, extra) {
     var S = { walk: [] };
     for (var i = 0; i < 4; i++) S.walk.push(pair(fn({ phase: i })));
@@ -25,136 +36,10 @@ var Sprites = (function () {
     return S;
   }
 
-  /* ================= Godzilla / Mechagodzilla / Minilla ================= */
-  var GZP = {
-    godzilla: { body: '#3b483c', dark: '#232b24', belly: '#687055', bellyD: '#51583f', plate: '#c2bca2', plateD: '#8e8872', glow: '#9ef4ff', glowD: '#48c4ff', eye: '#f2a82a', mouth: '#5c1010', claw: '#ddd8c4', brow: '#252e26' },
-    mecha: { body: '#8a98a9', dark: '#56647a', belly: '#a6b2c0', bellyD: '#76869a', plate: '#c0ccd8', plateD: '#8894a4', glow: '#ffffff', glowD: '#ffd24a', eye: '#ffe04a', mouth: '#2a2a3a', claw: '#dde4ee', accent: '#b82c2c', brow: '#5a6878' },
-    minilla: { body: '#6f9a5e', dark: '#4e7444', belly: '#b8c49a', bellyD: '#98a47c', plate: '#e4e4cc', plateD: '#c0c0a8', glow: '#b8ffff', glowD: '#80e0ff', eye: '#1a1a1a', mouth: '#b04040', claw: '#f0f0e0', brow: '#5a8450' }
-  };
-  var GZK = { godzilla: 1.25, mecha: 1.2, minilla: 0.62 };
-  var TLx = { godzilla: 46, mecha: 30, minilla: 10 };
-  function gz(style, f) {
-    var P = GZP[style], mini = style === 'minilla', mecha = style === 'mecha', god = style === 'godzilla';
-    var k = GZK[style], TL = TLx[style], TR = 28;
-    var r = new R((96 + TL + TR) * k + 3, 79 * k + 3); r.k = k; r.ox = 1 + TL * k; r.oy = 1;
-    var ph = f.phase || 0, pose = f.pose || '', st = f.stand || !!pose;
-    var la = st ? 0 : [-3, 0, 3, 0][ph], lb = st ? 0 : [3, 0, -3, 0][ph];
-    var lA = st ? 0 : [0, 3, 0, 0][ph], lB = st ? 0 : [0, 0, 0, 3][ph];
-    var b = st ? 0 : [0, -1, 0, -1][ph], sw = st ? 0 : [0, 2, 0, -2][ph];
-    var hx = pose === 'claw2' ? 2 : 0, hy = (pose === 'roar' ? -3 : 0) + b;
-    var mouth = pose === 'breath' || pose === 'roar', m2 = pose === 'roar' ? 2.5 : 0;
-    var glow = pose === 'breath';
-    var plate = glow ? P.glow : P.plate, plateD = glow ? P.glowD : P.plateD;
-    var segs;
-    if (pose === 'tail') segs = [[46, 57, 70, 80, 96, 71, 10.5, 5], [96, 71, 112, 66, 120, 52, 5, 1.4]];
-    else if (mini) segs = [[46, 53, 30, 68, 12, 67 + sw, 7, 2]];
-    else if (mecha) segs = [[46, 52, 30, 70, 8, 69, 10, 5], [8, 69, -12, 69 + sw, -28, 63 + sw * 2, 5, 1.5]];
-    else segs = [[46, 52, 30, 71, 4, 70, 11, 5.8], [4, 70, -22, 70 + sw, -44, 62 + sw * 2, 5.8, 1.2]];
-    function tail() { segs.forEach(function (s) { r.curve(s[0], s[1], s[2], s[3], s[4], s[5], s[6], s[7], P.body); }); }
-
-    r.layer = 0;
-    if (pose !== 'tail') tail();
-    // hinteres Bein, hinterer Arm
-    r.ell(59, 56, 7.5, 8.5, P.dark); r.ell(61 + lb, 63 - lB, 6, 7.5, P.dark); r.ell(64 + lb, 69.5 - lB, 8, 2.8, P.dark);
-    r.ell(68, 39 + b, 4, 3, P.dark);
-    // Rückenplatten (zwei Reihen)
-    var x0 = 58, y0 = 12 + b, x1 = 40, y1 = 50, dx = x1 - x0, dy = y1 - y0, dl = Math.sqrt(dx * dx + dy * dy);
-    dx /= dl; dy /= dl;
-    var nx = -dy, ny = dx; if (nx > 0) { nx = -nx; ny = -ny; }
-    var np = mini ? 4 : 7, i, t;
-    for (var row = 0; row < 2; row++) for (i = 0; i < np; i++) {
-      t = (i + 0.5) / np;
-      var px = x0 + (x1 - x0) * t, py = y0 + (y1 - y0) * t;
-      var s = (mini ? 2.5 : 4) + (mini ? 1.5 : 7.5) * Math.sin(Math.PI * (0.12 + 0.8 * t));
-      if (mecha) { s *= 0.5; r.poly([[px - dx * s, py - dy * s], [px + dx * s, py + dy * s], [px + nx * s * 2.2, py + ny * s * 2.2]], row ? plate : plateD); continue; }
-      if (row === 0) leaf(r, px + nx * 1.4 + dx * 2.6, py + ny * 1.4 + dy * 2.6, s * 0.85, nx, ny, dx, dy, plateD);
-      else leaf(r, px, py, s, nx, ny, dx, dy, plate);
-    }
-    // Platten auf dem Schwanz
-    if (pose !== 'tail' && !mini) {
-      var tp = [[0, 0.15], [0, 0.35], [0, 0.55], [0, 0.78], [1, 0.2], [1, 0.45], [1, 0.68]];
-      tp.forEach(function (q) {
-        var sg = segs[q[0]]; if (!sg) return;
-        var tx = bz(sg[0], sg[2], sg[4], q[1]), ty = bz(sg[1], sg[3], sg[5], q[1]), rr = sg[6] + (sg[7] - sg[6]) * q[1], ss = rr * 0.6;
-        r.poly([[tx - ss, ty - rr * 0.7], [tx + ss * 0.6, ty - rr * 0.7], [tx - ss * 0.4, ty - rr * 0.7 - ss * 1.9]], mecha ? P.plate : plate);
-      });
-    }
-    // Körper
-    r.layer = 1;
-    r.ell(51, 45 + b, 13, 17.5, P.body); r.ell(57, 35 + b, 10.5, 10.5, P.body); r.ell(61, 26 + b, 8, 9, P.body);
-    var H = function (x, y) { return [x + hx, y + hy]; };
-    if (mini) {
-      r.ell(64 + hx, 18 + hy, 10, 9, P.body); r.ell(73 + hx, 21 + hy, 4.5, 3.5, P.body);
-      if (mouth) r.poly([H(66, 22), H(76, 21), H(75, 26), H(67, 26)], P.mouth);
-    } else if (mecha) {
-      r.poly([H(57, 12), H(66, 9), H(79, 14), H(79, 19), H(66, 23), H(58, 21)], P.body);
-      r.poly([H(60, 12), H(74, 12.5), H(73, 14.4), H(61, 14.2)], P.brow);
-      if (mouth) { r.poly([H(62, 21), H(78, 20), H(77, 25), H(62, 24)], P.body); r.poly([H(65, 20.5), H(78, 19.8), H(78, 21.8), H(65, 22)], P.mouth); }
-    } else {
-      r.ell(64 + hx, 18 + hy, 6, 5, P.body);
-      r.poly([H(60, 13), H(70, 13.2), H(78, 16), H(79.5, 18.6), H(77.5, 20.6), H(63, 23)], P.body);
-      if (mouth) {
-        r.poly([H(63, 21), H(77, 23), H(75, 28 + m2), H(63, 26)], P.body);
-        r.poly([H(65, 20.6), H(79, 20.2), H(76.5, 24.5 + m2 * 0.5), H(65, 23.6)], P.mouth);
-      } else r.poly([H(63, 21), H(77, 20.4), H(75.5, 23), H(64, 24.6)], P.body);
-      r.poly([H(61, 12.4), H(72.5, 13), H(71.5, 15.3), H(62.5, 15)], P.brow);
-    }
-    // Bauch
-    r.layer = 2;
-    r.ell(58, 43 + b, 6.5, 14.5, P.belly);
-    r.recolor(P.belly, P.bellyD, function (x, y) { return y % 3 === 0; });
-    if (mecha) {
-      r.recolor(P.body, P.dark, function (x, y) { return y % 6 === 0; });
-      r.rect(55, 31 + b, 7, 6, P.accent);
-    }
-    // vorderes Bein
-    r.layer = 3;
-    r.ell(47, 54, 11, 11, P.body); r.ell(49 + la, 62 - lA, 7.5, 8, P.body); r.ell(52 + la, 69 - lA, 10, 3, P.body);
-    if (mecha) r.rect(50 + la, 58 - lA, 6, 3, P.plate);
-    // vorderer Arm
-    r.layer = 4;
-    var claws;
-    if (pose === 'claw1') { r.ell(62, 33, 5.5, 4, P.body); r.line(63, 32, 71, 19, P.body, 2.8); claws = [[71.5, 15.5], [73.8, 16.6], [69.3, 15.8], [75, 18.5]]; }
-    else if (pose === 'claw2') { r.ell(63, 38, 5.5, 4, P.body); r.line(65, 39, 79, 41, P.body, 2.6); claws = [[81.8, 39.6], [82, 41.5], [81, 43.4], [79.6, 44.6]]; }
-    else { r.ell(62, 38 + b, 5.5, 4, P.body); r.line(64, 39 + b, 71, 42.5 + b, P.body, 2.5); claws = [[73.4, 41.8 + b], [73.8, 43.4 + b], [72.8, 45 + b], [71.4, 46 + b]]; }
-    if (pose === 'tail') { r.layer = 5; tail(); }
-
-    var tx0 = {}; tx0[P.body] = mini ? 0.1 : 0.3; tx0[P.dark] = 0.26; tx0[P.belly] = 0.12;
-    var sk = {}; if (glow) sk[P.glow] = 1;
-    r.shade2({ tex: tx0, skip: sk, seed: style.length, grad: mini ? 0 : 0.14 });
-    // Details
-    if (mecha) {
-      for (var vx = 64; vx <= 76; vx++) r.dot(vx + hx, 15.8 + hy, glow ? '#ffffff' : P.eye);
-      r.dot(56, 33 + b, '#ff8a8a'); r.dot(60, 33 + b, '#ff8a8a');
-    } else if (mini) {
-      r.dot(66 + hx, 15 + hy, P.eye); r.dot(67 + hx, 15 + hy, P.eye); r.dot(66 + hx, 16 + hy, P.eye);
-    } else {
-      r.dot(69 + hx, 16.1 + hy, P.eye); r.dot(68 + hx, 16.1 + hy, '#140c04');
-      r.dot(77.5 + hx, 17.4 + hy, '#0c100c');
-      if (mouth) for (var tt2 = 66; tt2 <= 77; tt2 += 1.6) { r.dot(tt2 + hx, 21.2 + hy, '#f4f0e0'); r.dot(tt2 + 0.8 + hx, 23.8 + m2 * 0.5 + hy, '#e4e0d0'); }
-      else { r.line(65 + hx, 20.8 + hy, 77 + hx, 20.4 + hy, '#141410'); for (var t3 = 67; t3 <= 76; t3 += 2) r.dot(t3 + hx, 21.3 + hy, '#e8e4d4'); }
-    }
-    claws.forEach(function (c) { r.dot(c[0], c[1], P.claw); });
-    [[59, 70.8], [61.4, 70.3], [57, 71.1], [63.2, 69.6]].forEach(function (c) { r.dot(c[0] + la, c[1] - lA, P.claw); });
-    r.outline(OUT);
-    return r;
-  }
-  function gzSet(style) {
-    var k = GZK[style], TL = TLx[style];
-    var S = { walk: [] };
-    for (var i = 0; i < 4; i++) S.walk.push(pair(gz(style, { phase: i })));
-    ['stand', 'claw1', 'claw2', 'tail', 'breath', 'roar'].forEach(function (p) { S[p] = pair(gz(style, p === 'stand' ? { stand: true } : { pose: p })); });
-    S.attack = S.claw2;
-    S.w = S.stand.r.width; S.h = S.stand.r.height;
-    S.ax = (50 + TL) * k + 1; S.ay = 71.5 * k + 1;
-    S.mouth = { x: 78 * k - 50 * k, y: 21.5 * k - 71.5 * k };
-    return S;
-  }
-
   /* ================= King Ghidorah ================= */
-  var GP = { body: '#c8982a', dark: '#8a6414', wing: '#d6a832', wingD: '#96701a', belly: '#e0c070', horn: '#f4e6b8', eye: '#ff2a1a', mouth: '#5a0c0c' };
+  var GP = { body: '#c8982a', dark: '#8a6414', wing: '#d6a832', wingD: '#96701a', belly: '#e0c070', horn: '#f4e6b8', eye: '#ff2a1a', mouth: '#5a0c0c', metal: '#a4adba', metalD: '#6a7486', visor: '#ff3020' };
   var GK = 1.6;
-  function ghidorah(f) {
+  function ghidorah(f, mkg) {
     var r = new R(74 * GK, 64 * GK); r.k = GK; r.ox = 2; r.oy = 1;
     var fl = f.stand ? 0 : f.phase || 0, mouth = f.atk;
     var ff = [0, 0.4, 1, 0.4][fl], sw = [0, 1, 0, -1][fl];
@@ -174,7 +59,8 @@ var Sprites = (function () {
     for (var i = 0; i < 3; i++) {
       r.layer = 3 + (i === 0 ? 0 : 1);
       var h = heads[i], bs = bases[i], c = ctrls[i], col = i === 0 ? GP.dark : GP.body;
-      r.curve(bs[0], bs[1], c[0], c[1], h[0] - 3, h[1] + 1, 3.4, 2.6, col);
+      if (mkg && i === 1) col = GP.metal;
+      r.curve(bs[0], bs[1], c[0], c[1], h[0] - 3, h[1] + 1, mkg && i === 1 ? 3.8 : 3.4, 2.6, col);
       var hx = h[0], hy = h[1];
       r.line(hx - 2, hy - 2, hx - 10, hy - 8, GP.horn, 0.8);
       r.line(hx - 1, hy - 2, hx - 8, hy - 10, GP.horn, 0.8);
@@ -187,10 +73,18 @@ var Sprites = (function () {
     }
     r.layer = 5;
     r.ell(26, 51, 5, 7, GP.body); r.ell(28, 58, 6, 2.2, GP.body);
+    if (mkg) {
+      r.layer = 2;
+      r.poly([[26, 33], [38, 34], [40, 46], [30, 50], [24, 44]], GP.metal);
+      r.recolor(GP.metal, GP.metalD, function (x, y) { return y % 5 === 0; });
+      r.layer = 6;
+      r.ell(heads[1][0] + 2, heads[1][1] - 0.5, 5, 3.8, GP.metal);
+    }
     var tx = {}; tx[GP.body] = 0.3; tx[GP.dark] = 0.25; tx[GP.wing] = 0.1;
     r.shade2({ tex: tx, seed: 11, grad: 0.1 });
     for (i = 0; i < 3; i++) {
       var h2 = heads[i];
+      if (mkg && i === 1) { r.line(h2[0] - 1, h2[1] - 1.4, h2[0] + 6, h2[1] - 1, GP.visor); continue; }
       r.dot(h2[0] + 1, h2[1] - 1.2, GP.eye);
       r.line(h2[0] - 0.5, h2[1] - 2.2, h2[0] + 3, h2[1] - 1.4, sh(GP.body, -0.5));
       for (var tq = 2; tq < 9; tq += 1.5) r.dot(h2[0] + tq, h2[1] + 1.2, '#f4f0e0');
@@ -200,8 +94,8 @@ var Sprites = (function () {
     r.outline(OUT);
     return r;
   }
-  function ghidorahSet() {
-    var S = mkSet(ghidorah, 32 * GK + 2, 60 * GK + 1);
+  function ghidorahSet(mkg) {
+    var S = mkSet(function (f) { return ghidorah(f, mkg); }, 32 * GK + 2, 60 * GK + 1);
     S.mouths = [[32, 11], [52, 7], [68, 19]].map(function (m) { return { x: m[0] * GK + 2 - S.ax, y: m[1] * GK + 1 - S.ay }; });
     S.mouth = S.mouths[1];
     return S;
@@ -609,8 +503,8 @@ var Sprites = (function () {
       for (py = Math.floor(zc - ext); py < Math.ceil(zc + ext); py++) {
         var dd = Math.abs(py + 0.5 - zc);
         if (dd > ext) continue;
-        var edge = dd > ext - 1 || au > a - 1;
-        r.set(px, py, edge ? sh(S.roof, 0.2) : (hash(px, py, 7) < 0.2 ? sh(S.roof, -0.1) : S.roof));
+        var edge = dd > ext - 1 || au > a - 1, rc = o.snow ? '#e4eaf0' : S.roof;
+        r.set(px, py, edge ? sh(rc, 0.15) : (hash(px, py, 7) < 0.2 ? sh(rc, -0.1) : rc));
       }
     }
   }
@@ -802,6 +696,28 @@ var Sprites = (function () {
       r = new R(22, 16);
       r.ell(11, 10, 10, 5.5, '#6c6458'); r.ell(8, 8, 5, 4, '#7c7466');
       r.shade2({ tex: { '#6c6458': 0.3, '#7c7466': 0.3 } }); r.outline(OUT); ax = 11; ay = 12;
+    } else if (kind === 'crystal') {
+      r = new R(30, 46);
+      [[15, 44, 4, 40], [9, 44, 3, 24], [22, 44, 3, 28], [12, 44, 2.5, 14], [19, 44, 2, 16]].forEach(function (c, j) {
+        r.layer = j;
+        r.poly([[c[0] - c[2], c[1]], [c[0] - c[2] * 0.8, c[1] - c[3] * 0.8], [c[0], c[1] - c[3]], [c[0] + c[2] * 0.8, c[1] - c[3] * 0.8], [c[0] + c[2], c[1]]], j % 2 ? '#b07ae0' : '#7ad8ff');
+      });
+      r.shade2({ grad: -0.1 });
+      for (y = 6; y < 40; y += 5) r.dot(15, y, '#ffffff');
+      r.outline('#1a2040'); ax = 15; ay = 43;
+    } else if (kind === 'ftower') {
+      r = new R(22, 112);
+      r.poly([[3, 110], [11, 6], [19, 110]], '#7aa8cc');
+      r.poly([[11, 6], [19, 110], [14, 110]], '#4a7096');
+      for (y = 10; y < 108; y += 4) r.line(5 + (y - 6) * 0.07, y, 17 - (y - 6) * 0.07, y, '#a8d0f0');
+      r.line(11, 0, 11, 6, '#c0c0c8'); r.dot(11, 0, '#ff3030');
+      r.rect(5, 104, 12, 6, '#5a6070');
+      r.outline(OUT); ax = 11; ay = 108;
+    } else if (kind === 'snowpine') {
+      r = new R(16, 30);
+      r.rect(7, 23, 2, 6, '#4a2e18');
+      for (i = 0; i < 4; i++) { r.poly([[8, 1 + i * 5], [15 - i * 0.3, 11 + i * 4.5], [1 + i * 0.3, 11 + i * 4.5]], '#1c4a2c'); r.poly([[8, 1 + i * 5], [12, 7 + i * 4.8], [4, 7 + i * 4.8]], '#f0f4f8'); }
+      r.shade(); r.outline(OUT); ax = 8; ay = 28;
     } else if (kind === 'lamp') {
       r = new R(6, 16);
       r.line(3, 15, 3, 3, '#4a4c52'); r.line(3, 3, 5, 2, '#4a4c52'); r.dot(5, 3, '#fff0b0');
@@ -836,27 +752,35 @@ var Sprites = (function () {
       r.set(x, y, d < 9 ? '#ff8a2a' : d < 14 ? '#e0501a' : d < 22 ? '#a41a12' : d < 34 ? '#7a0e0e' : '#4a080a');
     }
     var c = r.toCanvas(), g = c.getContext('2d');
-    var S = gzSet('godzilla'), img = S.breath.r;
+    var S = REG.godzilla(), img = S.breath.r;
     if (maskable) g.drawImage(img, 104, 6, 64, 64, 10, 12, 48, 48);
     else g.drawImage(img, 104, 6, 64, 64, 0, 2, 64, 64);
     return c;
   }
 
+  /* Monster werden erst bei Bedarf erzeugt (schneller Start, weniger Speicher) */
+  function M(v) { return v * MK; }
+  var REG = {
+    ghidorah: function () { return ghidorahSet(false); },
+    mkg: function () { return ghidorahSet(true); },
+    biolante: biolanteSet,
+    kamacuras: function () { return mkSet(kamacuras, A(32), A(56), { mouth: { x: M(16), y: M(-44) } }); },
+    anguirus: function () { return mkSet(anguirus, A(45), A(53), { mouth: { x: M(34), y: M(-19) } }); },
+    kumonga: function () { return mkSet(kumonga, A(47), A(55), { mouth: { x: M(20), y: M(-16) } }); },
+    rodan: function () { return mkSet(rodan, A(51), A(44), { mouth: { x: M(42), y: M(-21) } }); },
+    gigan: function () { return mkSet(gigan, A(41), A(74), { mouth: { x: M(14), y: M(-55) } }); },
+    hedorah: function () { return mkSet(hedorah, A(39), A(77), { mouth: { x: M(4), y: M(-56) } }); },
+    destoroyah: function () { return mkSet(destoroyah, A(47), A(80), { mouth: { x: M(24), y: M(-53) } }); }
+  };
+  var built = {};
+  function reg(name, fn) { REG[name] = fn; }
+  function get(name) { return built[name] || (built[name] = REG[name]()); }
+
   function init() {
     var S = {};
-    S.godzilla = gzSet('godzilla');
-    S.mecha = gzSet('mecha');
-    S.minilla = gzSet('minilla');
-    S.ghidorah = ghidorahSet();
-    S.biolante = biolanteSet();
-    function M(v) { return v * MK; }
-    S.kamacuras = mkSet(kamacuras, A(32), A(56), { mouth: { x: M(16), y: M(-44) } });
-    S.anguirus = mkSet(anguirus, A(45), A(53), { mouth: { x: M(34), y: M(-19) } });
-    S.kumonga = mkSet(kumonga, A(47), A(55), { mouth: { x: M(20), y: M(-16) } });
-    S.rodan = mkSet(rodan, A(51), A(44), { mouth: { x: M(42), y: M(-21) } });
-    S.gigan = mkSet(gigan, A(41), A(74), { mouth: { x: M(14), y: M(-55) } });
-    S.hedorah = mkSet(hedorah, A(39), A(77), { mouth: { x: M(4), y: M(-56) } });
-    S.destoroyah = mkSet(destoroyah, A(47), A(80), { mouth: { x: M(24), y: M(-53) } });
+    Object.keys(REG).forEach(function (k) {
+      Object.defineProperty(S, k, { enumerable: true, configurable: true, get: function () { return get(k); } });
+    });
     S.mothra = [mothra(0), mothra(1), mothra(2), mothra(1)];
     S.tank = tank(); S.jet = jet(); S.llama = llama(); S.missile = missile(); S.barrel = barrel();
     var cc = ['#c83a2a', '#2a6ac8', '#e8e8e8', '#e0b020', '#3a3a3a', '#3a9a4a'];
@@ -865,5 +789,9 @@ var Sprites = (function () {
     return S;
   }
 
-  return { init: init, prism: prism, tower: tower, special: special, rubble: rubble, damaged: damaged, icon: icon, STY: STY };
+  return {
+    init: init, prism: prism, tower: tower, special: special, rubble: rubble, damaged: damaged, icon: icon, STY: STY,
+    reg: reg, get: get, ghidorah: ghidorah, GP: GP, GK: GK,
+    H: { R: R, sh: sh, hash: hash, pair: pair, mk: mk, A: A, M: M, bz: bz, plate: plate, leaf: leaf, mkSet: mkSet, OUT: OUT, MK: MK, isoBox: isoBox }
+  };
 })();
