@@ -40,11 +40,11 @@ die **Heisei-Ära** hält sich eng an die Filme und endet wie 1995 mit dem Final
 
 | Jahr | Film | Level | Gegner |
 |---|---|---|---|
-| 1954 | Gojira | Tokio – der erste Angriff | nur Militär – **Ziel: 40 Gebäude zerstören** |
+| 1954 | Gojira | Tokio – der erste Angriff | nur Militär, das immer stärker wird – **Ziel: 180 Gebäude zerstören** |
 | 1964 | Ghidorah, the Three-Headed Monster | Berg Fuji – **mit Mothra** | Rodan → King Ghidorah |
-| 1967 | Son of Godzilla | Insel Solgell | Kamacuras, 2× Kamacuras → Kumonga |
+| 1967 | Son of Godzilla | Insel Solgell – **beschütze Minilla** | 2× Kamacuras, 3× Kamacuras → Kumonga |
 | 1971 | Godzilla vs. Hedorah | Yokohama im Smog | Hedorah (Giftwolken) |
-| 1972 | Godzilla vs. Gigan | Tokio – **mit Anguirus** | Gigan → King Ghidorah |
+| 1972 | Godzilla vs. Gigan | Tokio – **mit Anguirus** | Gigan → Gigan + King Ghidorah |
 | 1973 | Godzilla vs. Megalon | Seatopia-Küste | Ebirah → Megalon + Gigan |
 | 1974 | Godzilla vs. Mechagodzilla | Okinawa | Titanosaurus → Mechagodzilla |
 
@@ -58,17 +58,22 @@ die **Heisei-Ära** hält sich eng an die Filme und endet wie 1995 mit dem Final
 | 1992 | Godzilla vs. Mothra | Nagoya – **mit Mothra** | Battra (Larve → Falter) |
 | 1993 | Godzilla vs. Mechagodzilla II | Kyoto | Fire Rodan → Mechagodzilla |
 | 1994 | Godzilla vs. SpaceGodzilla | Fukuoka – **mit Moguera** | SpaceGodzilla (Kristalle heilen ihn – zerstöre einige) |
-| 1995 | Godzilla vs. Destoroyah | Tokio – das Finale | Destoroyah – Godzilla glüht von Anfang an |
+| 1995 | Godzilla vs. Destoroyah | Tokio – das Finale | Destoroyah – Godzilla glüht von Anfang an, Kernschmelze: kaum Heilung |
 | ? | ??? | Geheimlevel | Boss-Rush gegen fünf |
 
-Nach dem Finale folgt der Abspann mit Godzillas Kernschmelze. Nach jedem Sieg erscheint die
-**Kaiju-Zeitung** mit der Schlagzeile des Tages.
+Nach dem Finale folgt der Abspann mit Godzillas Kernschmelze. Im Level-Menü sind alle Level frei wählbar
+(links/rechts wechselt die Ära).
 
 **Boss-Auftritt:** Bosse erscheinen wie im Kino mit schwarzen Balken, Kameraschwenk und Namenseinblendung.
 **Burning Godzilla:** Unter 30 % HP glüht Godzilla rot und teilt 40 % mehr Schaden aus – im Destoroyah-Finale
 glüht er von Anfang an (wie 1995).
 
-**Lebendige Stadt:** Sirenen heulen, sobald die Menschen fliehen, und Radio-Durchsagen warnen die Bevölkerung.
+**Verbündete:** Gegner halten in Leveln mit Helfern mehr aus, und die Helfer teilen weniger aus – den Kampf musst du selbst führen.
+Minilla kämpft kaum mit, die Gegner haben es auf ihn abgesehen; wird er besiegt, ist das Spiel verloren. Verletzt flüchtet er zu dir.
+
+**Super-X / Super-X2:** Zum Laserschuss sinken sie ab – dann erreichst du sie auch mit Klaue und Schwanz.
+
+**Lebendige Stadt:** Sirenen heulen, sobald Godzilla an Land kommt.
 In vielen Städten fährt ein **Shinkansen** – wer ihm im Weg steht, bringt ihn zum Entgleisen.
 Auf dem Wasser laufen Wellen, und beim Waten schiebt Godzilla eine Bugwelle vor sich her.
 Kommt ein Gegner nahe, zoomt die Kamera etwas heraus, damit man den ganzen Kampf sieht.

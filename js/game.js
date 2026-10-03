@@ -44,9 +44,13 @@
   /* ================= Monster-Daten ================= */
   var MON = {
     kamacuras: {
-      name: 'KAMACURAS', hp: 110, r: 0.9, speed: 2.3, pref: 2, cd: [0.8, 1.5], roar: ['rodan', 1.5], atk: [
+      name: 'KAMACURAS', hp: 120, r: 0.9, speed: 2.3, pref: 2, cd: [0.8, 1.5], roar: ['rodan', 1.5], atk: [
         { t: 'melee', max: 2.8, w: 0.4, dur: 0.75, dmg: 6, kb: 0.6 },
         { t: 'charge', min: 3, max: 9, w: 0.6, dur: 1.1, spd: 8, dmg: 7 }]
+    },
+    minilla: { // Godzillas Sohn – muss beschützt werden
+      name: 'MINILLA', hp: 130, r: 0.8, speed: 2.4, pref: 2, protect: true, cd: [1.3, 2.2], roar: ['godzilla', 1.9], atk: [
+        { t: 'melee', max: 2.4, w: 0.4, dur: 0.7, dmg: 4, kb: 0.4 }]
     },
     anguirus: {
       name: 'ANGUIRUS', hp: 170, r: 1.3, speed: 1.9, pref: 2.4, cd: [1, 1.8], roar: ['godzilla', 0.8], atk: [
@@ -71,10 +75,10 @@
         { t: 'beam', min: 3, max: 11, w: 0.85, dur: 1.3, dmg: 10, beam: 'red' }]
     },
     mecha: {
-      name: 'MECHAGODZILLA', hp: 320, r: 1.2, speed: 1.6, pref: 2.4, cd: [1.1, 2.1], roar: ['mecha', 1], shield: true, atk: [
-        { t: 'melee', max: 3.2, w: 0.45, dur: 0.8, dmg: 9, kb: 1 },
-        { t: 'beam', min: 3, max: 12, w: 0.85, dur: 1.3, dmg: 12, beam: 'eye' },
-        { t: 'volley', min: 4, max: 14, w: 0.35, dur: 1.3, n: 6, proj: 'missile', dmg: 3, spd: 4 }]
+      name: 'MECHAGODZILLA', hp: 430, r: 1.2, speed: 1.6, pref: 2.4, cd: [0.9, 1.8], roar: ['mecha', 1], shield: true, atk: [
+        { t: 'melee', max: 3.2, w: 0.45, dur: 0.8, dmg: 12, kb: 1.2 },
+        { t: 'beam', min: 3, max: 12, w: 0.85, dur: 1.3, dmg: 15, beam: 'eye' },
+        { t: 'volley', min: 4, max: 14, w: 0.35, dur: 1.3, n: 6, proj: 'missile', dmg: 4, spd: 4 }]
     },
     biolante: {
       name: 'BIOLANTE', hp: 380, r: 2.6, speed: 0.45, pref: 0, home: true, emerge: true, cd: [1.2, 2.2], roar: ['deep', 0.8], atk: [
@@ -83,35 +87,35 @@
         { t: 'lob', min: 3, max: 13, w: 0.35, dur: 1.0, n: 5, proj: 'sap', dmg: 6 }]
     },
     hedorah: {
-      name: 'HEDORAH', hp: 340, r: 1.7, speed: 0.9, pref: 4, emerge: true, cd: [1.1, 2], roar: ['deep', 0.6], atk: [
+      name: 'HEDORAH', hp: 390, r: 1.7, speed: 0.9, pref: 4, emerge: true, cd: [1.1, 2], roar: ['deep', 0.6], atk: [
         { t: 'melee', max: 3.6, w: 0.55, dur: 0.9, dmg: 10, kb: 1 },
         { t: 'lob', min: 3, max: 12, w: 0.35, dur: 1.0, n: 4, proj: 'sludge', dmg: 6 },
         { t: 'beam', min: 3, max: 11, w: 0.85, dur: 1.3, dmg: 10, beam: 'acid' },
         { t: 'marks', min: 0, max: 12, w: 0.5, dur: 0.8, n: 3, mark: 'smog', dmg: 4 }]
     },
     ghidorah: {
-      name: 'KING GHIDORAH', hp: 400, r: 1.6, speed: 2.6, pref: 6, phases: true, cd: [1.1, 2.1], roar: ['ghidorah', 1], atk: [
-        { t: 'melee', max: 3.4, w: 0.45, dur: 0.8, dmg: 10, kb: 1, ground: true },
-        { t: 'beam', min: 0, max: 11, w: 0.6, dur: 1.1, dmg: 6, beam: 'grav', heads: 3 },
+      name: 'KING GHIDORAH', hp: 400, r: 1.6, speed: 2.6, pref: 6, phases: true, cd: [0.95, 1.8], roar: ['ghidorah', 1], atk: [
+        { t: 'melee', max: 3.4, w: 0.45, dur: 0.8, dmg: 12, kb: 1.2, ground: true },
+        { t: 'beam', min: 0, max: 11, w: 0.6, dur: 1.1, dmg: 8, beam: 'grav', heads: 3 },
         { t: 'gust', min: 0, max: 8, w: 0.3, dur: 1.0, air: true }]
     },
     destoroyah: {
-      name: 'DESTOROYAH', hp: 620, r: 1.6, speed: 2.0, pref: 3, phases: true, cd: [1, 1.8], roar: ['godzilla', 0.7], atk: [
-        { t: 'melee', max: 3.4, w: 0.5, dur: 0.85, dmg: 12, kb: 1.2, ground: true },
-        { t: 'beam', min: 3, max: 12, w: 0.85, dur: 1.3, dmg: 13, beam: 'oxy' },
-        { t: 'charge', min: 3, max: 10, w: 0.65, dur: 1.1, spd: 9, dmg: 11, ground: true },
-        { t: 'marks', min: 0, max: 12, w: 0.5, dur: 0.8, n: 4, mark: 'oxy', dmg: 8 }]
+      name: 'DESTOROYAH', hp: 1100, r: 1.6, speed: 2.0, pref: 3, phases: true, cd: [0.85, 1.6], roar: ['godzilla', 0.7], atk: [
+        { t: 'melee', max: 3.4, w: 0.5, dur: 0.85, dmg: 15, kb: 1.3, ground: true },
+        { t: 'beam', min: 3, max: 12, w: 0.85, dur: 1.3, dmg: 16, beam: 'oxy' },
+        { t: 'charge', min: 3, max: 10, w: 0.65, dur: 1.1, spd: 9, dmg: 14, ground: true },
+        { t: 'marks', min: 0, max: 12, w: 0.5, dur: 0.8, n: 4, mark: 'oxy', dmg: 10 }]
     },
     superx: {
-      name: 'SUPER-X', hp: 260, r: 1.6, speed: 2.3, pref: 6, fly: 32, vehicle: true, cd: [0.9, 1.6], roar: ['mecha', 1.5], atk: [
+      name: 'SUPER-X', hp: 280, r: 1.6, speed: 2.3, pref: 6, fly: 32, vehicle: true, cd: [0.9, 1.6], roar: ['mecha', 1.5], atk: [
         { t: 'volley', min: 2, max: 14, w: 0.4, dur: 1.2, n: 6, proj: 'missile', dmg: 3, spd: 5 },
         { t: 'volley', min: 2, max: 12, w: 0.6, dur: 1.0, n: 2, proj: 'cadmium', dmg: 4, spd: 6 },
         { t: 'beam', min: 3, max: 12, w: 0.8, dur: 1.2, dmg: 9, beam: 'laser' }]
     },
     superx2: {
-      name: 'SUPER-X2', hp: 300, r: 1.6, speed: 2.5, pref: 6, fly: 30, vehicle: true, mirror: true, cd: [0.9, 1.6], roar: ['mecha', 1.5], atk: [
+      name: 'SUPER-X2', hp: 230, r: 1.6, speed: 2.5, pref: 6, fly: 30, vehicle: true, mirror: true, cd: [0.9, 1.6], roar: ['mecha', 1.5], atk: [
         { t: 'volley', min: 2, max: 14, w: 0.4, dur: 1.2, n: 6, proj: 'missile', dmg: 3, spd: 5 },
-        { t: 'beam', min: 3, max: 12, w: 0.8, dur: 1.2, dmg: 10, beam: 'laser' }]
+        { t: 'beam', min: 3, max: 12, w: 0.8, dur: 1.2, dmg: 8, beam: 'laser' }]
     },
     biolanteRose: {
       name: 'BIOLANTE (ROSE)', hp: 260, r: 2.0, speed: 0, pref: 0, home: true, emerge: true, next: 'biolante', cd: [1, 1.8], roar: ['deep', 1.25],
@@ -163,7 +167,7 @@
         { t: 'charge', min: 3, max: 10, w: 0.6, dur: 1.1, spd: 9, dmg: 10 }]
     },
     titanosaurus: {
-      name: 'TITANOSAURUS', hp: 240, r: 1.4, speed: 1.8, pref: 2.5, cd: [1, 1.8], roar: ['godzilla', 1.15], atk: [
+      name: 'TITANOSAURUS', hp: 280, r: 1.4, speed: 1.8, pref: 2.5, cd: [1, 1.8], roar: ['godzilla', 1.15], atk: [
         { t: 'melee', max: 3.4, w: 0.45, dur: 0.8, dmg: 10, kb: 1.3 },
         { t: 'gust', min: 0, max: 9, w: 0.4, dur: 1.2 },
         { t: 'charge', min: 3, max: 10, w: 0.6, dur: 1.1, spd: 8, dmg: 10 }]
@@ -186,16 +190,16 @@
   /* ================= Level ================= */
   var LEVELS = [
     /* ---------- SHOWA-ÄRA (frei nach den Filmen) ---------- */
-    { id: 'tokyo', era: 'SHOWA', year: 1954, film: 'GOJIRA', name: 'TOKIO', sub: 'DER ERSTE ANGRIFF', enc: [], goal: 40, military: true, train: true, music: 'stage',
-      text: ['EIN URZEITWESEN, GEWECKT', 'DURCH ATOMBOMBENTESTS,', 'STEIGT AUS DER BUCHT.', 'ZERSTÖRE 40 GEBÄUDE!'] },
+    { id: 'tokyo', era: 'SHOWA', year: 1954, film: 'GOJIRA', name: 'TOKIO', sub: 'DER ERSTE ANGRIFF', enc: [], goal: 180, military: true, train: true, music: 'stage',
+      text: ['EIN URZEITWESEN, GEWECKT', 'DURCH ATOMBOMBENTESTS,', 'STEIGT AUS DER BUCHT.', 'ZERSTÖRE 180 GEBÄUDE!'] },
     { id: 'fuji', era: 'SHOWA', year: 1964, film: 'GHIDORAH, THE THREE-HEADED MONSTER', name: 'BERG FUJI', sub: 'MIT MOTHRA AN DEINER SEITE', enc: [['rodan'], ['ghidorah']], ally: 'mothraImago', music: 'stage',
       text: ['RODAN STREITET MIT DIR -', 'DOCH DANN LANDET KING', 'GHIDORAH AUS DEM ALL.', 'MOTHRA HILFT DIR!'] },
-    { id: 'sollgel', era: 'SHOWA', year: 1967, film: 'SON OF GODZILLA', name: 'INSEL SOLGELL', sub: 'DIE INSEL DER RIESENINSEKTEN', enc: [['kamacuras'], ['kamacuras', 'kamacuras'], ['kumonga']], music: 'island',
-      text: ['RIESIGE GOTTESANBETERINNEN', 'UND DIE SPINNE KUMONGA', 'BEDROHEN DIE INSEL.', 'VERTEIDIGE SIE!'] },
+    { id: 'sollgel', era: 'SHOWA', year: 1967, film: 'SON OF GODZILLA', name: 'INSEL SOLGELL', sub: 'BESCHÜTZE DEINEN SOHN MINILLA', enc: [['kamacuras', 'kamacuras'], ['kamacuras', 'kamacuras', 'kamacuras'], ['kumonga']], ally: 'minilla', music: 'island',
+      text: ['DEIN SOHN MINILLA IST', 'GESCHLÜPFT. KAMACURAS UND', 'KUMONGA JAGEN IHN -', 'LASS IHN NICHT IM STICH!'] },
     { id: 'yokohama', era: 'SHOWA', year: 1971, film: 'GODZILLA VS. HEDORAH', name: 'YOKOHAMA', sub: 'DAS SMOGMONSTER', enc: [['hedorah']], train: true, music: 'stage',
       text: ['DER GIFTIGE SMOG DER', 'FABRIKEN HAT HEDORAH', 'GEBOREN. VORSICHT VOR', 'SEINEN GIFTWOLKEN!'] },
-    { id: 'osaka', era: 'SHOWA', year: 1972, film: 'GODZILLA VS. GIGAN', name: 'TOKIO', sub: 'MIT ANGUIRUS AN DEINER SEITE', enc: [['gigan'], ['ghidorah']], ally: 'anguirus', train: true, music: 'stage',
-      text: ['AUSSERIRDISCHE SCHICKEN', 'GIGAN UND KING GHIDORAH.', 'DEIN FREUND ANGUIRUS', 'KÄMPFT MIT DIR!'] },
+    { id: 'osaka', era: 'SHOWA', year: 1972, film: 'GODZILLA VS. GIGAN', name: 'TOKIO', sub: 'MIT ANGUIRUS AN DEINER SEITE', enc: [['gigan'], ['gigan', 'ghidorah']], ally: 'anguirus', train: true, music: 'stage',
+      text: ['AUSSERIRDISCHE SCHICKEN', 'GIGAN - UND DANN GIGAN UND', 'KING GHIDORAH ZUSAMMEN!', 'ANGUIRUS KÄMPFT MIT DIR.'] },
     { id: 'atoll', era: 'SHOWA', year: 1973, film: 'GODZILLA VS. MEGALON', name: 'SEATOPIA-KÜSTE', sub: 'ANGRIFF AUS DER TIEFE', enc: [['ebirah'], ['megalon', 'gigan']], music: 'island',
       text: ['DAS UNTERWASSERREICH', 'SEATOPIA SCHICKT MEGALON', '- UND HOLT SICH GIGAN', 'ALS VERSTÄRKUNG!'] },
     { id: 'okinawa', era: 'SHOWA', year: 1974, film: 'GODZILLA VS. MECHAGODZILLA', name: 'OKINAWA', sub: 'FINALE DER SHOWA-ÄRA', enc: [['titanosaurus'], ['mecha']], music: 'stage',
@@ -220,7 +224,6 @@
   ];
   var SHOWA_END = 6;
   var LAST = 13, ISLAND = 14;
-  var ANNOUNCE = ['ACHTUNG! VERLASSEN SIE SOFORT DIE KÜSTE!', 'ALLE BÜRGER IN DIE SCHUTZRÄUME!', 'DIE ARMEE BITTET UM RUHE.', 'ZÜGE WERDEN UMGELEITET.', 'GODZILLA BEWEGT SICH RICHTUNG ZENTRUM!', 'EVAKUIERUNG LÄUFT. BLEIBEN SIE RUHIG!'];
   // Gegner, in die sich ein Monster verwandeln kann (für das Vorladen der Sprites)
   function chainOf(t) { var o = [t]; while (MON[t].next) { t = MON[t].next; o.push(t); } return o; }
 
@@ -525,7 +528,7 @@
   }
   // Verwandlung: Larve -> Kokon -> Falter
   function morph(m, to) {
-    var d = MON[to], hpm = DIFF[save.opt.diff].hp, mtxt = m.def.morphText;
+    var d = MON[to], hpm = DIFF[save.opt.diff].hp * (m.hpMul || 1), mtxt = m.def.morphText;
     m.type = to; m.def = d; m.set = SPR[to]; m.hp = m.max = d.hp * hpm; m.act = null; m.stun = 0; m.flash = 0.4;
     m.cocoonT = d.cocoon || 0; m.cd = 1.5; m.view = 'side';
     L.whiteFlash = 0.25; L.shake = 0.4;
@@ -548,8 +551,11 @@
   }
   function spawnEncounter() {
     var list = L.enc[L.encIdx], boss = L.encIdx === L.enc.length - 1;
+    // Boss-Rush: kurze Verschnaufpause zwischen den Gegnern
+    if (L.def.secret && L.encIdx > 0 && !L.p.dead) { L.p.hp = Math.min(100, L.p.hp + 40); num(L.p.x, L.p.y, 40, '+40', '#7aff7a'); }
     L.encIdx++; L.warn = 0;
-    list.forEach(function (t, i) { L.mons.push(makeMon(t, boss, i, list.length)); });
+    var hm = L.def.ally && !MON[L.def.ally].protect ? ALLY_HP : 1;
+    list.forEach(function (t, i) { var m = makeMon(t, boss, i, list.length); m.hpMul = MON[t].crystals ? Math.min(hm, 1.2) : hm; m.hp *= m.hpMul; m.max *= m.hpMul; L.mons.push(m); });
     if (boss) L.cine = { t: 0, dur: 3, name: list.map(function (t) { return MON[t].name.replace(' (ROSE)', '').replace(' (LARVE)', ''); }).join(' & '), tgt: L.mons[L.mons.length - 1] };
     if (list.some(function (t) { return MON[t].crystals; })) { L.crystalsLeft = 0; spawnCrystals(6); }
     Sound.play(boss ? 'boss' : 'mini');
@@ -573,6 +579,7 @@
   }
 
   /* ---------- Teams: Gegner greifen Godzilla & Verbündete an, Verbündete greifen Gegner an ---------- */
+  var ALLY_DMG = 0.55, ALLY_HP = 1.6; // Verbündete teilen weniger aus, Gegner halten mehr aus
   function isAlly(m) { return m.team === 'ally'; }
   function foesOf(m) {
     if (isAlly(m)) return L.mons.filter(function (e) { return !e.dead && e.enter <= 0 && !e.def.cocoon; });
@@ -582,22 +589,24 @@
   }
   function pickTarget(m) {
     var best = null, bd = 1e9;
-    foesOf(m).forEach(function (t) { var d = dist(t.x, t.y, m.x, m.y) * (t === L.p ? 0.8 : 1); if (d < bd) { bd = d; best = t; } });
+    // Gegner haben es besonders auf Minilla abgesehen
+    foesOf(m).forEach(function (t) { var d = dist(t.x, t.y, m.x, m.y) * (t === L.p ? 0.8 : t.def && t.def.protect ? 0.55 : 1); if (d < bd) { bd = d; best = t; } });
     return best;
   }
   function hitTarget(m, T, dmg, kx, ky) {
     if (T === L.p) hurtPlayer(dmg, kx, ky);
     else if (isAlly(T)) hurtAlly(T, dmg);
-    else damageMon(T, dmg);
+    else damageMon(T, isAlly(m) ? dmg * ALLY_DMG : dmg);
   }
   function hurtAlly(a, dmg) {
     if (a.dead || a.inv > 0) return;
-    dmg *= 0.7 * DIFF[save.opt.diff].dmg;
+    dmg *= (a.def.protect ? 1 : 0.85) * DIFF[save.opt.diff].dmg;
     a.inv = 0.3; a.hp -= dmg; a.flash = 0.12; a.calm = 0;
     num(a.x, a.y, 50 + a.z, '-' + Math.round(dmg), '#ffb0b0');
     if (a.hp <= 0) {
       a.hp = 0; a.dead = true; a.deathT = 0; a.act = null;
-      toast(a.def.name + ' IST ERSCHÖPFT UND ZIEHT SICH ZURÜCK!', '#ffb84a', 3);
+      if (a.def.protect) { L.miniLost = 0; toast('MINILLA WURDE BESIEGT!', '#ff5040', 3); L.shake = 0.4; }
+      else toast(a.def.name + ' IST ERSCHÖPFT UND ZIEHT SICH ZURÜCK!', '#ffb84a', 3);
       Sound.sfx('roar', { kind: a.def.roar[0], pitch: a.def.roar[1] * 0.8 });
     }
   }
@@ -609,7 +618,7 @@
     else { a.x = Math.max(1, Math.min(L.map.W - 1, p.x - 6)); a.y = Math.max(1, Math.min(L.map.H - 1, p.y + 3)); a.z = 0; a.enter = 1.5; }
     L.allies.push(a);
     Sound.sfx('roar', { kind: d.roar[0], pitch: d.roar[1] });
-    toast(d.name + ' KÄMPFT AN DEINER SEITE!', '#7aff7a', 4);
+    toast(d.protect ? d.name + ' FOLGT DIR - BESCHÜTZE IHN!' : d.name + ' KÄMPFT AN DEINER SEITE!', d.protect ? '#ffe04a' : '#7aff7a', 4);
   }
 
   function updateMon(m, dt) {
@@ -618,7 +627,7 @@
     if (m.inv > 0) m.inv -= dt;
     if (m.dead) {
       m.deathT += dt;
-      if (ally) { m.z += 45 * dt; if (!d.fly) m.x -= dt * 2; return; } // Verbündeter zieht sich zurück
+      if (ally) { if (!d.protect) { m.z += 45 * dt; if (!d.fly) m.x -= dt * 2; } return; } // Verbündeter zieht sich zurück
       if ((d.fly || d.phases) && m.z > 0) m.z = Math.max(0, m.z - 70 * dt);
       else m.z -= dt * 16;
       if (Math.random() < 0.3) explode(m.x + rnd(-1, 1), m.y + rnd(-1, 1), rnd(10, 40) + Math.max(0, m.z), Math.random() < 0.3);
@@ -635,7 +644,7 @@
     }
     if (m.shield > 0) m.shield -= dt;
     if (m.mirrorOn > 0) m.mirrorOn -= dt;
-    if (ally) { m.calm = (m.calm || 0) + dt; if (m.calm > 4) m.hp = Math.min(m.max, m.hp + 2 * dt); }
+    if (ally) { m.calm = (m.calm || 0) + dt; if (m.calm > 4) m.hp = Math.min(m.max, m.hp + (d.protect ? 0.8 : 2) * dt); }
     var T = pickTarget(m), idle = !T;
     if (idle) T = p;
     var dx = T.x - m.x, dy = T.y - m.y, dd = Math.sqrt(dx * dx + dy * dy) || 0.01;
@@ -670,6 +679,11 @@
       m.z += (tz - m.z) * Math.min(1, dt * 2);
     } else if (d.fly) {
       var fz = (m.act && m.act.a.swoop && m.act.t > m.act.a.w) ? 6 : d.fly;
+      // Super-X sinkt zum Laserschuss ab – dann kann Godzilla zuschlagen
+      if (d.vehicle && m.act && m.act.a.t === 'beam') {
+        fz = 7; m.lowT = 0.8;
+        if (!L.lowHint && !ally) { L.lowHint = true; toast(d.name + ' SINKT AB - JETZT ZUSCHLAGEN!', '#ffe04a', 2.5); }
+      } else if (d.vehicle && m.lowT > 0) { m.lowT -= dt; fz = 7; }
       m.z += (fz - m.z) * Math.min(1, dt * 4);
     }
     // nicht mit Godzilla überlappen (Verbündete weichen sanft aus)
@@ -685,8 +699,9 @@
       if (m.shieldCd <= 0) { m.shield = 3.5; m.shieldCd = 12; toast(d.name + ': SPIEGELSCHILD!', '#8fe8ff'); Sound.sfx('zap'); }
     }
     if (!m.act) {
-      if (idle) { // Verbündeter ohne Gegner: Godzilla begleiten
-        if (dd > 4) moveToward(m, p.x - 2.5, p.y + 2.5, d.speed * dt); else m.anim += dt;
+      // Verbündeter ohne Gegner begleitet Godzilla; Minilla flüchtet verletzt zum Vater
+      if (idle || (d.protect && (m.hp < m.max * 0.45 || pdd > 7))) {
+        if (pdd > (d.protect ? 2.6 : 4)) moveToward(m, p.x - 1.8, p.y + 1.8, d.speed * (idle ? 1 : 1.25) * dt); else m.anim += dt;
         clampPos(m); return;
       }
       if (d.phases && m.phase === 'air') {
@@ -702,7 +717,7 @@
         var hd = dist(m.x, m.y, m.home[0], m.home[1]);
         if (hd > m.home[2]) { m.x = m.home[0] + (m.x - m.home[0]) / hd * m.home[2]; m.y = m.home[1] + (m.y - m.home[1]) / hd * m.home[2]; }
       }
-      if (dd < 12) m.cd -= dt * (m.hp < m.max / 2 ? 1.35 : 1) * (ally ? 1.15 : 1);
+      if (dd < 12) m.cd -= dt * (m.hp < m.max / 2 ? 1.35 : 1) * (ally ? 0.85 : 1);
       if (m.cd <= 0) {
         var opts = d.atk.filter(function (a) {
           if (dd < (a.min || 0) || dd > a.max) return false;
@@ -812,7 +827,7 @@
     p.atkCd -= dt; p.roarCd -= dt; p.roarT -= dt; p.comboT -= dt; p.slow -= dt;
     p.calm += dt;
     if (p.dead) { p.deathT += dt; p.z = -p.deathT * 12; return; }
-    if (p.calm > 3 && p.hp < 100) p.hp = Math.min(100, p.hp + 2.5 * dt);
+    if (p.calm > 3 && p.hp < 100) p.hp = Math.min(100, p.hp + (L.def.burning ? 1 : 2.5) * dt); // Kernschmelze: kaum Heilung
     // Burning Godzilla (wie 1995): bei wenig Leben glüht er rot und wird stärker
     var burn = !G.mini && (p.hp < 30 || L.def.burning);
     if (burn && !p.burning) { toast(L.def.burning ? 'GODZILLAS HERZ GLÜHT - KERNSCHMELZE DROHT!' : 'BURNING GODZILLA! DEINE ANGRIFFE WERDEN STÄRKER!', '#ff6a2a', 3.5); Sound.sfx('roar', { kind: 'godzilla', pitch: 0.9 }); }
@@ -974,8 +989,8 @@
   // Super-X2: der Feuerspiegel wirft den Atomstrahl zurück, bis er schmilzt
   function reflectBeam(m) {
     var p = L.p;
-    m.mirrorHp -= 2.8; m.mirrorOn = 0.25;
-    if (!p.dead && p.dance <= 0) { p.hp -= 1.4 * DIFF[save.opt.diff].dmg; p.calm = 0; if (p.hp <= 0) hurtPlayer(1); }
+    m.mirrorHp -= 3.2; m.mirrorOn = 0.25;
+    if (!p.dead && p.dance <= 0) { p.hp -= 0.85 * DIFF[save.opt.diff].dmg; p.calm = 0; if (p.hp <= 0) hurtPlayer(1); }
     if (Math.random() < 0.3) num(p.x, p.y, 55, 'REFLEKTIERT', '#ffe890');
     if (!L.mirrorHint) { L.mirrorHint = true; toast('DER FEUERSPIEGEL WIRFT DEINEN STRAHL ZURÜCK!', '#ffe890', 3); }
     if (m.mirrorHp <= 0) { toast('DER FEUERSPIEGEL SCHMILZT!', '#ff9a40', 3); explode(m.x, m.y, m.z + 20, true); m.flash = 0.4; }
@@ -1130,20 +1145,25 @@
     }
     return null;
   }
+  // im Gebäude-Level wird die Armee mit jedem Abschnitt gefährlicher
+  function milDmg() { return L.def.goal ? 1.3 * (1 + 0.5 * (L.esc || 0)) : 1; }
   function updateUnits(dt) {
     var p = L.p;
     if (!L.def.secret && !p.dead) {
       L.spawnT -= dt; L.jetT -= dt;
       var tanks = L.units.filter(function (u) { return u.alive && u.kind === 'tank'; }).length;
-      var mil = L.def.military, cap = mil ? (L.mons.length ? 5 : 9) : (L.mons.length ? 2 : 5);
+      // Gebäude-Level: die Armee wird mit jedem Abschnitt stärker
+      var esc = L.def.goal ? Math.min(2, Math.floor(L.destroyed / (L.def.goal / 3))) : 0;
+      if (esc > (L.esc || 0)) { L.esc = esc; toast(esc === 1 ? 'DIE ARMEE SCHICKT VERSTÄRKUNG!' : 'DIE LUFTWAFFE GREIFT MIT ALLEM AN!', '#ff9a40', 3); Sound.sfx('alarm'); }
+      var mil = L.def.military, cap = (mil ? (L.mons.length ? 5 : 9) : (L.mons.length ? 2 : 5)) + esc * 3;
       if (L.spawnT <= 0 && tanks < cap) {
-        L.spawnT = mil ? 2.2 : (L.mons.length ? 7 : 4);
+        L.spawnT = (mil ? 2.2 : (L.mons.length ? 7 : 4)) / (1 + esc * 0.4);
         var s = edgeSpawn();
         var masers = L.units.filter(function (u) { return u.alive && u.kind === 'maser'; }).length;
-        if (s) L.units.push({ kind: mil && masers < 3 && Math.random() < 0.4 ? 'maser' : 'tank', x: s[0], y: s[1], z: 0, alive: true, cd: rnd(1, 3), face: 1 });
+        if (s) L.units.push({ kind: mil && masers < 3 + esc && Math.random() < 0.4 ? 'maser' : 'tank', x: s[0], y: s[1], z: 0, alive: true, cd: rnd(1, 3), face: 1 });
       }
       if (L.jetT <= 0) {
-        L.jetT = mil ? 5 : (L.mons.length ? 16 : 10);
+        L.jetT = (mil ? 5 : (L.mons.length ? 16 : 10)) / (1 + esc * 0.5);
         var ang = Math.random() * 6.283;
         L.units.push({ kind: 'jet', x: p.x - Math.cos(ang) * 18, y: p.y - Math.sin(ang) * 18, z: 50, vx: Math.cos(ang) * 7, vy: Math.sin(ang) * 7, alive: true, fired: false, life: 6, face: (Math.cos(ang) - Math.sin(ang)) > 0 ? 1 : -1 });
       }
@@ -1159,7 +1179,7 @@
         if (u.cd <= 0 && d < 11 && !p.dead) {
           u.cd = rnd(3, 4.5); Sound.sfx('zap');
           L.fx.push({ k: 'ubeam', x0: u.x, y0: u.y, x1: p.x, y1: p.y, life: 0.4, max: 0.4 });
-          hurtPlayer(4);
+          hurtPlayer(4 * milDmg());
         }
       } else if (u.kind === 'tank') {
         if (d > 5) { u.x += dx / d * 1.2 * dt; u.y += dy / d * 1.2 * dt; }
@@ -1167,14 +1187,14 @@
         u.cd -= dt;
         if (u.cd <= 0 && d < 9 && !p.dead) {
           u.cd = rnd(2.2, 3.8); Sound.sfx('shot');
-          L.proj.push({ kind: 'shell', x: u.x, y: u.y, z: 4, vx: dx / d * 7, vy: dy / d * 7, life: 2, from: 'e', dmg: 1.5 });
+          L.proj.push({ kind: 'shell', x: u.x, y: u.y, z: 4, vx: dx / d * 7, vy: dy / d * 7, life: 2, from: 'e', dmg: 1.5 * milDmg() });
           particles(u.x, u.y, 5, 2, ['#ffe04a'], 0.5, 0.2, 0, 1);
         }
       } else {
         u.x += u.vx * dt; u.y += u.vy * dt; u.life -= dt;
         if (!u.fired && d < 6) {
           u.fired = true; Sound.sfx('shot');
-          for (var i = 0; i < 2; i++) L.proj.push({ kind: 'missile', x: u.x, y: u.y, z: 45, vx: dx / d * 6 + rnd(-1, 1), vy: dy / d * 6 + rnd(-1, 1), life: 2.5, from: 'e', dmg: 3, fall: true });
+          for (var i = 0; i < 2; i++) L.proj.push({ kind: 'missile', x: u.x, y: u.y, z: 45, vx: dx / d * 6 + rnd(-1, 1), vy: dy / d * 6 + rnd(-1, 1), life: 2.5, from: 'e', dmg: 3 * milDmg(), fall: true });
         }
         if (u.life <= 0) u.alive = false;
       }
@@ -1193,7 +1213,7 @@
           q.life = 0;
           particles(q.x, q.y, 2, 8, { sap: ['#ff9a2a', '#ffcc4a'], sludge: ['#4a5a3a', '#7a8a5a'], water: ['#6ab8ff', '#e0f4ff'], napalm: ['#ff5a1a', '#ffd040', '#ffffff'] }[q.kind], 1.2, 0.5, 30, 2);
           if (q.kind === 'napalm') { decal(q.x, q.y, 'scorch'); smoke(q.x, q.y, 3, 2); }
-          if (q.from === 'a') L.mons.forEach(function (m) { if (!m.dead && dist(q.x, q.y, m.x, m.y) < m.r + 0.6) damageMon(m, q.dmg); });
+          if (q.from === 'a') L.mons.forEach(function (m) { if (!m.dead && dist(q.x, q.y, m.x, m.y) < m.r + 0.6) damageMon(m, q.dmg * ALLY_DMG); });
           else {
             if (dist(q.x, q.y, p.x, p.y) < 1.1) hurtPlayer(q.dmg);
             L.allies.forEach(function (a) { if (!a.dead && dist(q.x, q.y, a.x, a.y) < a.r + 0.6) hurtAlly(a, q.dmg); });
@@ -1214,7 +1234,7 @@
         L.allies.forEach(function (a) { if (q.life > 0 && !a.dead && !inAir(a) && dist(q.x, q.y, a.x, a.y) < a.r + 0.2) { q.life = 0; hurtAlly(a, q.dmg); explode(q.x, q.y, q.z, false); } });
         if (q.life > 0 && dist(q.x, q.y, p.x, p.y) < p.r * 0.9) {
           q.life = 0; hurtPlayer(q.dmg);
-          if (q.kind === 'cadmium') { p.en = Math.max(0, p.en - 35); toast('KADMIUM! ATOM-ENERGIE GELÄHMT', '#c8d0d8', 2); particles(p.x, p.y, 40, 10, ['#c8d0d8', '#8a9098'], 1, 0.6, 10, 2); }
+          if (q.kind === 'cadmium') { p.en = Math.max(0, p.en - 25); toast('KADMIUM! ATOM-ENERGIE GELÄHMT', '#c8d0d8', 2); particles(p.x, p.y, 40, 10, ['#c8d0d8', '#8a9098'], 1, 0.6, 10, 2); }
           if (q.kind === 'web' || q.kind === 'silk') { p.slow = 2.5; toast('IM NETZ GEFANGEN!', '#ffffff', 1.5); particles(p.x, p.y, 20, 10, ['#ffffff', '#dddddd'], 1, 0.6, 10, 2); }
           else explode(q.x, q.y, q.z, false);
         }
@@ -1243,7 +1263,7 @@
         L.fx.push({ k: m.kind === 'vine' || m.kind === 'crystal' || m.kind === 'powder' ? m.kind : 'erupt', x0: m.x, y0: m.y, life: m.kind === 'crystal' ? 1.2 : m.kind === 'vine' ? 1.1 : 0.6, max: m.kind === 'crystal' ? 1.2 : m.kind === 'vine' ? 1.1 : 0.6, seed: Math.random() * 10 });
         if (m.kind === 'vine') { L.shake = Math.max(L.shake, 0.3); dust(m.x, m.y, 2, 6, 1); decal(m.x, m.y, 'scorch'); }
         Sound.sfx(m.kind === 'vine' ? 'splat' : 'boom', false);
-        if (m.team === 'ally') L.mons.forEach(function (e) { if (!e.dead && dist(m.x, m.y, e.x, e.y) < m.r + e.r * 0.5) damageMon(e, m.dmg); });
+        if (m.team === 'ally') L.mons.forEach(function (e) { if (!e.dead && dist(m.x, m.y, e.x, e.y) < m.r + e.r * 0.5) damageMon(e, m.dmg * ALLY_DMG); });
         else {
           if (dist(m.x, m.y, p.x, p.y) < m.r) { hurtPlayer(m.dmg); spark(p.x, p.y, 20, false); }
           L.allies.forEach(function (a) { if (!a.dead && dist(m.x, m.y, a.x, a.y) < m.r + a.r * 0.5) hurtAlly(a, m.dmg); });
@@ -1317,19 +1337,13 @@
   /* ================= Update ================= */
   function updatePlay(dt) {
     L.time += dt; L.hintT -= dt;
-    // Luftschutzsirene und Lautsprecher-Durchsagen in den Städten
-    if (!L.def.secret && L.ppl0 > 0) {
-      if (!L.sirenDone && L.time > 1.5) { L.sirenDone = true; Sound.sfx('siren'); }
-      L.annT = (L.annT === undefined ? 8 : L.annT) - dt;
-      if (L.annT <= 0 && L.people.length > 5) {
-        L.annT = rnd(18, 28);
-        L.radio = { t: 4, s: ANNOUNCE[Math.floor(Math.random() * ANNOUNCE.length)] };
-        Sound.sfx('radio');
-      }
-    }
-    if (L.radio) { L.radio.t -= dt; if (L.radio.t <= 0) L.radio = null; } L.hurtFlash -= dt; L.whiteFlash = (L.whiteFlash || 0) - dt;
+    // Luftschutzsirene in den Städten
+    if (!L.def.secret && L.ppl0 > 0 && !L.sirenDone && L.time > 1.5) { L.sirenDone = true; Sound.sfx('siren'); }
+    L.hurtFlash -= dt; L.whiteFlash = (L.whiteFlash || 0) - dt;
     updatePlayer(dt);
-    if (L.p.dead && L.p.deathT > 2.8) { G.state = 'over'; G.t = 0; Sound.play('over'); save.hi = Math.max(save.hi, G.score); store(); return; }
+    if (L.miniLost !== undefined) L.miniLost += dt;
+    G.overMsg = L.miniLost > 2.5 ? 'DU HAST MINILLA NICHT BESCHÜTZT...' : 'GODZILLA VERSINKT IM MEER...';
+    if ((L.p.dead && L.p.deathT > 2.8) || L.miniLost > 2.5) { G.state = 'over'; G.t = 0; Sound.play('over'); save.hi = Math.max(save.hi, G.score); store(); return; }
     // Begegnungen
     if (!L.mons.length) {
       if (L.encIdx < L.enc.length) {
@@ -1342,7 +1356,7 @@
       }
     }
     // Verbündeter kommt nach kurzer Zeit dazu
-    if (L.def.ally && !L.allyDone && L.time > 2.5) { L.allyDone = true; spawnAlly(L.def.ally); }
+    if (L.def.ally && !L.allyDone && L.time > 2.5 && !(G.mini && L.def.ally === 'minilla')) { L.allyDone = true; spawnAlly(L.def.ally); }
     L.mons.forEach(function (m) { updateMon(m, dt); });
     L.allies.forEach(function (m) { updateMon(m, dt); });
     L.allies = L.allies.filter(function (m) { return !(m.dead && m.deathT > 2.5); });
@@ -1965,28 +1979,23 @@
     L.allies.forEach(function (a, i) {
       if (a.dead) return;
       var y = H - 46 - i * 22;
-      ctx.fillStyle = 'rgba(0,0,0,.45)'; ctx.fillRect(4, y - 2, 124, 20);
-      text('MIT DIR: ' + a.def.name.replace(' (LARVE)', ''), 8, y, '#40ffe0');
+      ctx.fillStyle = 'rgba(0,0,0,.45)'; ctx.fillRect(4, y - 2, 154, 20);
+      text((a.def.protect ? 'BESCHÜTZE: ' : 'MIT DIR: ') + a.def.name.replace(' (LARVE)', ''), 8, y, a.def.protect ? '#ffe04a' : '#40ffe0');
       bar(8, y + 11, 116, 4, a.hp / a.max, '#40e0c0', '#0a2a24');
     });
     var alive = L.mons.filter(function (m) { return !m.dead || m.deathT < 1; });
     alive.forEach(function (m, i) {
       var y = H - 24 - (alive.length - 1 - i) * 22;
-      ctx.fillStyle = 'rgba(0,0,0,.5)'; ctx.fillRect(W / 2 - 110, y - 2, 220, 21);
-      text((m.boss ? 'BOSS: ' : '') + m.def.name, W / 2, y, m.boss ? '#ff6a5a' : '#ffb070', 'center');
-      bar(W / 2 - 100, y + 11, 200, 5, m.hp / m.max, m.boss ? '#ff4040' : '#ff9a40');
+      var bx = W / 2 + (L.allies.some(function (a) { return !a.dead; }) ? 45 : 0);
+      ctx.fillStyle = 'rgba(0,0,0,.5)'; ctx.fillRect(bx - 110, y - 2, 220, 21);
+      text((m.boss ? 'BOSS: ' : '') + m.def.name, bx, y, m.boss ? '#ff6a5a' : '#ffb070', 'center');
+      bar(bx - 100, y + 11, 200, 5, m.hp / m.max, m.boss ? '#ff4040' : '#ff9a40');
     });
     if (L.warn > 0 && Math.floor(L.warn * 4) % 2) {
       var boss = L.encIdx === L.enc.length - 1;
       ctx.fillStyle = boss ? 'rgba(160,0,0,.75)' : 'rgba(140,80,0,.7)'; ctx.fillRect(0, H / 2 - 22, W, 34);
       text(boss ? '!! BOSS-ALARM !!' : '!! WARNUNG !!', W / 2, H / 2 - 18, '#fff', 'center', 16);
       text(L.enc[L.encIdx].map(function (t) { return MON[t].name; }).join(' & ') + ' NÄHERT SICH', W / 2, H / 2 + 2, '#ffe04a', 'center');
-    }
-    if (L.radio) {
-      var rt = L.radio, ra = Math.min(1, rt.t * 2), nA = L.allies.filter(function (a) { return !a.dead; }).length;
-      var ry = H - 20 - 22 * Math.max(alive.length, nA ? nA + 1 : 1);
-      ctx.globalAlpha = ra; ctx.fillStyle = 'rgba(0,0,0,.65)'; ctx.fillRect(8, ry - 3, W - 16, 14);
-      text('DURCHSAGE: ' + rt.s, W / 2, ry, '#e8e0a0', 'center'); ctx.globalAlpha = 1;
     }
     var ty = 46;
     L.toasts.forEach(function (t) { ctx.globalAlpha = Math.min(1, t.t * 2); text(t.s, W / 2, ty, t.c, 'center'); ty += 12; });
@@ -2063,7 +2072,7 @@
   }
   function menuItems() {
     var it = [{ label: 'SPIEL STARTEN', a: function () { G.score = 0; startLevel(0); } }];
-    if (save.unlocked > 1 || save.island) it.push({ label: 'LEVEL WÄHLEN', a: function () { G.state = 'select'; G.sel = 0; } });
+    it.push({ label: 'LEVEL WÄHLEN', a: function () { G.state = 'select'; G.sel = 0; } });
     it.push({ label: 'OPTIONEN', a: function () { G.back = null; G.state = 'options'; G.osel = 0; } });
     it.push({ label: 'STEUERUNG', a: function () { G.back = null; G.state = 'help'; } });
     return it;
@@ -2112,7 +2121,7 @@
   }
   function selectable() {
     var l = [];
-    for (var i = 0; i <= Math.min(LAST, save.unlocked - 1); i++) l.push(i);
+    for (var i = 0; i <= LAST; i++) l.push(i);
     if (save.island) l.push(ISLAND);
     return l;
   }
@@ -2150,7 +2159,7 @@
       text(dsel.film || dsel.sub, W / 2, H - 56, '#ffe04a', 'center');
       text(dsel.sub + (bossNames(dsel) ? '  -  BOSS: ' + bossNames(dsel) : ''), W / 2, H - 40, '#8fe8ff', 'center');
     }
-    text('ENTER = START   ESC = ZURÜCK', W / 2, H - 14, '#888', 'center');
+    text('ENTER START   LINKS/RECHTS ÄRA   ESC ZURÜCK', W / 2, H - 14, '#888', 'center');
   }
   function drawIntro() {
     ctx.fillStyle = '#000'; ctx.fillRect(0, 0, W, H);
@@ -2173,42 +2182,25 @@
     if (Math.floor(G.t * 2) % 2) text('ENTER = LOS!', 24, H - 26, '#ffe04a');
     if (G.mini) text('MINILLA-MODUS', W - 12, 12, '#7aff7a', 'right');
   }
-  // Zeitungsschlagzeile nach dem Level
-  function headline(d) {
-    if (d.secret) return 'KÖNIG DER MONSTER: GODZILLA BESIEGT ALLE!';
-    if (!d.enc.length) return 'RIESENECHSE VERWÜSTET ' + d.name + '!';
-    return 'GODZILLA BESIEGT ' + bossNames(d) + ' IN ' + d.name + '!';
-  }
   function drawClear() {
     drawWorld(); drawHUD();
     var d = LEVELS[G.lvl];
     ctx.fillStyle = 'rgba(0,0,0,.55)'; ctx.fillRect(0, 0, W, H);
-    // Zeitung
-    var px = 40, py = 30, pw = W - 80, ph = 150;
-    ctx.save(); ctx.translate(W / 2, py + ph / 2); ctx.rotate(-0.02); ctx.translate(-W / 2, -(py + ph / 2));
-    ctx.fillStyle = '#e8e2d0'; ctx.fillRect(px, py, pw, ph);
-    ctx.fillStyle = '#d0c8b2'; for (var yy = py + 70; yy < py + ph - 8; yy += 6) { ctx.fillRect(px + 12, yy, pw * 0.55, 2); ctx.fillRect(px + pw * 0.62, yy, pw * 0.3, 2); }
-    text('DIE KAIJU-ZEITUNG', W / 2, py + 6, '#2a2620', 'center', 8, false);
-    ctx.fillStyle = '#2a2620'; ctx.fillRect(px + 8, py + 18, pw - 16, 1);
-    text(d.secret ? '' : 'AUSGABE ' + d.year, px + 10, py + 22, '#5a5448', 'left', 8, false);
-    var hl = headline(d), words = hl.split(' '), line = '', lines = [];
-    words.forEach(function (w) { if ((line + ' ' + w).length > 26) { lines.push(line); line = w; } else line = line ? line + ' ' + w : w; });
-    lines.push(line);
-    lines.forEach(function (l, i) { text(l, W / 2, py + 36 + i * 18, '#1a1612', 'center', 16, false); });
-    ctx.restore();
-    text(G.lvl === ISLAND ? 'KÖNIG DER MONSTER!' : 'SIEG!', W / 2, 188, '#ffe04a', 'center', 16);
-    text('GEBÄUDE: ' + L.destroyed + '   ZEIT: ' + Math.floor(L.time) + ' SEK   PUNKTE: ' + G.score, W / 2 - 30, 210, '#ffcc6a', 'center');
+    text(G.lvl === ISLAND ? 'KÖNIG DER MONSTER!' : 'SIEG!', W / 2, 70, '#ffe04a', 'center', 24);
+    text(d.secret ? 'DIE MONSTERINSEL GEHÖRT DIR' : d.name + ' ' + d.year + (bossNames(d) ? ' - ' + bossNames(d) + ' BESIEGT' : ' LIEGT IN TRÜMMERN'), W / 2, 110, '#8fe8ff', 'center');
+    text('GEBÄUDE: ' + L.destroyed + '   ZEIT: ' + Math.floor(L.time) + ' SEK', W / 2, 136, '#ffcc6a', 'center');
+    text('PUNKTE: ' + G.score, W / 2, 152, '#ffcc6a', 'center');
     var rating = L.p.hp * 0.35 + Math.min(40, L.destroyed * 0.6) + Math.max(0, 25 - L.time / 12);
     var grade = rating >= 80 ? 'S' : rating >= 62 ? 'A' : rating >= 45 ? 'B' : 'C';
-    text('RANG', W - 40, 196, '#aaa', 'center');
-    text(grade, W - 40, 208, { S: '#ffe04a', A: '#7aff7a', B: '#8fe8ff', C: '#ff9a6a' }[grade], 'center', 16);
-    if (G.t > 1.5 && Math.floor(G.t * 2) % 2) text('ENTER = WEITER', W / 2, 236, '#8fe8ff', 'center');
+    text('RANG', W / 2, 176, '#aaa', 'center');
+    text(grade, W / 2, 188, { S: '#ffe04a', A: '#7aff7a', B: '#8fe8ff', C: '#ff9a6a' }[grade], 'center', 16);
+    if (G.t > 1.5 && Math.floor(G.t * 2) % 2) text('ENTER = WEITER', W / 2, 226, '#8fe8ff', 'center');
   }
   function drawOver() {
     drawWorld();
     ctx.fillStyle = 'rgba(40,0,0,.65)'; ctx.fillRect(0, 0, W, H);
     text('GAME OVER', W / 2, 90, '#ff4a2a', 'center', 24);
-    text('GODZILLA VERSINKT IM MEER...', W / 2, 130, '#ddd', 'center');
+    text(G.overMsg || 'GODZILLA VERSINKT IM MEER...', W / 2, 130, '#ddd', 'center');
     if (G.t > 1.5 && Math.floor(G.t * 2) % 2) text('ENTER = NOCHMAL   ESC = TITEL', W / 2, 170, '#ffe04a', 'center');
   }
   var ENDING = ['DESTOROYAH IST BESIEGT.', '', 'DOCH GODZILLAS HERZ GLÜHT', 'IMMER HEISSER...', 'DIE KERNSCHMELZE BEGINNT.', '',
@@ -2248,6 +2240,7 @@
         var sl = selectable();
         if (hit('arrowup')) G.sel = (G.sel + sl.length - 1) % sl.length;
         if (hit('arrowdown')) G.sel = (G.sel + 1) % sl.length;
+        if (hit('arrowleft') || hit('arrowright')) { var cs = sl[G.sel]; G.sel = cs <= SHOWA_END ? Math.min(cs + SHOWA_END + 1, LAST) : (cs === ISLAND ? SHOWA_END : Math.max(0, cs - SHOWA_END - 1)); }
         if (hit('escape')) G.state = 'title';
         if (enter) { G.score = 0; startLevel(sl[G.sel]); }
         break;
