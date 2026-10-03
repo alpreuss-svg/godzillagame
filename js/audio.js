@@ -440,6 +440,26 @@ var Sound = (function () {
       var w = ctx.createGain(); w.gain.value = 0.22; g.connect(w); w.connect(verb);
       o.start(t); o2.start(t); o.stop(t + d + 0.15); o2.stop(t + d + 0.15);
     },
+    // Luftschutzsirene (auf- und abschwellend, leise im Hintergrund)
+    siren: function () {
+      var t = ctx.currentTime, g = ctx.createGain(), f = ctx.createBiquadFilter();
+      f.type = 'lowpass'; f.frequency.value = 1400;
+      g.gain.setValueAtTime(0.0001, t); g.gain.linearRampToValueAtTime(0.07, t + 1.5); g.gain.setValueAtTime(0.07, t + 5.5); g.gain.linearRampToValueAtTime(0.0001, t + 8);
+      [0, 6].forEach(function (det) {
+        var o = ctx.createOscillator(); o.type = 'square'; o.detune.value = det * 10;
+        o.frequency.setValueAtTime(220, t); o.frequency.linearRampToValueAtTime(560, t + 2.5); o.frequency.setValueAtTime(560, t + 4);
+        o.frequency.linearRampToValueAtTime(260, t + 8);
+        o.connect(f); o.start(t); o.stop(t + 8.1);
+      });
+      f.connect(g); g.connect(sfx);
+      var w = ctx.createGain(); w.gain.value = 0.6; g.connect(w); w.connect(verb);
+    },
+    // Lautsprecher-Gong vor einer Durchsage
+    radio: function () {
+      var t = ctx.currentTime;
+      [[784, 0], [622, 0.35]].forEach(function (n) { sweep('triangle', t + n[1], 0.5, n[0], n[0], 0.12); });
+      noise(t, 0.8, 'bandpass', 2500, 1800, 0.05, 3);
+    },
     collapse: function (tall) {
       var t = ctx.currentTime, len = 1 + Math.min(1.8, (tall || 40) / 50);
       noise(t, len, 'lowpass', 700, 60, 0.9, 0, 0.5);

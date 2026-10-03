@@ -31,30 +31,52 @@ Das Spiel ist eine Progressive Web App und läuft nach dem ersten Laden auch **o
 Im Menü **OPTIONEN** lassen sich Musik- und Effektlautstärke, Grafikqualität (NIEDRIG für ältere PCs)
 und Schwierigkeit (Leicht/Normal/Schwer) einstellen.
 
-## Level
+## Level – die Kampagne in zwei Ären
 
-| # | Level | Zwischengegner | Boss |
+Die Level folgen den Filmen. Die **Showa-Ära** ist frei nach den alten Filmen gestaltet,
+die **Heisei-Ära** hält sich eng an die Filme und endet wie 1995 mit dem Finale gegen Destoroyah.
+
+**Showa-Ära (1954–1974)**
+
+| Jahr | Film | Level | Gegner |
 |---|---|---|---|
-| 1 | Tokio – Hafenviertel bei Nacht | Kamacuras (1, dann 2) | Mechagodzilla (Spiegelschild) |
-| 2 | Tokio 1984 – die Rückkehr (nur Militär) | Panzer, Jets, Maser-Kanonen | Super-X (Kadmium-Geschosse) |
-| 3 | Osaka – **mit Anguirus als Verbündetem** | Kamacuras ×2 | Gigan |
-| 5 | Ashino-See – Hakone in der Dämmerung | Kumonga, Super-X2 (Feuerspiegel) | Biolante: erst Rosenform, dann Bestie (wie im Film) |
-| 5 | Letchi-Atoll – Südsee | Ebirah, dann Ebirah + Kamacuras | Megalon |
-| 6 | Yokohama – Industriehafen im Smog | Kamacuras + Kumonga | Hedorah (Giftwolken) |
-| 7 | Nagoya – **mit Mothra als Verbündeter** | Kumonga | Battra (Larve → Falter) |
-| 8 | Berg Fuji | Rodan, dann Rodan + Kamacuras | King Ghidorah |
-| 9 | Fukuoka – Kristallstadt | Moguera | SpaceGodzilla (Kristalle heilen ihn – zerstöre einige) |
-| 10 | Sapporo – Schneefestival | Titanosaurus, dann Battra + Rodan | Mecha-King Ghidorah |
-| 11 | Shinjuku – das Finale | Gigan + Megalon | Destoroyah |
-| ? | ??? | – | Geheimlevel (Boss-Rush gegen fünf) |
+| 1954 | Gojira | Tokio – der erste Angriff | nur Militär – **Ziel: 40 Gebäude zerstören** |
+| 1964 | Ghidorah, the Three-Headed Monster | Berg Fuji – **mit Mothra** | Rodan → King Ghidorah |
+| 1967 | Son of Godzilla | Insel Solgell | Kamacuras, 2× Kamacuras → Kumonga |
+| 1971 | Godzilla vs. Hedorah | Yokohama im Smog | Hedorah (Giftwolken) |
+| 1972 | Godzilla vs. Gigan | Tokio – **mit Anguirus** | Gigan → King Ghidorah |
+| 1973 | Godzilla vs. Megalon | Seatopia-Küste | Ebirah → Megalon + Gigan |
+| 1974 | Godzilla vs. Mechagodzilla | Okinawa | Titanosaurus → Mechagodzilla |
+
+**Heisei-Ära (1984–1995)**
+
+| Jahr | Film | Level | Gegner |
+|---|---|---|---|
+| 1984 | The Return of Godzilla | Tokio – die Rückkehr | Panzer, Jets, Maser-Kanonen → Super-X (Kadmium) |
+| 1989 | Godzilla vs. Biollante | Ashino-See | Super-X2 (Feuerspiegel) → Biolante (Rose → Bestie) |
+| 1991 | Godzilla vs. King Ghidorah | Sapporo | King Ghidorah → Mecha-King Ghidorah |
+| 1992 | Godzilla vs. Mothra | Nagoya – **mit Mothra** | Battra (Larve → Falter) |
+| 1993 | Godzilla vs. Mechagodzilla II | Kyoto | Fire Rodan → Mechagodzilla |
+| 1994 | Godzilla vs. SpaceGodzilla | Fukuoka – **mit Moguera** | SpaceGodzilla (Kristalle heilen ihn – zerstöre einige) |
+| 1995 | Godzilla vs. Destoroyah | Tokio – das Finale | Destoroyah – Godzilla glüht von Anfang an |
+| ? | ??? | Geheimlevel | Boss-Rush gegen fünf |
+
+Nach dem Finale folgt der Abspann mit Godzillas Kernschmelze. Nach jedem Sieg erscheint die
+**Kaiju-Zeitung** mit der Schlagzeile des Tages.
 
 **Boss-Auftritt:** Bosse erscheinen wie im Kino mit schwarzen Balken, Kameraschwenk und Namenseinblendung.
-**Burning Godzilla:** Unter 30 % HP glüht Godzilla rot (wie 1995) und teilt 40 % mehr Schaden aus.
+**Burning Godzilla:** Unter 30 % HP glüht Godzilla rot und teilt 40 % mehr Schaden aus – im Destoroyah-Finale
+glüht er von Anfang an (wie 1995).
+
+**Lebendige Stadt:** Sirenen heulen, sobald die Menschen fliehen, und Radio-Durchsagen warnen die Bevölkerung.
+In vielen Städten fährt ein **Shinkansen** – wer ihm im Weg steht, bringt ihn zum Entgleisen.
+Auf dem Wasser laufen Wellen, und beim Waten schiebt Godzilla eine Bugwelle vor sich her.
+Kommt ein Gegner nahe, zoomt die Kamera etwas heraus, damit man den ganzen Kampf sieht.
 
 **Verbündete:** Anguirus und Mothra kämpfen in ihren Leveln an deiner Seite (grüne Markierung, eigene Lebensleiste).
 Es gibt kein Friendly Fire – deine Angriffe treffen sie nie. Gegner greifen aber auch sie an.
 
-In Tokio, im Atoll, in Yokohama und Fukuoka steigt Godzilla zu Beginn Stück für Stück aus dem Meer.
+In Tokio (1954 und 1984), an der Seatopia-Küste, in Yokohama und Fukuoka steigt Godzilla zu Beginn Stück für Stück aus dem Meer.
 Danach watet er im Wasser nur noch leicht ein. Rund um das Spielfeld geht Stadt und Landschaft im Dunst weiter;
 am Rand hält dich eine unsichtbare Wand auf, die beim Anstoßen kurz aufschimmert.
 

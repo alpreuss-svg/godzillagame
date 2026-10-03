@@ -34,9 +34,9 @@
 
   /* ================= Speicher ================= */
   var save = { unlocked: 1, island: false, hi: 0 };
-  try { var sv = JSON.parse(localStorage.getItem('gz3000b') || 'null'); if (sv) save = sv; } catch (e) { }
+  try { var sv = JSON.parse(localStorage.getItem('gz3000c') || 'null'); if (sv) save = sv; } catch (e) { }
   if (!save.opt) save.opt = { mus: 7, sfx: 8, q: 1, diff: 1 };
-  function store() { try { localStorage.setItem('gz3000b', JSON.stringify(save)); } catch (e) { } }
+  function store() { try { localStorage.setItem('gz3000c', JSON.stringify(save)); } catch (e) { } }
   var DIFF = [{ n: 'LEICHT', dmg: 0.6, hp: 0.8 }, { n: 'NORMAL', dmg: 1, hp: 1 }, { n: 'SCHWER', dmg: 1.35, hp: 1.25 }];
   function Q() { return save.opt.q === 1; }
   function PCAP() { return Q() ? 300 : 110; }
@@ -96,7 +96,7 @@
         { t: 'gust', min: 0, max: 8, w: 0.3, dur: 1.0, air: true }]
     },
     destoroyah: {
-      name: 'DESTOROYAH', hp: 480, r: 1.6, speed: 2.0, pref: 3, phases: true, cd: [1, 1.8], roar: ['godzilla', 0.7], atk: [
+      name: 'DESTOROYAH', hp: 620, r: 1.6, speed: 2.0, pref: 3, phases: true, cd: [1, 1.8], roar: ['godzilla', 0.7], atk: [
         { t: 'melee', max: 3.4, w: 0.5, dur: 0.85, dmg: 12, kb: 1.2, ground: true },
         { t: 'beam', min: 3, max: 12, w: 0.85, dur: 1.3, dmg: 13, beam: 'oxy' },
         { t: 'charge', min: 3, max: 10, w: 0.65, dur: 1.1, spd: 9, dmg: 11, ground: true },
@@ -185,32 +185,42 @@
 
   /* ================= Level ================= */
   var LEVELS = [
-    { id: 'tokyo', name: 'TOKIO', sub: 'HAFENVIERTEL BEI NACHT', enc: [['kamacuras'], ['kamacuras', 'kamacuras'], ['mecha']], music: 'stage',
-      text: ['MECHAGODZILLA WURDE IN DER', 'BUCHT VON TOKIO GESICHTET.', 'VORHER SCHWÄRMEN RIESIGE', 'GOTTESANBETERINNEN AUS...'] },
-    { id: 'tokyo84', name: 'TOKIO 1984', sub: 'DIE RÜCKKEHR DES GODZILLA', enc: [['superx']], music: 'stage', military: true,
-      text: ['WIE IM FILM VON 1984: KEINE', 'MONSTER - NUR DIE ARMEE,', 'MASER-KANONEN UND DAS', 'FLIEGENDE KAMPFSCHIFF SUPER-X!'] },
-    { id: 'osaka', name: 'OSAKA', sub: 'MIT ANGUIRUS AN DEINER SEITE', enc: [['kamacuras', 'kamacuras'], ['gigan']], music: 'stage', ally: 'anguirus',
-      text: ['DEIN ALTER FREUND ANGUIRUS', 'KÄMPFT MIT DIR GEGEN DEN', 'CYBORG GIGAN AUS DEM ALL.', 'VERBÜNDETE TRIFFST DU NIE!'] },
-    { id: 'lake', name: 'ASHINO-SEE', sub: 'HAKONE IN DER ABENDDÄMMERUNG', enc: [['kumonga'], ['superx2'], ['biolanteRose']], music: 'stage',
-      text: ['IM SEE BLÜHT BIOLANTE - EINE', 'ROSE AUS GODZILLAS ZELLEN.', 'BESIEGST DU SIE, ZEIGT SIE', 'IHRE WAHRE GESTALT...'] },
-    { id: 'atoll', name: 'LETCHI-ATOLL', sub: 'SÜDSEE, 1966', enc: [['ebirah'], ['ebirah', 'kamacuras'], ['megalon']], music: 'island',
-      text: ['IM ATOLL LAUERT EBIRAH,', 'DER RIESENHUMMER.', 'AUS DEM UNTERWASSERREICH', 'SEATOPIA STEIGT MEGALON!'] },
-    { id: 'yokohama', name: 'YOKOHAMA', sub: 'INDUSTRIEHAFEN IM SMOG', enc: [['kamacuras', 'kumonga'], ['hedorah']], music: 'stage',
-      text: ['DER SMOG DER FABRIKEN HAT', 'EIN MONSTER GEBOREN:', 'HEDORAH, DAS SMOGMONSTER.', 'VORSICHT VOR GIFTWOLKEN!'] },
-    { id: 'nagoya', name: 'NAGOYA', sub: 'MIT MOTHRA AN DEINER SEITE', enc: [['kumonga'], ['battraLarva']], music: 'stage', ally: 'mothraImago',
-      text: ['MOTHRA, DIE SCHUTZGÖTTIN,', 'FLIEGT AN DEINER SEITE.', 'IHR SCHWARZER RIVALE BATTRA', 'WIRD SICH VERWANDELN!'] },
-    { id: 'fuji', name: 'BERG FUJI', sub: 'DÖRFER AM HEILIGEN BERG', enc: [['rodan'], ['rodan', 'kamacuras'], ['ghidorah']], music: 'stage',
-      text: ['RODAN KREIST ÜBER DEM FUJI.', 'DANACH LANDET DER', 'DREIKÖPFIGE DRACHE', 'KING GHIDORAH!'] },
-    { id: 'fukuoka', name: 'FUKUOKA', sub: 'DIE KRISTALLSTADT', enc: [['moguera'], ['spacegodzilla']], music: 'stage',
+    /* ---------- SHOWA-ÄRA (frei nach den Filmen) ---------- */
+    { id: 'tokyo', era: 'SHOWA', year: 1954, film: 'GOJIRA', name: 'TOKIO', sub: 'DER ERSTE ANGRIFF', enc: [], goal: 40, military: true, train: true, music: 'stage',
+      text: ['EIN URZEITWESEN, GEWECKT', 'DURCH ATOMBOMBENTESTS,', 'STEIGT AUS DER BUCHT.', 'ZERSTÖRE 40 GEBÄUDE!'] },
+    { id: 'fuji', era: 'SHOWA', year: 1964, film: 'GHIDORAH, THE THREE-HEADED MONSTER', name: 'BERG FUJI', sub: 'MIT MOTHRA AN DEINER SEITE', enc: [['rodan'], ['ghidorah']], ally: 'mothraImago', music: 'stage',
+      text: ['RODAN STREITET MIT DIR -', 'DOCH DANN LANDET KING', 'GHIDORAH AUS DEM ALL.', 'MOTHRA HILFT DIR!'] },
+    { id: 'sollgel', era: 'SHOWA', year: 1967, film: 'SON OF GODZILLA', name: 'INSEL SOLGELL', sub: 'DIE INSEL DER RIESENINSEKTEN', enc: [['kamacuras'], ['kamacuras', 'kamacuras'], ['kumonga']], music: 'island',
+      text: ['RIESIGE GOTTESANBETERINNEN', 'UND DIE SPINNE KUMONGA', 'BEDROHEN DIE INSEL.', 'VERTEIDIGE SIE!'] },
+    { id: 'yokohama', era: 'SHOWA', year: 1971, film: 'GODZILLA VS. HEDORAH', name: 'YOKOHAMA', sub: 'DAS SMOGMONSTER', enc: [['hedorah']], train: true, music: 'stage',
+      text: ['DER GIFTIGE SMOG DER', 'FABRIKEN HAT HEDORAH', 'GEBOREN. VORSICHT VOR', 'SEINEN GIFTWOLKEN!'] },
+    { id: 'osaka', era: 'SHOWA', year: 1972, film: 'GODZILLA VS. GIGAN', name: 'TOKIO', sub: 'MIT ANGUIRUS AN DEINER SEITE', enc: [['gigan'], ['ghidorah']], ally: 'anguirus', train: true, music: 'stage',
+      text: ['AUSSERIRDISCHE SCHICKEN', 'GIGAN UND KING GHIDORAH.', 'DEIN FREUND ANGUIRUS', 'KÄMPFT MIT DIR!'] },
+    { id: 'atoll', era: 'SHOWA', year: 1973, film: 'GODZILLA VS. MEGALON', name: 'SEATOPIA-KÜSTE', sub: 'ANGRIFF AUS DER TIEFE', enc: [['ebirah'], ['megalon', 'gigan']], music: 'island',
+      text: ['DAS UNTERWASSERREICH', 'SEATOPIA SCHICKT MEGALON', '- UND HOLT SICH GIGAN', 'ALS VERSTÄRKUNG!'] },
+    { id: 'okinawa', era: 'SHOWA', year: 1974, film: 'GODZILLA VS. MECHAGODZILLA', name: 'OKINAWA', sub: 'FINALE DER SHOWA-ÄRA', enc: [['titanosaurus'], ['mecha']], music: 'stage',
+      text: ['AUSSERIRDISCHE HABEN EINE', 'MASCHINE GEBAUT: MECHA-', 'GODZILLA. VORHER KOMMT', 'TITANOSAURUS!'] },
+    /* ---------- HEISEI-ÄRA (nach den Filmen) ---------- */
+    { id: 'tokyo84', era: 'HEISEI', year: 1984, film: 'THE RETURN OF GODZILLA', name: 'TOKIO', sub: 'DIE RÜCKKEHR', enc: [['superx']], military: true, train: true, music: 'stage',
+      text: ['30 JAHRE SPÄTER KEHRT', 'GODZILLA ZURÜCK. DIE ARMEE', 'SETZT DAS FLIEGENDE', 'KAMPFSCHIFF SUPER-X EIN!'] },
+    { id: 'lake', era: 'HEISEI', year: 1989, film: 'GODZILLA VS. BIOLLANTE', name: 'ASHINO-SEE', sub: 'HAKONE IN DER DÄMMERUNG', enc: [['superx2'], ['biolanteRose']], music: 'stage',
+      text: ['ZUERST DIE SUPER-X2 MIT', 'IHREM FEUERSPIEGEL. DANN', 'BIOLANTE - EINE ROSE AUS', 'GODZILLAS ZELLEN...'] },
+    { id: 'sapporo', era: 'HEISEI', year: 1991, film: 'GODZILLA VS. KING GHIDORAH', name: 'SAPPORO', sub: 'DIE ZEITREISENDEN', enc: [['ghidorah'], ['mkg']], train: true, music: 'stage',
+      text: ['ZEITREISENDE HETZEN KING', 'GHIDORAH AUF DICH. BESIEGT', 'KEHRT ER ALS CYBORG ZURÜCK:', 'MECHA-KING GHIDORAH!'] },
+    { id: 'nagoya', era: 'HEISEI', year: 1992, film: 'GODZILLA VS. MOTHRA', name: 'NAGOYA', sub: 'MIT MOTHRA AN DEINER SEITE', enc: [['battraLarva']], ally: 'mothraImago', train: true, music: 'stage',
+      text: ['BATTRA, DER SCHWARZE', 'KRIEGER, IST ERWACHT.', 'MOTHRA KÄMPFT MIT DIR.', 'BATTRA WIRD SICH VERWANDELN!'] },
+    { id: 'kyoto', era: 'HEISEI', year: 1993, film: 'GODZILLA VS. MECHAGODZILLA II', name: 'KYOTO', sub: 'DIE ALTE KAISERSTADT', enc: [['rodan'], ['mecha']], train: true, music: 'stage',
+      text: ['FIRE RODAN STELLT SICH DIR', 'IN DEN WEG. DANN SCHICKT', 'DIE G-FORCE IHRE WAFFE:', 'MECHAGODZILLA!'] },
+    { id: 'fukuoka', era: 'HEISEI', year: 1994, film: 'GODZILLA VS. SPACEGODZILLA', name: 'FUKUOKA', sub: 'MIT MOGUERA AN DEINER SEITE', enc: [['spacegodzilla']], ally: 'moguera', music: 'stage',
       text: ['SPACEGODZILLA KOMMT AUS', 'DEM ALL. SEINE KRISTALL-', 'TÜRME HEILEN IHN - JE', 'WENIGER, DESTO SCHWÄCHER!'] },
-    { id: 'sapporo', name: 'SAPPORO', sub: 'SCHNEEFESTIVAL IN GEFAHR', enc: [['titanosaurus'], ['battra', 'rodan'], ['mkg']], music: 'stage',
-      text: ['AUS DEM JAHR 2204 KEHRT', 'GHIDORAH ZURÜCK - ALS', 'CYBORG: MECHA-KING', 'GHIDORAH!'] },
-    { id: 'shinjuku', name: 'SHINJUKU', sub: 'DAS FINALE', enc: [['gigan', 'megalon'], ['destoroyah']], music: 'stage',
-      text: ['DESTOROYAH, DER ZERSTÖRER,', 'IST AUS DEM MEERESGRUND', 'ERWACHT. DER LETZTE KAMPF', 'UM TOKIO BEGINNT!'] },
+    { id: 'shinjuku', era: 'HEISEI', year: 1995, film: 'GODZILLA VS. DESTOROYAH', name: 'TOKIO', sub: 'DAS FINALE', enc: [['destoroyah']], burning: true, music: 'stage',
+      text: ['GODZILLAS HERZ GLÜHT -', 'EINE KERNSCHMELZE DROHT.', 'DESTOROYAH, DER ZERSTÖRER,', 'WARTET IN TOKIO...'] },
     { id: 'island', name: 'MONSTERINSEL', sub: 'GEHEIMLEVEL: BOSS-RUSH', enc: [['mecha'], ['biolanteRose'], ['spacegodzilla'], ['mkg'], ['destoroyah']], music: 'island', secret: true,
       text: ['DU HAST DIE MONSTERINSEL', 'ENTDECKT! BESIEGE ALLE', 'FÜNF RIVALEN', 'HINTEREINANDER.'] }
   ];
-  var LAST = 10, ISLAND = 11;
+  var SHOWA_END = 6;
+  var LAST = 13, ISLAND = 14;
+  var ANNOUNCE = ['ACHTUNG! VERLASSEN SIE SOFORT DIE KÜSTE!', 'ALLE BÜRGER IN DIE SCHUTZRÄUME!', 'DIE ARMEE BITTET UM RUHE.', 'ZÜGE WERDEN UMGELEITET.', 'GODZILLA BEWEGT SICH RICHTUNG ZENTRUM!', 'EVAKUIERUNG LÄUFT. BLEIBEN SIE RUHIG!'];
   // Gegner, in die sich ein Monster verwandeln kann (für das Vorladen der Sprites)
   function chainOf(t) { var o = [t]; while (MON[t].next) { t = MON[t].next; o.push(t); } return o; }
 
@@ -273,11 +283,59 @@
   }
 
   /* ================= Level starten ================= */
+  /* ---------- Shinkansen ---------- */
+  // Gleis quer durch die Stadt legen (Zeile mit möglichst viel Bebauung, ohne Hauptstraße)
+  function addRail(m) {
+    var best = -1, bs = -1;
+    for (var j = 6; j < m.H - 6; j++) {
+      var sc = 0;
+      for (var i = 0; i < m.W; i++) { var t = m.T(i, j); if (t === T.ROADX || t === T.CROSS) sc -= 3; else if (t === T.CONCRETE) sc++; }
+      if (sc > bs) { bs = sc; best = j; }
+    }
+    if (best < 0) return -1;
+    for (var i2 = 0; i2 < m.W; i2++) { m.S(i2, best, T.RAIL); delete m.occ[i2 + ',' + best]; }
+    m.b = m.b.filter(function (b) { return Math.floor(b.y) !== best; });
+    return best;
+  }
+  function newTrain() { var dir = Math.random() < 0.5 ? 1 : -1; return { dir: dir, x: dir > 0 ? -6 : L.map.W + 6, alive: true, spd: 4.2, wait: 0 }; }
+  var TRAINCAR = null;
+  function trainCar() {
+    if (TRAINCAR) return TRAINCAR;
+    var HH = Sprites.H, r = new HH.R(36, 24);
+    HH.isoBox(r, 18, 14, 0.44, 0.17, 0, 4.4, '#eef0f2', '#c4c8ce', '#a4aab2');
+    HH.isoBox(r, 18, 14, 0.445, 0.175, 1.4, 1.1, '#2a5ab0', '#244c96', '#1c3c7a');
+    HH.isoBox(r, 18, 14, 0.44, 0.17, 3.2, 0.9, '#3a4a5c', '#2a3644', '#222c38');
+    r.outline('soft');
+    return (TRAINCAR = r.toCanvas());
+  }
+  function updateTrains(dt) {
+    var p = L.p, y = L.railRow + 0.5;
+    L.trains.forEach(function (tr, idx) {
+      if (!tr.alive || tr.wait > 0) { tr.wait -= dt; if (tr.wait <= 0 && !tr.alive) L.trains[idx] = newTrain(); return; }
+      tr.x += tr.dir * tr.spd * dt;
+      var hitBy = null;
+      for (var k = 0; k < 5; k++) {
+        var cx = tr.x - tr.dir * k * 0.9;
+        if (!p.dead && dist(cx, y, p.x, p.y) < p.r + 0.35) hitBy = p;
+        L.mons.concat(L.allies).forEach(function (mo) { if (!mo.dead && !inAir(mo) && dist(cx, y, mo.x, mo.y) < mo.r * 0.8) hitBy = hitBy || mo; });
+      }
+      if (hitBy) {
+        tr.alive = false; tr.wait = 12;
+        for (var c2 = 0; c2 < 5; c2++) { var wx = tr.x - tr.dir * c2 * 0.9; explode(wx, y, 4, c2 % 2 === 0); decal(wx, y, 'scorch'); }
+        Sound.sfx('collapse', 50); L.shake = Math.max(L.shake, 0.5);
+        if (hitBy === p) { G.score += 600; toast('SHINKANSEN ENTGLEIST! +600', '#ffcc6a', 2.5); }
+        return;
+      }
+      if ((tr.dir > 0 && tr.x - 4.5 > L.map.W + 6) || (tr.dir < 0 && tr.x + 4.5 < -6)) { tr.alive = false; tr.wait = 6; }
+    });
+  }
+  function drawTrainCar(e) { var s = spos(e.x, e.y, 0); ctx.drawImage(trainCar(), s[0] - 18, s[1] - 15); }
   function sortB(m) { m.b.sort(function (a, b) { return (a.x + a.y) - (b.x + b.y) || a.x - b.x; }); }
   function startLevel(i) {
     G.lvl = i; G.levelStartScore = G.score;
     var def = LEVELS[i], gen = World.gen[def.id](), m = gen.map;
     if (gen.island) m.b.push({ x: 15.5, y: 15.5, spr: { img: SPR.volcano, ax: 60, ay: 56, h: 56 }, hp: 1e9, max: 1e9, score: 0, r: 1.8, dead: false, burn: 0, kind: 'deco', tall: 56, flash: 0 });
+    var railRow = def.train ? addRail(m) : -1;
     m.b = m.b.concat(World.decorate(m)); // Kulisse rund um das Spielfeld
     sortB(m);
     if (def.ally) SPR[def.ally];
@@ -298,6 +356,7 @@
       mothra: null, mothraUsed: false, hintT: 10, flyHint: false, eggs: {}, snow: [], crystalsLeft: 0
     };
     initTraffic();
+    L.railRow = railRow; L.trains = railRow >= 0 ? [newTrain()] : [];
     if (gen.snow) for (var sn = 0; sn < (Q() ? 90 : 35); sn++) L.snow.push([Math.random() * W, Math.random() * H, rnd(0.5, 1.5)]);
     // Minikarte einmalig verkleinert vorrendern
     var c0 = gpos(0, 0), c1 = gpos(m.W, 0), c2 = gpos(m.W, m.H), c3 = gpos(0, m.H);
@@ -755,8 +814,9 @@
     if (p.dead) { p.deathT += dt; p.z = -p.deathT * 12; return; }
     if (p.calm > 3 && p.hp < 100) p.hp = Math.min(100, p.hp + 2.5 * dt);
     // Burning Godzilla (wie 1995): bei wenig Leben glüht er rot und wird stärker
-    var burn = !G.mini && p.hp < 30;
-    if (burn && !p.burning) { toast('BURNING GODZILLA! DEINE ANGRIFFE WERDEN STÄRKER!', '#ff6a2a', 3); Sound.sfx('roar', { kind: 'godzilla', pitch: 0.9 }); }
+    var burn = !G.mini && (p.hp < 30 || L.def.burning);
+    if (burn && !p.burning) { toast(L.def.burning ? 'GODZILLAS HERZ GLÜHT - KERNSCHMELZE DROHT!' : 'BURNING GODZILLA! DEINE ANGRIFFE WERDEN STÄRKER!', '#ff6a2a', 3.5); Sound.sfx('roar', { kind: 'godzilla', pitch: 0.9 }); }
+    if (burn && L.def.burning && Math.random() < 0.25) L.parts.length < PCAP() && L.parts.push({ x: p.x + rnd(-0.5, 0.5), y: p.y + rnd(-0.5, 0.5), z: rnd(20, 60), vx: 0, vy: 0, vz: rnd(8, 16), life: 1.4, max: 1.4, c: '#e8d8d0', g: -2, s: 3, gr: 3 });
     p.burning = burn;
     if (burn && Math.random() < 0.45) particles(p.x + rnd(-0.6, 0.6), p.y + rnd(-0.6, 0.6), rnd(10, 60), 1, ['#ff6a1a', '#ffb040', '#ff3a1a'], 0.3, 0.8, -20, 2);
     if (p.dance > 0) {
@@ -774,7 +834,13 @@
     }
     p.wade = wet ? (deepW ? 9 : 4) : 0;
     p.z = -Math.max(p.emerge, p.wade * (G.mini ? 0.6 : 1));
-    if (wet && p.moving && Math.random() < 0.5) particles(p.x + rnd(-0.5, 0.5), p.y + rnd(-0.5, 0.5), 1, 2, ['#e8f4ff', '#9ad0ff'], 1.4, 0.5, 40, 2);
+    if (wet && p.moving && p.emerge <= 0) {
+      // Bugwelle: Gischt schräg nach hinten zu beiden Seiten
+      for (var bw = -1; bw <= 1; bw += 2) if (Math.random() < 0.6 && L.parts.length < PCAP()) {
+        var px0 = -p.dir[1] * bw, py0 = p.dir[0] * bw;
+        L.parts.push({ x: p.x + p.dir[0] * 0.6 + px0 * 0.5, y: p.y + p.dir[1] * 0.6 + py0 * 0.5, z: 2, vx: px0 * 1.4 - p.dir[0] * 0.6, vy: py0 * 1.4 - p.dir[1] * 0.6, vz: rnd(8, 18), life: 0.6, max: 0.6, c: Math.random() < 0.5 ? '#ffffff' : '#bfe4ff', g: 40, s: 2 });
+      }
+    }
     var ix = (down('arrowright') || down('d') ? 1 : 0) - (down('arrowleft') || down('a') ? 1 : 0);
     var iy = (down('arrowdown') || down('s') ? 1 : 0) - (down('arrowup') || down('w') ? 1 : 0);
     var wx = ix + iy, wy = iy - ix, l = Math.sqrt(wx * wx + wy * wy);
@@ -979,7 +1045,7 @@
     L.roads = roads;
     L.carTarget = Math.min(24, Math.floor(roads.length / 7));
     for (var c = 0; c < L.carTarget; c++) spawnCar(true);
-    var np = L.def.secret ? 0 : (Q() ? (L.gen.map.b.length > 300 ? 70 : 45) : 25);
+    var np = L.def.secret ? 0 : (Q() ? (L.gen.map.b.length > 300 ? 100 : 60) : 30); L.ppl0 = np;
     for (var k = 0; k < np && ground.length; k++) {
       var g = ground[Math.floor(Math.random() * ground.length)];
       L.people.push({ x: g[0] + Math.random(), y: g[1] + Math.random(), vx: 0, vy: 0, t: 0, col: ['#e84040', '#4070e8', '#f0f0f0', '#e8c040', '#40a060', '#c060c0'][k % 6], anim: Math.random() * 4, alive: true, flee: false });
@@ -1250,7 +1316,18 @@
 
   /* ================= Update ================= */
   function updatePlay(dt) {
-    L.time += dt; L.hintT -= dt; L.hurtFlash -= dt; L.whiteFlash = (L.whiteFlash || 0) - dt;
+    L.time += dt; L.hintT -= dt;
+    // Luftschutzsirene und Lautsprecher-Durchsagen in den Städten
+    if (!L.def.secret && L.ppl0 > 0) {
+      if (!L.sirenDone && L.time > 1.5) { L.sirenDone = true; Sound.sfx('siren'); }
+      L.annT = (L.annT === undefined ? 8 : L.annT) - dt;
+      if (L.annT <= 0 && L.people.length > 5) {
+        L.annT = rnd(18, 28);
+        L.radio = { t: 4, s: ANNOUNCE[Math.floor(Math.random() * ANNOUNCE.length)] };
+        Sound.sfx('radio');
+      }
+    }
+    if (L.radio) { L.radio.t -= dt; if (L.radio.t <= 0) L.radio = null; } L.hurtFlash -= dt; L.whiteFlash = (L.whiteFlash || 0) - dt;
     updatePlayer(dt);
     if (L.p.dead && L.p.deathT > 2.8) { G.state = 'over'; G.t = 0; Sound.play('over'); save.hi = Math.max(save.hi, G.score); store(); return; }
     // Begegnungen
@@ -1260,7 +1337,7 @@
           L.encTimer -= dt;
           if (L.encTimer <= 0 || (L.encIdx === 0 && L.destroyed >= 18)) { L.warn = 3; Sound.sfx('alarm'); }
         } else { L.warn -= dt; if (L.warn <= 0) spawnEncounter(); }
-      } else {
+      } else if (!L.def.goal || L.destroyed >= L.def.goal) {
         G.state = 'clear'; G.t = 0; Sound.breath(false); Sound.play('win'); unlockNext(); return;
       }
     }
@@ -1282,6 +1359,7 @@
     }
     updateUnits(dt);
     updateCars(dt);
+    updateTrains(dt);
     updatePeople(dt);
     updateProj(dt);
     updateParticles(dt);
@@ -1300,6 +1378,10 @@
     L.camY = my0 > my1 ? (my0 + my1) / 2 : Math.max(my0, Math.min(my1, L.camY));
     if (L.barrier) { L.barrier.t -= dt; if (L.barrier.t <= 0) L.barrier = null; }
     L.shake = Math.max(0, L.shake - dt);
+    // Kamera zoomt heraus, wenn große Monster in der Nähe kämpfen
+    var near = L.mons.some(function (mo) { return !mo.dead && mo.enter <= 0 && dist(mo.x, mo.y, L.p.x, L.p.y) < 8; });
+    L.zoom = (L.zoom || 1) + ((near ? 0.82 : 1) - (L.zoom || 1)) * Math.min(1, dt * 1.2);
+    if (Math.abs(L.zoom - 1) < 0.004) L.zoom = 1;
   }
 
   /* ================= Zeichnen ================= */
@@ -1498,15 +1580,40 @@
     ctx.restore();
   }
 
+  // Wellenkämme auf sichtbaren Wasserkacheln
+  function drawWaves(cx0, cy0) {
+    var m = L.map, OX = L.ground.OX, OY = L.ground.OY;
+    function wpos(gx, gy) { var a = (gx - OX) / 16, b = (gy - OY) / 8; return [(a + b) / 2, (b - a) / 2]; }
+    var gl = L.camX - W / 2 - cx0, gr = L.camX + W / 2 + cx0, gt = L.camY - H / 2 - cy0, gb = L.camY + H / 2 + cy0 + 20;
+    var c1 = wpos(gl, gt), c2 = wpos(gr, gt), c3 = wpos(gl, gb), c4 = wpos(gr, gb);
+    var i0 = Math.floor(Math.min(c1[0], c3[0])) - 1, i1 = Math.ceil(Math.max(c2[0], c4[0])) + 1;
+    var j0 = Math.floor(Math.min(c1[1], c2[1])) - 1, j1 = Math.ceil(Math.max(c3[1], c4[1])) + 1;
+    var M = L.ground.M || 0;
+    i0 = Math.max(-M, i0); j0 = Math.max(-M, j0); i1 = Math.min(m.W + M - 1, i1); j1 = Math.min(m.H + M - 1, j1);
+    ctx.fillStyle = 'rgba(235,248,255,0.4)';
+    for (var j = j0; j <= j1; j++) for (var i = i0; i <= i1; i++) {
+      var t = m.T(Math.max(0, Math.min(m.W - 1, i)), Math.max(0, Math.min(m.H - 1, j)));
+      if (t !== T.WATER && t !== T.DEEP) continue;
+      var h = Pix.hash(i, j, 5), ph = L.time * (0.6 + h * 0.6) + h * 6.28;
+      var s = spos(i + 0.5 + Math.sin(ph) * 0.18, j + 0.5 + Math.cos(ph * 0.7) * 0.18, 0), wl = 3 + Math.round((Math.sin(ph * 1.3) + 1) * 2);
+      ctx.fillRect(s[0] - wl, s[1], wl * 2, 1);
+      if (h > 0.6) ctx.fillRect(s[0] - 2 + Math.round(Math.sin(ph) * 4), s[1] + 4, 3, 1);
+    }
+  }
   function drawWorld() {
     var m = L.map, pal = m.pal;
     L.sx = L.shake > 0 ? Math.round(rnd(-3, 3) * L.shake * 3) : 0;
     L.sy = L.shake > 0 ? Math.round(rnd(-3, 3) * L.shake * 3) : 0;
     ctx.fillStyle = pal.sky; ctx.fillRect(0, 0, W, H);
     if (L.gen.night) { ctx.fillStyle = '#c8d0ff'; stars.forEach(function (s) { if (s[2] > 0.3 || Math.floor(L.time * 2 + s[2] * 10) % 3) ctx.fillRect(s[0], s[1] * 0.6, 1, 1); }); }
+    var zm = L.zoom || 1;
+    ctx.save();
+    if (zm !== 1) { ctx.translate(W / 2, H / 2); ctx.scale(zm, zm); ctx.translate(-W / 2, -H / 2); }
+    var cullX = (W / zm - W) / 2 + 70, cullY = (H / zm - H) / 2;
     var ox = Math.round(-L.camX + W / 2 + L.sx), oy = Math.round(-L.camY + H / 2 + L.sy);
     if (L.gen.bgFuji) ctx.drawImage(SPR.fuji, ox + L.ground.OX - 130, oy + L.ground.OY - 100);
     ctx.drawImage(L.ground.cv, ox, oy);
+    drawWaves(cullX, cullY);
     var p = L.p, s;
     L.marks.forEach(function (mk) {
       s = spos(mk.x, mk.y, 0);
@@ -1539,6 +1646,10 @@
     L.mons.concat(L.allies).forEach(function (mo) { dyn.push({ d: mo.x + mo.y + (inAir(mo) ? 3 : 0), f: drawMon, e: mo }); });
     L.units.forEach(function (u) { dyn.push({ d: u.x + u.y + (u.kind === 'jet' ? 50 : 0), f: drawUnit, e: u }); });
     L.cars.forEach(function (c) { if (onScreen(c.x, c.y, 20)) dyn.push({ d: c.x + c.y, f: drawCar, e: c }); });
+    L.trains.forEach(function (tr) {
+      if (!tr.alive) return;
+      for (var k = 0; k < 5; k++) { var cx = tr.x - tr.dir * k * 0.9, cy = L.railRow + 0.5; if (onScreen(cx, cy, 30)) dyn.push({ d: cx + cy, f: drawTrainCar, e: { x: cx, y: cy } }); }
+    });
     L.people.forEach(function (h) { if (onScreen(h.x, h.y, 10)) dyn.push({ d: h.x + h.y, f: drawPerson, e: h }); });
     L.items.forEach(function (it) { dyn.push({ d: it.x + it.y, f: drawItem, e: it }); });
     if (L.llama.alive) dyn.push({ d: L.llama.x + L.llama.y, f: drawLlama });
@@ -1553,7 +1664,7 @@
       var bb = bl[i], bd = bb.x + bb.y;
       while (di < dyn.length && dyn[di].d <= bd) { dyn[di].f(dyn[di].e); di++; }
       var sp = spos(bb.x, bb.y, 0), sprr = bb.spr;
-      if (sp[0] < -70 || sp[0] > W + 70 || sp[1] < -12 || sp[1] - sprr.ay > H + 4) continue;
+      if (sp[0] < -cullX || sp[0] > W + cullX || sp[1] < -12 - cullY || sp[1] - sprr.ay > H + 4 + cullY) continue;
       if (bb.col) { drawCollapse(bb, sp); continue; }
       if (!bb.dead && bb.hp < bb.max * 0.55 && bb.hp < 1e8) sprr = Sprites.damaged(bb.spr);
       var fade = false;
@@ -1589,6 +1700,7 @@
     ctx.globalAlpha = 1;
     L.nums.forEach(function (n) { var s3 = spos(n.x, n.y, n.z); ctx.globalAlpha = Math.min(1, n.t * 2); text(n.s, s3[0], s3[1], n.c, 'center'); });
     ctx.globalAlpha = 1;
+    ctx.restore();
     if (L.gen.smog) { ctx.fillStyle = 'rgba(120,110,70,0.12)'; ctx.fillRect(0, 0, W, H); }
     if (L.gen.red) { ctx.fillStyle = 'rgba(255,40,20,0.06)'; ctx.fillRect(0, 0, W, H); }
     if (L.snow.length) {
@@ -1825,7 +1937,8 @@
     bar(8, 33, 116, 4, p.rage / 100, full ? (Math.floor(L.time * 8) % 2 ? '#ffffff' : '#ff6a1a') : '#d8501a', '#2a1008');
     ctx.fillStyle = 'rgba(0,0,0,.45)'; ctx.fillRect(W - 150, 4, 146, 34);
     text('PUNKTE ' + ('0000000' + G.score).slice(-7), W - 8, 7, '#fff', 'right');
-    text('ZERSTÖRT ' + L.destroyed, W - 8, 19, '#ffcc6a', 'right');
+    if (L.def.goal) text('ZIEL ' + Math.min(L.destroyed, L.def.goal) + ' / ' + L.def.goal, W - 8, 19, L.destroyed >= L.def.goal ? '#7aff7a' : '#ffcc6a', 'right');
+    else text('ZERSTÖRT ' + L.destroyed, W - 8, 19, '#ffcc6a', 'right');
     // Pause-Knopf (anklickbar)
     ctx.fillStyle = 'rgba(0,0,0,.5)'; ctx.fillRect(W / 2 - 12, 3, 24, 16);
     ctx.strokeStyle = 'rgba(255,255,255,.35)'; ctx.lineWidth = 1; ctx.strokeRect(W / 2 - 11.5, 3.5, 23, 15);
@@ -1869,6 +1982,12 @@
       text(boss ? '!! BOSS-ALARM !!' : '!! WARNUNG !!', W / 2, H / 2 - 18, '#fff', 'center', 16);
       text(L.enc[L.encIdx].map(function (t) { return MON[t].name; }).join(' & ') + ' NÄHERT SICH', W / 2, H / 2 + 2, '#ffe04a', 'center');
     }
+    if (L.radio) {
+      var rt = L.radio, ra = Math.min(1, rt.t * 2), nA = L.allies.filter(function (a) { return !a.dead; }).length;
+      var ry = H - 20 - 22 * Math.max(alive.length, nA ? nA + 1 : 1);
+      ctx.globalAlpha = ra; ctx.fillStyle = 'rgba(0,0,0,.65)'; ctx.fillRect(8, ry - 3, W - 16, 14);
+      text('DURCHSAGE: ' + rt.s, W / 2, ry, '#e8e0a0', 'center'); ctx.globalAlpha = 1;
+    }
     var ty = 46;
     L.toasts.forEach(function (t) { ctx.globalAlpha = Math.min(1, t.t * 2); text(t.s, W / 2, ty, t.c, 'center'); ty += 12; });
     ctx.globalAlpha = 1;
@@ -1877,7 +1996,8 @@
       text('PFEILE LAUFEN  J KOMBO  K STRAHL  L BRÜLLEN', W / 2, H - 14, '#ddd', 'center');
       ctx.globalAlpha = 1;
     }
-    if (!L.mons.length && L.encIdx === 0 && !L.warn) text('ZERSTÖRE DIE STADT!', 8, hy, '#ffcc6a');
+    if (L.def.goal) { /* Ziel steht oben rechts */ }
+    else if (!L.mons.length && L.encIdx === 0 && !L.warn) text('ZERSTÖRE DIE STADT!', 8, hy, '#ffcc6a');
     // Encounter-Fortschritt
     for (var e = 0; e < L.enc.length; e++) {
       ctx.fillStyle = e < L.encIdx ? (L.mons.length && e === L.encIdx - 1 ? '#ff5040' : '#5ad850') : '#444';
@@ -1996,19 +2116,6 @@
     if (save.island) l.push(ISLAND);
     return l;
   }
-  function drawSelect() {
-    ctx.fillStyle = '#0a0e1e'; ctx.fillRect(0, 0, W, H);
-    text('LEVEL WÄHLEN', W / 2, 16, '#ffe04a', 'center', 16);
-    var sl = selectable();
-    sl.forEach(function (li, i) {
-      var sel = i === G.sel, d = LEVELS[li];
-      text((sel ? '> ' : '  ') + (d.secret ? ' ?' : ('0' + (li + 1)).slice(-2)) + '. ' + d.name, 40, 40 + i * 16, sel ? '#fff' : '#999');
-      if (sel) text('BOSS: ' + d.enc[d.enc.length - 1].map(function (t) { return MON[t].name; }).join(' + '), 240, 40 + i * 16, '#ff8a6a');
-    });
-    var dsel = LEVELS[sl[G.sel] || 0];
-    if (dsel) text(dsel.sub, W / 2, H - 30, '#8fe8ff', 'center');
-    text('ENTER = START   ESC = ZURÜCK', W / 2, H - 14, '#888', 'center');
-  }
   function drawHelp() {
     ctx.fillStyle = '#0a0e1e'; ctx.fillRect(0, 0, W, H);
     text('STEUERUNG', W / 2, 16, '#ffe04a', 'center', 16);
@@ -2027,35 +2134,75 @@
       .forEach(function (s, i) { text(s, 30, 165 + i * 12, '#bbb'); });
     text('ESC / ENTER = ZURÜCK', W / 2, H - 14, '#888', 'center');
   }
+  function bossNames(d) { var e = d.enc[d.enc.length - 1]; return e ? e.map(function (t) { return MON[t].name.replace(' (ROSE)', '').replace(' (LARVE)', ''); }).join(' + ') : ''; }
+  function drawSelect() {
+    ctx.fillStyle = '#0a0e1e'; ctx.fillRect(0, 0, W, H);
+    text('LEVEL WÄHLEN', W / 2, 10, '#ffe04a', 'center', 16);
+    text('SHOWA-ÄRA', 24, 34, '#ffb070'); text('HEISEI-ÄRA', 250, 34, '#8fe8ff');
+    var sl = selectable();
+    sl.forEach(function (li, i) {
+      var sel = i === G.sel, d = LEVELS[li], col = d.secret ? 250 : (li <= SHOWA_END ? 16 : 242), row = d.secret ? 8 : (li <= SHOWA_END ? li : li - SHOWA_END - 1);
+      text((sel ? '>' : ' ') + (d.secret ? ' ????' : ' ' + d.year) + ' ' + d.name, col, 48 + row * 18, sel ? '#fff' : '#8a8a96');
+    });
+    var dsel = LEVELS[sl[G.sel]];
+    if (dsel) {
+      ctx.fillStyle = 'rgba(255,255,255,0.06)'; ctx.fillRect(10, H - 62, W - 20, 40);
+      text(dsel.film || dsel.sub, W / 2, H - 56, '#ffe04a', 'center');
+      text(dsel.sub + (bossNames(dsel) ? '  -  BOSS: ' + bossNames(dsel) : ''), W / 2, H - 40, '#8fe8ff', 'center');
+    }
+    text('ENTER = START   ESC = ZURÜCK', W / 2, H - 14, '#888', 'center');
+  }
   function drawIntro() {
     ctx.fillStyle = '#000'; ctx.fillRect(0, 0, W, H);
     var d = LEVELS[G.lvl];
-    text(d.secret ? 'GEHEIMLEVEL' : 'LEVEL ' + (G.lvl + 1) + ' / ' + (LAST + 1), 24, 18, '#888');
-    text(d.name, 24, 32, '#ff4a2a', 'left', 16);
-    text(d.sub, 24, 54, '#8fe8ff');
-    d.text.forEach(function (l, i) { text(l, 24, 80 + i * 13, '#ddd'); });
-    var bt = d.enc[d.enc.length - 1][0], set = SPR[bt];
+    // Ära-Wechsel ankündigen
+    if (d.era === 'HEISEI' && G.lvl === SHOWA_END + 1) text('- DIE HEISEI-ÄRA BEGINNT -', W / 2, 6, '#8fe8ff', 'center');
+    text(d.secret ? 'GEHEIMLEVEL' : (d.era === 'SHOWA' ? 'SHOWA' : 'HEISEI') + '-ÄRA   ' + d.year, 24, 20, '#888');
+    if (d.film) text('"' + d.film + '"', 24, 32, '#ffcc6a');
+    text(d.name, 24, 46, '#ff4a2a', 'left', 16);
+    text(d.sub, 24, 68, '#8fe8ff');
+    d.text.forEach(function (l, i) { text(l, 24, 90 + i * 13, '#ddd'); });
+    var set = d.enc.length ? SPR[d.enc[d.enc.length - 1][0]] : SPR.godzilla;
     var img = Math.floor(G.t * 2) % 2 ? set.attack.l : set.stand.l, sc = set.h > 80 ? 1.5 : 2;
+    if (!d.enc.length) { img = Math.floor(G.t * 2) % 2 ? set.roar.l : set.stand.l; sc = 1.4; }
     ctx.drawImage(img, W - 30 - set.w * sc, H - 50 - set.h * sc, set.w * sc, set.h * sc);
     var mini = d.enc.slice(0, -1).map(function (e) { return e.map(function (t) { return MON[t].name; }).join(' + '); });
     if (mini.length) text('ZWISCHENGEGNER: ' + mini.join(', '), 24, H - 60, '#ffb070');
-    text('BOSS: ' + d.enc[d.enc.length - 1].map(function (t) { return MON[t].name; }).join(' + '), 24, H - 46, '#ff6a5a');
+    if (d.enc.length) text('BOSS: ' + bossNames(d), 24, H - 46, '#ff6a5a');
+    else text('ZIEL: ' + d.goal + ' GEBÄUDE ZERSTÖREN', 24, H - 46, '#ff6a5a');
     if (Math.floor(G.t * 2) % 2) text('ENTER = LOS!', 24, H - 26, '#ffe04a');
     if (G.mini) text('MINILLA-MODUS', W - 12, 12, '#7aff7a', 'right');
   }
+  // Zeitungsschlagzeile nach dem Level
+  function headline(d) {
+    if (d.secret) return 'KÖNIG DER MONSTER: GODZILLA BESIEGT ALLE!';
+    if (!d.enc.length) return 'RIESENECHSE VERWÜSTET ' + d.name + '!';
+    return 'GODZILLA BESIEGT ' + bossNames(d) + ' IN ' + d.name + '!';
+  }
   function drawClear() {
     drawWorld(); drawHUD();
-    ctx.fillStyle = 'rgba(0,0,0,.6)'; ctx.fillRect(60, 60, W - 120, 150);
-    text(G.lvl === ISLAND ? 'KÖNIG DER MONSTER!' : 'SIEG!', W / 2, 74, '#ffe04a', 'center', 16);
-    text(LEVELS[G.lvl].name + ' LIEGT IN TRÜMMERN.', W / 2, 104, '#fff', 'center');
-    text('ZERSTÖRTE GEBÄUDE: ' + L.destroyed, W / 2 - 30, 124, '#ffcc6a', 'center');
-    text('ZEIT: ' + Math.floor(L.time) + ' SEK', W / 2 - 30, 138, '#ffcc6a', 'center');
-    text('PUNKTE: ' + G.score, W / 2 - 30, 152, '#fff', 'center');
+    var d = LEVELS[G.lvl];
+    ctx.fillStyle = 'rgba(0,0,0,.55)'; ctx.fillRect(0, 0, W, H);
+    // Zeitung
+    var px = 40, py = 30, pw = W - 80, ph = 150;
+    ctx.save(); ctx.translate(W / 2, py + ph / 2); ctx.rotate(-0.02); ctx.translate(-W / 2, -(py + ph / 2));
+    ctx.fillStyle = '#e8e2d0'; ctx.fillRect(px, py, pw, ph);
+    ctx.fillStyle = '#d0c8b2'; for (var yy = py + 70; yy < py + ph - 8; yy += 6) { ctx.fillRect(px + 12, yy, pw * 0.55, 2); ctx.fillRect(px + pw * 0.62, yy, pw * 0.3, 2); }
+    text('DIE KAIJU-ZEITUNG', W / 2, py + 6, '#2a2620', 'center', 8, false);
+    ctx.fillStyle = '#2a2620'; ctx.fillRect(px + 8, py + 18, pw - 16, 1);
+    text(d.secret ? '' : 'AUSGABE ' + d.year, px + 10, py + 22, '#5a5448', 'left', 8, false);
+    var hl = headline(d), words = hl.split(' '), line = '', lines = [];
+    words.forEach(function (w) { if ((line + ' ' + w).length > 26) { lines.push(line); line = w; } else line = line ? line + ' ' + w : w; });
+    lines.push(line);
+    lines.forEach(function (l, i) { text(l, W / 2, py + 36 + i * 18, '#1a1612', 'center', 16, false); });
+    ctx.restore();
+    text(G.lvl === ISLAND ? 'KÖNIG DER MONSTER!' : 'SIEG!', W / 2, 188, '#ffe04a', 'center', 16);
+    text('GEBÄUDE: ' + L.destroyed + '   ZEIT: ' + Math.floor(L.time) + ' SEK   PUNKTE: ' + G.score, W / 2 - 30, 210, '#ffcc6a', 'center');
     var rating = L.p.hp * 0.35 + Math.min(40, L.destroyed * 0.6) + Math.max(0, 25 - L.time / 12);
     var grade = rating >= 80 ? 'S' : rating >= 62 ? 'A' : rating >= 45 ? 'B' : 'C';
-    text('RANG', W - 110, 112, '#aaa', 'center');
-    text(grade, W - 110, 126, { S: '#ffe04a', A: '#7aff7a', B: '#8fe8ff', C: '#ff9a6a' }[grade], 'center', 32);
-    if (G.t > 1.5 && Math.floor(G.t * 2) % 2) text('ENTER = WEITER', W / 2, 186, '#8fe8ff', 'center');
+    text('RANG', W - 40, 196, '#aaa', 'center');
+    text(grade, W - 40, 208, { S: '#ffe04a', A: '#7aff7a', B: '#8fe8ff', C: '#ff9a6a' }[grade], 'center', 16);
+    if (G.t > 1.5 && Math.floor(G.t * 2) % 2) text('ENTER = WEITER', W / 2, 236, '#8fe8ff', 'center');
   }
   function drawOver() {
     drawWorld();
@@ -2064,12 +2211,22 @@
     text('GODZILLA VERSINKT IM MEER...', W / 2, 130, '#ddd', 'center');
     if (G.t > 1.5 && Math.floor(G.t * 2) % 2) text('ENTER = NOCHMAL   ESC = TITEL', W / 2, 170, '#ffe04a', 'center');
   }
-  var ENDING = ['DESTOROYAH IST BESIEGT.', '', 'GODZILLA STAPFT ZURÜCK INS MEER.', 'DIE MENSCHHEIT BLEIBT VERSCHONT...', '...VORERST.', '', '', 'ENDE?', '', '', 'EIN GERÜCHT BESAGT, DASS AUF DER', 'MONSTERINSEL NOCH MEHR WARTET.', '(JETZT IM LEVEL-MENÜ)', '', '', 'IDEE, CODE, PIXEL & MUSIK:', 'CLAUDE ALS GAME-DEVELOPER', 'FÜR ALPREUSS-SVG', '', 'EINE FAN-HOMMAGE AN DIE', 'SHOWA- & HEISEI-KAIJU-FILME.', '', 'DANKE FÜRS SPIELEN!'];
+  var ENDING = ['DESTOROYAH IST BESIEGT.', '', 'DOCH GODZILLAS HERZ GLÜHT', 'IMMER HEISSER...', 'DIE KERNSCHMELZE BEGINNT.', '',
+    'GODZILLA SCHMILZT DAHIN UND', 'VERSCHWINDET IM ROTEN NEBEL.', '', '', 'DOCH DIE STRAHLUNG WIRD', 'VON SEINEM SOHN AUFGESOGEN...', '',
+    'JUNIOR ERHEBT SICH ALS', 'DER NEUE GODZILLA.', '', '', 'ENDE DER HEISEI-ÄRA', '', '', 'EIN GERÜCHT BESAGT, DASS AUF DER', 'MONSTERINSEL NOCH MEHR WARTET.',
+    '(JETZT IM LEVEL-MENÜ)', '', '', 'IDEE, CODE, PIXEL & MUSIK:', 'CLAUDE ALS GAME-DEVELOPER', 'FÜR ALPREUSS-SVG', '', 'EINE FAN-HOMMAGE AN DIE',
+    'SHOWA- & HEISEI-KAIJU-FILME.', '', 'DANKE FÜRS SPIELEN!'];
   function drawEnding() {
     ctx.fillStyle = '#000'; ctx.fillRect(0, 0, W, H);
+    // roter Nebel der Kernschmelze
+    var gl = ctx.createRadialGradient(W - 110, H - 40, 10, W - 110, H - 40, 160);
+    gl.addColorStop(0, 'rgba(255,60,20,' + (0.25 + 0.1 * Math.sin(G.t * 3)) + ')'); gl.addColorStop(1, 'rgba(0,0,0,0)');
+    ctx.fillStyle = gl; ctx.fillRect(0, 0, W, H);
     var y0 = H - G.t * 18;
-    ENDING.forEach(function (l, i) { var y = y0 + i * 16; if (y > -10 && y < H) text(l, W / 2, y, i === 7 ? '#ff4a2a' : '#ddd', 'center'); });
-    var set = SPR.godzilla; ctx.drawImage(set.walk[Math.floor(G.t * 4) % 4].l, W - 150 - (G.t * 6) % 60, H - set.h - 4);
+    ENDING.forEach(function (l, i) { var y = y0 + i * 16; if (y > -10 && y < H) text(l, W / 2, y, i === 17 ? '#ff4a2a' : '#ddd', 'center'); });
+    var set = SPR.godzilla; ctx.globalAlpha = Math.max(0.15, 1 - G.t / 14);
+    ctx.drawImage(set.stand.l, W - 150, H - set.h - 4);
+    ctx.globalAlpha = 1;
     if (G.t > 4) text('ENTER', W - 8, H - 12, '#555', 'right');
   }
 
@@ -2258,7 +2415,7 @@
     window.__GZ = {
       G: G, get L() { return L; }, SPR: SPR, MON: MON, startLevel: startLevel,
       step: function (n, hold) { for (var i = 0; i < n; i++) { if (hold) hold.forEach(function (k) { keys[k] = true; }); update(1 / 30); } if (hold) hold.forEach(function (k) { keys[k] = false; }); draw(); },
-      press: function (k) { pressed[k] = true; }
+      press: function (k) { pressed[k] = true; }, damageMon: damageMon
     };
   }
   ctx.fillStyle = '#000'; ctx.fillRect(0, 0, W, H);

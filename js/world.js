@@ -2,7 +2,7 @@
 /* Isometrische Welt: Kacheln, Level-Generatoren und gecachter Boden. */
 var World = (function () {
   var TW = 32, TH = 16;
-  var T = { GRASS: 0, ROADX: 1, ROADY: 2, CROSS: 3, WATER: 4, SAND: 5, CONCRETE: 6, PARK: 7, FIELD: 8, ROCK: 9, SNOW: 10, DIRT: 11, LAVA: 12, DEEP: 13 };
+  var T = { GRASS: 0, ROADX: 1, ROADY: 2, CROSS: 3, WATER: 4, SAND: 5, CONCRETE: 6, PARK: 7, FIELD: 8, ROCK: 9, SNOW: 10, DIRT: 11, LAVA: 12, DEEP: 13, RAIL: 14 };
   var hash = Pix.hash, sh = Pix.shade;
 
   function rng(seed) { var s = seed >>> 0; return function () { s = (Math.imul(s, 1664525) + 1013904223) >>> 0; return s / 4294967296; }; }
@@ -31,6 +31,11 @@ var World = (function () {
           case T.SNOW: c = n < 0.2 ? '#dce4ee' : '#f4f8fc'; break;
           case T.DIRT: c = n < 0.3 ? sh(pal.dirt, -0.1) : pal.dirt; break;
           case T.LAVA: c = n < 0.4 ? '#ff7a1a' : n < 0.7 ? '#e0401a' : '#ffc040'; break;
+          case T.RAIL: // Gleisbett entlang x mit Schwellen und zwei Schienen
+            c = n < 0.4 ? '#6e6a62' : '#7c776c';
+            if (Math.floor(u * 8) % 2 === 0 && v > 0.22 && v < 0.78) c = '#5a3e26';
+            if (Math.abs(v - 0.36) < 0.035 || Math.abs(v - 0.64) < 0.035) c = '#c8ccd2';
+            break;
           case T.ROADX: case T.ROADY: case T.CROSS:
             c = pal.road;
             var a = type === T.ROADY ? u : v, b = type === T.ROADY ? v : u;
@@ -162,8 +167,8 @@ var World = (function () {
     }
   }
 
-  function genOsaka() {
-    var W = 36, H = 36, m = new Map(W, H, PAL.day), R = rng(1955), i, j;
+  function genOsaka(pal, seed, kyoto) {
+    var W = 36, H = 36, m = new Map(W, H, pal || PAL.day), R = rng(seed || 1955), i, j;
     for (j = 0; j < H; j++) for (i = 0; i < W; i++) m.S(i, j, T.CONCRETE);
     // Fluss Yodo diagonal
     for (i = 0; i < W; i++) { var ry = 24 + Math.round(Math.sin(i / 5) * 2); for (j = ry; j < ry + 3; j++) m.S(i, j, T.WATER); }
@@ -171,10 +176,11 @@ var World = (function () {
     // Burgpark
     for (j = 6; j < 13; j++) for (i = 20; i < 28; i++) m.S(i, j, T.PARK);
     for (j = 6; j < 13; j++) { m.S(19, j, T.WATER); m.S(28, j, T.WATER); }
-    special(m, 24, 9, 'castle', { hp: 150, score: 1500, r: 0.7, egg: 'castle' });
+    special(m, 24, 9, kyoto ? 'pagoda' : 'castle', { hp: 150, score: 1500, r: 0.7, egg: kyoto ? null : 'castle' });
     for (j = 6; j < 13; j++) for (i = 20; i < 28; i++) if (!(i === 24 && j === 9) && R() < 0.35) special(m, i, j, 'tree', { hp: 10, score: 10 });
     special(m, 4, 31, 'reactor', { hp: 90, score: 500, nuclear: true });
-    special(m, 14, 20, 'tower', { hp: 140, score: 1000 });
+    if (kyoto) { special(m, 14, 20, 'pagoda', { hp: 60, score: 300 }); special(m, 22, 13, 'torii', { hp: 20, score: 100 }); special(m, 26, 13, 'torii', { hp: 20, score: 100 }); }
+    else special(m, 14, 20, 'tower', { hp: 140, score: 1000 });
     for (j = 0; j < H; j++) for (i = 0; i < W; i++) {
       if (m.T(i, j) !== T.CONCRETE) continue;
       var dc = Math.sqrt((i - 12) * (i - 12) + (j - 14) * (j - 14)), close = Math.max(0, 1 - dc / 18);
@@ -405,6 +411,7 @@ var World = (function () {
     if (t === T.CROSS) t = ox && oy ? T.CONCRETE : ox ? T.ROADX : T.ROADY;
     else if (t === T.ROADX && (oy)) t = T.CONCRETE;
     else if (t === T.ROADY && (ox)) t = T.CONCRETE;
+    else if (t === T.RAIL && oy) t = T.CONCRETE;
     // in der Ferne gelegentlich neue Querstraßen
     if (t === T.CONCRETE && ((ox && (i % 6 === 0)) || (oy && (j % 6 === 0)))) t = ox ? T.ROADY : T.ROADX;
     return t;
@@ -462,5 +469,5 @@ var World = (function () {
     return { cv: cv, OX: OX, OY: OY, M: M };
   }
 
-  return { T: T, TW: TW, TH: TH, gen: { tokyo: function () { return genTokyo(1954); }, tokyo84: function () { var g = genTokyo(1984); g.llama = [30.5, 8.5]; g.bossAt = [30, 6]; return g; }, osaka: genOsaka, lake: genLake, atoll: genAtoll, yokohama: genYokohama, nagoya: genNagoya, fuji: genFuji, fukuoka: genFukuoka, sapporo: genSapporo, shinjuku: genShinjuku, island: genIsland }, renderGround: renderGround, decorate: decorate, PAL: PAL, rng: rng };
+  return { T: T, TW: TW, TH: TH, gen: { okinawa: function () { var g = genOsaka(PAL.tropic, 1974); g.start = [33.5, 32.5]; return g; }, kyoto: function () { return genOsaka(PAL.dusk, 1993, true); }, sollgel: function () { var g = genIsland(); g.island = true; return g; }, tokyo: function () { return genTokyo(1954); }, tokyo84: function () { var g = genTokyo(1984); g.llama = [30.5, 8.5]; g.bossAt = [30, 6]; return g; }, osaka: function () { return genOsaka(); }, lake: genLake, atoll: genAtoll, yokohama: genYokohama, nagoya: genNagoya, fuji: genFuji, fukuoka: genFukuoka, sapporo: genSapporo, shinjuku: genShinjuku, island: genIsland }, renderGround: renderGround, decorate: decorate, PAL: PAL, rng: rng };
 })();
